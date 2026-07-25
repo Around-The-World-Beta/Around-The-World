@@ -1,0 +1,121 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+}
+
+:root {
+  --radius: 0.75rem;
+  /* Deep black base */
+  --background: oklch(0.14 0.005 60);
+  --foreground: oklch(0.97 0.02 85);
+  --card: oklch(0.19 0.008 60);
+  --card-foreground: oklch(0.97 0.02 85);
+  --popover: oklch(0.19 0.008 60);
+  --popover-foreground: oklch(0.97 0.02 85);
+  /* Gold primary */
+  --primary: oklch(0.78 0.16 82);
+  --primary-foreground: oklch(0.14 0.005 60);
+  /* Warm dark secondary */
+  --secondary: oklch(0.24 0.02 70);
+  --secondary-foreground: oklch(0.97 0.02 85);
+  --muted: oklch(0.22 0.01 60);
+  --muted-foreground: oklch(0.68 0.04 80);
+  --accent: oklch(0.78 0.16 82);
+  --accent-foreground: oklch(0.14 0.005 60);
+  --destructive: oklch(0.58 0.22 27);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.28 0.02 70);
+  --input: oklch(0.24 0.02 70);
+  --ring: oklch(0.78 0.16 82);
+  --glow-primary: 0 0 24px oklch(0.78 0.16 82 / 45%);
+}
+
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+  }
+}
+
+@layer components {
+  .auth-input {
+    @apply w-full rounded-xl border border-input bg-card px-4 py-3 text-sm text-foreground outline-none transition-shadow placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/25;
+  }
+}
+
+@utility glow-primary {
+  box-shadow: var(--glow-primary);
+}
+
+/* Volt range slider */
+@utility slider-volt {
+  appearance: none;
+  height: 6px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    to right,
+    var(--color-primary) 0%,
+    var(--color-primary) var(--slider-pct, 40%),
+    oklch(1 0 0 / 10%) var(--slider-pct, 40%),
+    oklch(1 0 0 / 10%) 100%
+  );
+  outline: none;
+
+  &::-webkit-slider-thumb {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 9999px;
+    background: var(--color-foreground);
+    border: 3px solid var(--color-background);
+    box-shadow: 0 2px 8px oklch(0 0 0 / 50%);
+    cursor: pointer;
+  }
+
+  &::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 9999px;
+    background: var(--color-foreground);
+    border: 3px solid var(--color-background);
+    box-shadow: 0 2px 8px oklch(0 0 0 / 50%);
+    cursor: pointer;
+  }
+}
