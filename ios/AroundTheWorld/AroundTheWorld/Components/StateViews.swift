@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct LoadingStateView: View {
-    var message: String = "Loading matches…"
+    var message: String = L10n.loadingMatches
 
     var body: some View {
         VStack(spacing: 16) {
@@ -19,7 +19,7 @@ struct LoadingStateView: View {
 
 struct ErrorStateView: View {
     let message: String
-    var retryTitle: String = "Try again"
+    var retryTitle: String = L10n.tryAgain
     let onRetry: () -> Void
 
     var body: some View {
@@ -27,7 +27,7 @@ struct ErrorStateView: View {
             Image(systemName: "exclamationmark.triangle.fill")
                 .font(.system(size: 36))
                 .foregroundStyle(AppTheme.primary)
-            Text("Something broke")
+            Text(L10n.somethingBroke)
                 .font(AppTheme.displayFont)
                 .foregroundStyle(AppTheme.foreground)
                 .textCase(.uppercase)
@@ -53,8 +53,8 @@ struct ErrorStateView: View {
 }
 
 struct EmptyStateView: View {
-    var title: String = "No matches yet"
-    var message: String = "When games are posted, they’ll show up here."
+    var title: String = L10n.emptyMatchesTitle
+    var message: String = L10n.emptyMatchesMessage
     var systemImage: String = "sportscourt"
 
     var body: some View {

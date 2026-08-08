@@ -24,5 +24,7 @@
 - Swift under `/opt/swift/current/usr/bin` when present; needs `libstdc++-14-dev` on this image.
 - **Default DB is SQLite** (`around_the_world.sqlite`) — no Postgres required for local/dev.
 - Run: `./scripts/run-backend.sh` or `cd Backend && swift run App serve --env development --hostname 127.0.0.1 --port 8081`
-- Port **8081** matches the iOS client. Demo games are seeded on first boot.
+- Port **8081** matches the iOS client. Demo seed is **off** unless `SEED_DEMO=1`.
 - Postgres/Supabase: set `DATABASE_URL` or `DATABASE_DRIVER=postgres`. See `Backend/README.md` and `RUN.md`.
+- Bay Area beta notes: `docs/bay-area-beta.md`, TestFlight gaps: `docs/TESTFLIGHT-CHECKLIST.md`.
+- iOS launch diagnostics: Console filter `subsystem:app.aroundtheworld.boot`. Location/MapKit must not run in `App.init`.

@@ -31,11 +31,13 @@ curl http://127.0.0.1:8081/health
 # → {"status":"ok","service":"around-the-world-api"}
 
 curl http://127.0.0.1:8081/api/v1/games
-# → JSON array of demo matches
+# → JSON array of open Bay Area matches (empty unless you seeded or connected Supabase)
 ```
 
 **Default database is SQLite** (`Backend/around_the_world.sqlite`) — no Postgres install needed.  
-Demo games are seeded automatically on first boot.
+Demo games are **not** seeded by default. For local sample data: `SEED_DEMO=1 ./scripts/run-backend.sh`.
+
+If the Simulator used to freeze on launch with a spinner: pull latest `main` (URLSession no longer waits for connectivity) and keep the API running, or you’ll get a fast error/empty state instead of a hang.
 
 Leave this Terminal window running.
 

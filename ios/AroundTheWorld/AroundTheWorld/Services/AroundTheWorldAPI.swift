@@ -61,8 +61,23 @@ public struct AroundTheWorldAPI: Sendable {
 
     // MARK: Games
 
-    public func listGames() async throws -> [GameResponse] {
-        try await network.get("api/v1/games")
+    /// Browse open Bay Area sessions (`joinedCount < capacity` by default).
+    public func listGames(includeFull: Bool = false, region: String = "bay-area") async throws -> [GameResponse] {
+        try await network.get(
+            "api/v1/games",
+            queryItems: [
+                URLQueryItem(name: "includeFull", value: includeFull ? "true" : "false"),
+                URLQueryItem(name: "region", value: region),
+            ]
+        )
+    }
+
+    /// Sessions the user already joined/waitlisted — includes full games.
+    public func listMyGames(userId: UUID) async throws -> [GameResponse] {
+        try await network.get(
+            "api/v1/games/mine",
+            queryItems: [URLQueryItem(name: "userId", value: userId.uuidString)]
+        )
     }
 
     public func getGame(id: UUID) async throws -> GameResponse {

@@ -9,6 +9,7 @@ public struct ProfileResponse: Codable, Sendable, Identifiable, Equatable {
     public let favoritePosition: String?
     public let skillLevel: String?
     public let avatarUrl: String?
+    public let age: Int?
     public let createdAt: Date?
     public let updatedAt: Date?
 
@@ -20,6 +21,7 @@ public struct ProfileResponse: Codable, Sendable, Identifiable, Equatable {
         favoritePosition: String? = nil,
         skillLevel: String? = nil,
         avatarUrl: String? = nil,
+        age: Int? = nil,
         createdAt: Date? = nil,
         updatedAt: Date? = nil
     ) {
@@ -30,6 +32,7 @@ public struct ProfileResponse: Codable, Sendable, Identifiable, Equatable {
         self.favoritePosition = favoritePosition
         self.skillLevel = skillLevel
         self.avatarUrl = avatarUrl
+        self.age = age
         self.createdAt = createdAt
         self.updatedAt = updatedAt
     }
@@ -42,18 +45,21 @@ public struct UpdateProfileRequest: Codable, Sendable, Equatable {
     public let favoritePosition: String?
     public let skillLevel: String?
     public let avatarUrl: String?
+    public let age: Int?
 
     public init(
         city: String? = nil,
         bio: String? = nil,
         favoritePosition: String? = nil,
         skillLevel: String? = nil,
-        avatarUrl: String? = nil
+        avatarUrl: String? = nil,
+        age: Int? = nil
     ) {
         self.city = city
         self.bio = bio
         self.favoritePosition = favoritePosition
         self.skillLevel = skillLevel
         self.avatarUrl = avatarUrl
+        self.age = age
     }
 }

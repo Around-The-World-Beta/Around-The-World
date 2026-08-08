@@ -12,7 +12,11 @@ struct LoadableContent<Content: View>: View {
 
     var body: some View {
         switch state {
-        case .idle, .loading:
+        case .idle:
+            // Do not block the first frame on a forever spinner — `.task` flips to `.loading`.
+            Color.clear
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        case .loading:
             LoadingStateView(message: loadingMessage)
         case .failed(let message):
             ErrorStateView(message: message, onRetry: onRetry)

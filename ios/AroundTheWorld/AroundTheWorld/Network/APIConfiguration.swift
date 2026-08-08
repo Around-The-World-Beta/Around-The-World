@@ -9,7 +9,7 @@ public struct APIConfiguration: Sendable, Equatable {
     public init(
         baseURL: URL,
         defaultHeaders: [String: String] = ["Accept": "application/json"],
-        timeoutInterval: TimeInterval = 30
+        timeoutInterval: TimeInterval = 8
     ) {
         self.baseURL = baseURL
         self.defaultHeaders = defaultHeaders
@@ -18,11 +18,13 @@ public struct APIConfiguration: Sendable, Equatable {
 
     /// Local Vapor default used during Phase 1 smoke tests.
     public static let localDevelopment = APIConfiguration(
-        baseURL: URL(string: "http://127.0.0.1:8081")!
+        baseURL: URL(string: "http://127.0.0.1:8081")!,
+        timeoutInterval: 8
     )
 
     /// Simulator-friendly alias for the Mac host when the API runs on the development machine.
     public static let iOSSimulatorLocal = APIConfiguration(
-        baseURL: URL(string: "http://127.0.0.1:8081")!
+        baseURL: URL(string: "http://127.0.0.1:8081")!,
+        timeoutInterval: 8
     )
 }

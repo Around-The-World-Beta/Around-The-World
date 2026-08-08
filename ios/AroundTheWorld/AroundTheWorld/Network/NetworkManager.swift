@@ -5,8 +5,9 @@ import FoundationNetworking
 
 /// Reusable async/await HTTP client for the Around The World Vapor API.
 ///
-/// Thread-safe (`actor`). Encode/decode uses `JSONCoding` so dates and camelCase
-/// keys match the backend `Content` schemas exactly.
+/// Thread-safe (`actor`). Uses a dedicated `URLSession` with
+/// `waitsForConnectivity = false` and short timeouts so a down API cannot
+/// freeze the simulator launch path.
 public actor NetworkManager {
     public static let shared = NetworkManager()
 
@@ -17,18 +18,30 @@ public actor NetworkManager {
 
     public init(
         configuration: APIConfiguration = .localDevelopment,
-        session: URLSession = .shared,
+        session: URLSession? = nil,
         decoder: JSONDecoder? = nil,
         encoder: JSONEncoder? = nil
     ) {
         self.configuration = configuration
-        self.session = session
+        if let session {
+            self.session = session
+        } else {
+            let sessionConfig = URLSessionConfiguration.ephemeral
+            sessionConfig.waitsForConnectivity = false
+            sessionConfig.timeoutIntervalForRequest = configuration.timeoutInterval
+            sessionConfig.timeoutIntervalForResource = configuration.timeoutInterval + 4
+            self.session = URLSession(configuration: sessionConfig)
+        }
         self.decoder = decoder ?? JSONCoding.decoder
         self.encoder = encoder ?? JSONCoding.encoder
     }
 
     public func setConfiguration(_ configuration: APIConfiguration) {
         self.configuration = configuration
+        BootLogger.step(
+            "network.setConfiguration",
+            "\(configuration.baseURL.absoluteString) timeout=\(Int(configuration.timeoutInterval))s"
+        )
     }
 
     public func currentConfiguration() -> APIConfiguration {
@@ -84,11 +97,14 @@ public actor NetworkManager {
             body: body
         )
 
+        BootLogger.step("network.request", "\(method) \(request.url?.absoluteString ?? path)")
+
         let data: Data
         let response: URLResponse
         do {
             (data, response) = try await session.data(for: request)
         } catch {
+            BootLogger.fail("network.request", error)
             throw APIError.transport(error.localizedDescription)
         }
 
@@ -105,8 +121,11 @@ public actor NetworkManager {
         }
 
         do {
-            return try decoder.decode(Response.self, from: data)
+            let decoded = try decoder.decode(Response.self, from: data)
+            BootLogger.done("network.request \(method) \(path) → \(http.statusCode)")
+            return decoded
         } catch {
+            BootLogger.fail("network.decode", error)
             throw APIError.decoding(String(describing: error))
         }
     }

@@ -9,10 +9,12 @@ enum FavoritePosition: String, Codable, CaseIterable, Sendable {
 }
 
 enum SkillLevel: String, Codable, CaseIterable, Sendable {
-    case casual = "Casual"
+    case beginner = "Beginner"
     case intermediate = "Intermediate"
     case baller = "Baller"
     case openToAll = "Open to All"
+    /// Legacy seed / pre-beta value — accepted by validation, normalized to Beginner.
+    case casual = "Casual"
 }
 
 /// Extended player profile (1:1 with `users`). Aligns with existing Supabase `profiles` fields.
@@ -40,6 +42,9 @@ final class Profile: Model, Content, @unchecked Sendable {
     @OptionalField(key: "avatar_url")
     var avatarUrl: String?
 
+    @OptionalField(key: "age")
+    var age: Int?
+
     @Timestamp(key: "created_at", on: .create)
     var createdAt: Date?
 
@@ -55,7 +60,8 @@ final class Profile: Model, Content, @unchecked Sendable {
         bio: String? = nil,
         favoritePosition: String? = nil,
         skillLevel: String? = nil,
-        avatarUrl: String? = nil
+        avatarUrl: String? = nil,
+        age: Int? = nil
     ) {
         self.id = id
         self.$user.id = userID
@@ -64,5 +70,6 @@ final class Profile: Model, Content, @unchecked Sendable {
         self.favoritePosition = favoritePosition
         self.skillLevel = skillLevel
         self.avatarUrl = avatarUrl
+        self.age = age
     }
 }

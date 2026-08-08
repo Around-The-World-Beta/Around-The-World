@@ -49,6 +49,7 @@ struct ProfileResponse: Content {
     let favoritePosition: String?
     let skillLevel: String?
     let avatarUrl: String?
+    let age: Int?
     let createdAt: Date?
     let updatedAt: Date?
 
@@ -63,6 +64,7 @@ struct ProfileResponse: Content {
         self.favoritePosition = profile.favoritePosition
         self.skillLevel = profile.skillLevel
         self.avatarUrl = profile.avatarUrl
+        self.age = profile.age
         self.createdAt = profile.createdAt
         self.updatedAt = profile.updatedAt
     }
@@ -74,6 +76,7 @@ struct UpdateProfileRequest: Content {
     let favoritePosition: String?
     let skillLevel: String?
     let avatarUrl: String?
+    let age: Int?
 }
 
 struct GameResponse: Content {

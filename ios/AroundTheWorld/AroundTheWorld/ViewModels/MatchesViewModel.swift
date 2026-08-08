@@ -1,7 +1,7 @@
 import Foundation
 import Combine
 
-/// Fetches the live matches dashboard from the Vapor API via `NetworkManager`.
+/// Fetches live Bay Area browse listings (open spots only) from the Vapor API.
 @MainActor
 final class MatchesViewModel: ObservableObject {
     @Published private(set) var state: LoadState = .idle
@@ -25,15 +25,18 @@ final class MatchesViewModel: ObservableObject {
     func load(force: Bool = false) async {
         if case .loading = state, !force { return }
 
+        BootLogger.step("matches.load.start")
         state = .loading
         do {
-            let fetched = try await api.listGames()
+            let fetched = try await api.listGames(includeFull: false, region: "bay-area")
             games = fetched
             lastRefreshed = Date()
             state = fetched.isEmpty ? .empty : .loaded
+            BootLogger.done("matches.load (\(fetched.count) open)")
         } catch {
             games = []
             state = .failed(error.localizedDescription)
+            BootLogger.fail("matches.load", error)
         }
     }
 }

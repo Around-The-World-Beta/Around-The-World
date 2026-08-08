@@ -1,0 +1,56 @@
+"tab.matches" = "Partidos";
+"tab.map" = "Mapa";
+"tab.host" = "Organizar";
+"tab.my_games" = "Mis juegos";
+"tab.profile" = "Perfil";
+"tab.settings" = "Ajustes";
+
+"loading.matches" = "Cargando partidos…";
+"loading.match" = "Cargando partido…";
+"empty.matches.title" = "No hay juegos abiertos cerca";
+"empty.matches.message" = "Los partidos del Área de la Bahía con cupos aparecerán aquí. Desliza para actualizar u organiza una sesión.";
+"empty.my_games.title" = "Aún no tienes juegos";
+"empty.my_games.message" = "Las sesiones en las que te unes permanecen aquí, incluso si están llenas.";
+"empty.map.title" = "No hay sesiones en el mapa";
+"empty.map.message" = "Los cupos abiertos en el Área de la Bahía aparecen como pines cuando se publican juegos.";
+
+"hero.headline" = "Fútbol. Para todos. En cualquier lugar.";
+"hero.subtitle" = "Encuentra partidos cerca de ti. Gratis. Abierto a todos.";
+"section.free" = "Sesiones gratis";
+"section.paid" = "Sesiones de pago";
+"section.available_count" = "%d disponibles";
+"section.no_free" = "No hay sesiones gratis con cupos";
+"section.no_paid" = "No hay sesiones de pago con cupos";
+
+"settings.title" = "Ajustes";
+"settings.language" = "Idioma";
+"settings.language.system" = "Predeterminado del dispositivo";
+"settings.language.english" = "Inglés";
+"settings.language.spanish" = "Español";
+"settings.api_keys" = "Configuración de API";
+"settings.missing_keys" = "Faltan o son marcadores: %@";
+"settings.keys_ok" = "Las claves de Supabase y Google Places están configuradas.";
+
+"action.claim_spot" = "RESERVAR · %d LIBRES";
+"action.join_waitlist" = "LISTA DE ESPERA";
+"action.try_again" = "Reintentar";
+"error.something_broke" = "Algo falló";
+"auth.sign_in_to_claim" = "Inicia sesión para reservar un lugar. La autenticación llega en la siguiente fase.";
+
+"host.title" = "Organizar una sesión";
+"host.search_placeholder" = "Buscar sedes en el Área de la Bahía";
+"host.drop_pin" = "Colocar pin en el mapa";
+"host.selected_location" = "Ubicación seleccionada";
+"host.create" = "Publicar sesión";
+
+"profile.title" = "Perfil del jugador";
+"profile.age" = "Edad";
+"profile.skill" = "Nivel";
+"profile.position" = "Posición";
+"profile.bio" = "Bio";
+"profile.based_in" = "Vive en";
+"profile.empty" = "Completa tu perfil después de iniciar sesión.";
+"profile.pending_layout" = "El diseño coincidirá con las pantallas de Lovable cuando compartas esos assets.";
+
+"map.title" = "Mapa del Área de la Bahía";
+"brand.logo_pending" = "Archivo de logo final pendiente del diseño.";

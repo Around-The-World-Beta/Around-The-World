@@ -35,10 +35,20 @@ enum APIValidation {
     static func validateOptionalSkill(_ skill: String?) throws -> String? {
         guard let skill else { return nil }
         let trimmed = skill.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard allowedSkills.contains(trimmed) else {
-            throw Abort(.badRequest, reason: "skillLevel must be one of: \(allowedSkills.sorted().joined(separator: ", "))")
+        // Normalize legacy "Casual" → "Beginner" (Bay Area beta skill tiers).
+        let normalized = trimmed == SkillLevel.casual.rawValue ? SkillLevel.beginner.rawValue : trimmed
+        guard allowedSkills.contains(normalized) || normalized == SkillLevel.beginner.rawValue else {
+            throw Abort(.badRequest, reason: "skillLevel must be one of: Beginner, Intermediate, Baller, Open to All")
         }
-        return trimmed
+        return normalized
+    }
+
+    static func validateOptionalAge(_ age: Int?) throws -> Int? {
+        guard let age else { return nil }
+        guard (4...99).contains(age) else {
+            throw Abort(.badRequest, reason: "age must be between 4 and 99")
+        }
+        return age
     }
 
     static func validateSkill(_ skill: String) throws -> String {

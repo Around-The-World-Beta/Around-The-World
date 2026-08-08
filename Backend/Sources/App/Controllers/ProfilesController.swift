@@ -68,6 +68,9 @@ struct ProfilesController: RouteCollection {
             }
             profile.avatarUrl = trimmed.isEmpty ? nil : trimmed
         }
+        if body.age != nil {
+            profile.age = try APIValidation.validateOptionalAge(body.age)
+        }
 
         try await profile.update(on: req.db)
         return try ProfileResponse(profile: profile)

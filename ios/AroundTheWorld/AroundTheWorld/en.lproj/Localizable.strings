@@ -1,0 +1,56 @@
+"tab.matches" = "Matches";
+"tab.map" = "Map";
+"tab.host" = "Host";
+"tab.my_games" = "My Games";
+"tab.profile" = "Profile";
+"tab.settings" = "Settings";
+
+"loading.matches" = "Loading matches…";
+"loading.match" = "Loading match…";
+"empty.matches.title" = "No open games nearby";
+"empty.matches.message" = "Bay Area listings with open spots will show up here. Pull to refresh, or host a session.";
+"empty.my_games.title" = "No games yet";
+"empty.my_games.message" = "Sessions you join stay here — even when they're full.";
+"empty.map.title" = "No sessions on the map";
+"empty.map.message" = "Open spots in the Bay Area appear as pins when hosts publish games.";
+
+"hero.headline" = "Soccer. Anyone. Anywhere.";
+"hero.subtitle" = "Find pickup games near you. Free to play. Open to everyone.";
+"section.free" = "Free Sessions";
+"section.paid" = "Paid Sessions";
+"section.available_count" = "%d available";
+"section.no_free" = "No free sessions with open spots";
+"section.no_paid" = "No paid sessions with open spots";
+
+"settings.title" = "Settings";
+"settings.language" = "Language";
+"settings.language.system" = "Device default";
+"settings.language.english" = "English";
+"settings.language.spanish" = "Spanish";
+"settings.api_keys" = "API configuration";
+"settings.missing_keys" = "Missing or placeholder: %@";
+"settings.keys_ok" = "Supabase + Google Places keys are configured.";
+
+"action.claim_spot" = "CLAIM SPOT · %d LEFT";
+"action.join_waitlist" = "JOIN WAITLIST";
+"action.try_again" = "Try again";
+"error.something_broke" = "Something broke";
+"auth.sign_in_to_claim" = "Sign in to claim a spot. Auth lands in the next phase.";
+
+"host.title" = "Host a session";
+"host.search_placeholder" = "Search Bay Area venues";
+"host.drop_pin" = "Drop pin on map";
+"host.selected_location" = "Selected location";
+"host.create" = "Publish session";
+
+"profile.title" = "Player profile";
+"profile.age" = "Age";
+"profile.skill" = "Skill tier";
+"profile.position" = "Position";
+"profile.bio" = "Bio";
+"profile.based_in" = "Based in";
+"profile.empty" = "Complete your profile after you sign in.";
+"profile.pending_layout" = "Layout will match the Lovable profile screens once those assets are shared.";
+
+"map.title" = "Bay Area map";
+"brand.logo_pending" = "Final logo file pending from design.";

@@ -49,6 +49,15 @@
 		<true/>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Around The World uses your location to find nearby pickup games.</string>
+	<string>Around The World uses your location to find nearby pickup games in the Bay Area.</string>
+	<!-- Inject real values via Xcode scheme Environment / xcconfig. Do not commit secrets. -->
+	<key>API_BASE_URL</key>
+	<string>$(API_BASE_URL)</string>
+	<key>SUPABASE_URL</key>
+	<string>$(SUPABASE_URL)</string>
+	<key>SUPABASE_ANON_KEY</key>
+	<string>$(SUPABASE_ANON_KEY)</string>
+	<key>GOOGLE_PLACES_API_KEY</key>
+	<string>$(GOOGLE_PLACES_API_KEY)</string>
 </dict>
 </plist>

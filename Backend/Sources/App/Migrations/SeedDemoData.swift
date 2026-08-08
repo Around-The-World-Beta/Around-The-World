@@ -1,10 +1,17 @@
 import Fluent
 import Vapor
 
-/// Inserts a demo host + a couple of games when the database is empty so the
-/// iOS simulator has something to render on first launch.
+/// Optional local demo seed. **Off by default** so empty Supabase/Postgres
+/// databases stay empty for Bay Area beta testing.
+///
+/// Enable with `SEED_DEMO=1` when you need sample Bay Area listings on a fresh DB.
 struct SeedDemoData: AsyncMigration {
     func prepare(on database: any Database) async throws {
+        let enabled = (Environment.get("SEED_DEMO") ?? "").lowercased()
+        guard enabled == "1" || enabled == "true" || enabled == "yes" else {
+            return
+        }
+
         let existing = try await Game.query(on: database).count()
         if existing > 0 {
             return
@@ -19,10 +26,11 @@ struct SeedDemoData: AsyncMigration {
 
         let profile = Profile(
             userID: hostID,
-            city: "Brooklyn, NY",
-            bio: "Pickup soccer organizer",
+            city: "San Francisco, CA",
+            bio: "Bay Area pickup organizer",
             favoritePosition: "Midfielder",
-            skillLevel: "Baller"
+            skillLevel: "Baller",
+            age: 29
         )
         try await profile.save(on: database)
 
@@ -32,48 +40,49 @@ struct SeedDemoData: AsyncMigration {
         )
         try await player.save(on: database)
 
+        // Bay Area venues only (Mission, Oakland, Palo Alto).
         let games: [Game] = [
             Game(
                 hostID: hostID,
-                title: "Saturday Scrimmage & Drills",
-                venue: "Red Hook Rec Fields",
-                neighborhood: "Red Hook",
+                title: "Mission Evening Scrimmage",
+                venue: "Franklin Square Park",
+                neighborhood: "Mission",
                 skill: "Baller",
-                format: "8v8",
-                capacity: 16,
-                priceCents: 1000,
-                notes: "First 30 min touch drills, then full scrimmage. Serious players only please.",
-                startsAt: Date().addingTimeInterval(60 * 60 * 20),
-                latitude: 40.6734,
-                longitude: -74.0083
-            ),
-            Game(
-                hostID: hostID,
-                title: "Late Night 7v7 Sprints",
-                venue: "McCarren Park Turf",
-                neighborhood: "Williamsburg",
-                skill: "Intermediate",
                 format: "7v7",
                 capacity: 14,
-                priceCents: 800,
-                notes: "Bring dark + light shirts. Turf shoes recommended.",
-                startsAt: Date().addingTimeInterval(60 * 60 * 6),
-                latitude: 40.7215,
-                longitude: -73.9518
+                priceCents: 0,
+                notes: "Bring dark + light. Turf shoes recommended.",
+                startsAt: Date().addingTimeInterval(60 * 60 * 20),
+                latitude: 37.7644,
+                longitude: -122.4102
             ),
             Game(
                 hostID: hostID,
-                title: "Lunch Break Kickabout",
-                venue: "Bushwick Inlet Park",
-                neighborhood: "Greenpoint",
-                skill: "Casual",
+                title: "Lake Merritt Morning Kickabout",
+                venue: "Lake Merritt Fields",
+                neighborhood: "Oakland",
+                skill: "Beginner",
                 format: "6v6",
                 capacity: 12,
                 priceCents: 0,
-                notes: "Free casual game. Show up, play, head back to work.",
+                notes: "All ages welcome. Free casual game.",
                 startsAt: Date().addingTimeInterval(60 * 60 * 48),
-                latitude: 40.7226,
-                longitude: -73.9614
+                latitude: 37.8015,
+                longitude: -122.2583
+            ),
+            Game(
+                hostID: hostID,
+                title: "Palo Alto Lunch 5v5",
+                venue: "Mitchell Park Field",
+                neighborhood: "Palo Alto",
+                skill: "Intermediate",
+                format: "5v5",
+                capacity: 10,
+                priceCents: 500,
+                notes: "Quick lunch session. First come first served.",
+                startsAt: Date().addingTimeInterval(60 * 60 * 6),
+                latitude: 37.4020,
+                longitude: -122.1130
             ),
         ]
 
@@ -89,6 +98,6 @@ struct SeedDemoData: AsyncMigration {
     }
 
     func revert(on database: any Database) async throws {
-        // Keep demo data on revert; wipe the DB file/volume if you need a clean slate.
+        // Keep data on revert; wipe the DB file/volume if you need a clean slate.
     }
 }

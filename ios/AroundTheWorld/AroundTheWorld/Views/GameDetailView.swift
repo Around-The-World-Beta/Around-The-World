@@ -16,9 +16,9 @@ struct GameDetailView: View {
 
             LoadableContent(
                 state: viewModel.state,
-                loadingMessage: "Loading match…",
-                emptyTitle: "Game not found",
-                emptyMessage: "This match may have been cancelled or removed.",
+                loadingMessage: L10n.loadingMatch,
+                emptyTitle: L10n.emptyMatchesTitle,
+                emptyMessage: L10n.emptyMatchesMessage,
                 emptySystemImage: "questionmark.circle",
                 onRetry: { Task { await viewModel.load() } }
             ) {
@@ -167,9 +167,9 @@ struct GameDetailView: View {
                     ProgressView()
                         .tint(AppTheme.primaryForeground)
                 } else if game.isFull {
-                    Text("JOIN WAITLIST")
+                    Text(L10n.joinWaitlist)
                 } else {
-                    Text("CLAIM SPOT · \(game.spotsLeft) LEFT")
+                    Text(L10n.claimSpot(game.spotsLeft))
                 }
             }
             .font(.title3.weight(.black))

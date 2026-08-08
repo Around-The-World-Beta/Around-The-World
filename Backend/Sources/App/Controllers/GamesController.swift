@@ -6,6 +6,7 @@ struct GamesController: RouteCollection {
         let games = routes.grouped("api", "v1", "games")
         games.get(use: index)
         games.post(use: create)
+        games.get("mine", use: mine)
         games.group(":gameID") { game in
             game.get(use: show)
             game.patch(use: update)
@@ -13,10 +14,55 @@ struct GamesController: RouteCollection {
         }
     }
 
+    /// Browse listings for the Bay Area beta.
+    ///
+    /// Visibility is derived from the live roster (`joinedCount < capacity`), not a
+    /// stored "hidden" flag — a cancellation that frees a spot reopens the listing
+    /// automatically. Query params:
+    /// - `includeFull` (default `false`): when false, omit fully booked sessions
+    /// - `region` (default `bay-area`): geographic filter; `all` disables it
     @Sendable
     func index(req: Request) async throws -> [GameResponse] {
+        let includeFull = (try? req.query.get(Bool.self, at: "includeFull")) ?? false
+        let region = (try? req.query.get(String.self, at: "region")) ?? "bay-area"
+
         let games = try await Game.query(on: req.db)
             .filter(\.$status == GameStatus.scheduled.rawValue)
+            .sort(\.$startsAt, .ascending)
+            .all()
+
+        var responses = try await mapGames(games, on: req.db)
+
+        if region.lowercased() != "all" {
+            responses = responses.filter {
+                BayAreaRegion.contains(latitude: $0.latitude, longitude: $0.longitude)
+            }
+        }
+
+        // spots_filled < spots_total  ≡  joinedCount < capacity
+        if !includeFull {
+            responses = responses.filter { $0.joinedCount < $0.capacity }
+        }
+
+        return responses
+    }
+
+    /// Sessions the user already signed up for (joined or waitlisted), including full ones.
+    @Sendable
+    func mine(req: Request) async throws -> [GameResponse] {
+        guard let userID = try? req.query.get(UUID.self, at: "userId") else {
+            throw Abort(.badRequest, reason: "userId query parameter is required")
+        }
+
+        let participations = try await Participant.query(on: req.db)
+            .filter(\.$user.$id == userID)
+            .filter(\.$status != ParticipantStatus.cancelled.rawValue)
+            .all()
+        let gameIDs = Set(participations.map(\.$game.id))
+        guard !gameIDs.isEmpty else { return [] }
+
+        let games = try await Game.query(on: req.db)
+            .filter(\.$id ~~ Array(gameIDs))
             .sort(\.$startsAt, .ascending)
             .all()
         return try await mapGames(games, on: req.db)
@@ -145,6 +191,9 @@ struct GamesController: RouteCollection {
         try APIValidation.validateCapacity(body.capacity)
         try APIValidation.validatePriceCents(body.priceCents)
         try APIValidation.validateCoordinates(latitude: body.latitude, longitude: body.longitude)
+        guard BayAreaRegion.contains(latitude: body.latitude, longitude: body.longitude) else {
+            throw Abort(.badRequest, reason: "Bay Area beta: session location must be inside the San Francisco Bay Area")
+        }
     }
 
     private func joinedCount(for game: Game, on db: any Database) async throws -> Int {

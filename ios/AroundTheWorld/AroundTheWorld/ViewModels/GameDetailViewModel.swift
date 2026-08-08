@@ -50,7 +50,7 @@ final class GameDetailViewModel: ObservableObject {
     func claimSpot() async {
         guard let game else { return }
         guard let userID = currentUserID else {
-            actionMessage = "Sign in to claim a spot. Auth lands in the next phase."
+            actionMessage = L10n.signInToClaim
             return
         }
 

@@ -1,8 +1,9 @@
 import SwiftUI
 
-/// Main Matches dashboard — inspired by `src/routes/index.tsx`.
+/// Main Matches dashboard — live API browse (open spots only, Bay Area).
 struct MatchesDashboardView: View {
     @StateObject private var viewModel = MatchesViewModel()
+    @EnvironmentObject private var languageStore: LanguageStore
 
     var body: some View {
         NavigationStack {
@@ -11,9 +12,9 @@ struct MatchesDashboardView: View {
 
                 LoadableContent(
                     state: viewModel.state,
-                    loadingMessage: "Loading matches…",
-                    emptyTitle: "No matches yet",
-                    emptyMessage: "Find. Play. Connect. Host a pickup match for your neighborhood.",
+                    loadingMessage: L10n.loadingMatches,
+                    emptyTitle: L10n.emptyMatchesTitle,
+                    emptyMessage: L10n.emptyMatchesMessage,
                     emptySystemImage: "sportscourt",
                     onRetry: { Task { await viewModel.load(force: true) } }
                 ) {
@@ -22,17 +23,17 @@ struct MatchesDashboardView: View {
                             header
 
                             gameSection(
-                                title: "Free Sessions",
+                                title: L10n.freeSessions,
                                 count: viewModel.freeGames.count,
                                 games: viewModel.freeGames,
-                                emptyLabel: "No free sessions match"
+                                emptyLabel: L10n.noFreeSessions
                             )
 
                             gameSection(
-                                title: "Paid Sessions",
+                                title: L10n.paidSessions,
                                 count: viewModel.paidGames.count,
                                 games: viewModel.paidGames,
-                                emptyLabel: "No paid sessions match"
+                                emptyLabel: L10n.noPaidSessions
                             )
                         }
                         .padding(.horizontal, 20)
@@ -48,12 +49,23 @@ struct MatchesDashboardView: View {
                 ToolbarItem(placement: .principal) {
                     BrandHeader(compact: true)
                 }
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink {
+                        SettingsView()
+                    } label: {
+                        Image(systemName: "gearshape")
+                            .foregroundStyle(AppTheme.gold)
+                    }
+                    .accessibilityLabel(L10n.tabSettings)
+                }
             }
             .toolbarBackground(AppTheme.background, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
         }
         .atwScreenBackground()
+        .id(languageStore.language)
         .task {
+            BootLogger.step("matches.dashboard.task")
             if viewModel.state == .idle {
                 await viewModel.load()
             }
@@ -63,11 +75,11 @@ struct MatchesDashboardView: View {
     private var header: some View {
         VStack(alignment: .leading, spacing: 8) {
             BrandHeader()
-            Text("Soccer. Anyone. Anywhere.")
+            Text(L10n.heroHeadline)
                 .font(AppTheme.displayFont)
                 .foregroundStyle(AppTheme.foreground)
                 .textCase(.uppercase)
-            Text("Find pickup games near you. Free to play. Open to everyone.")
+            Text(L10n.heroSubtitle)
                 .font(.subheadline)
                 .foregroundStyle(AppTheme.muted)
         }
@@ -87,7 +99,7 @@ struct MatchesDashboardView: View {
                     .foregroundStyle(AppTheme.foreground)
                     .textCase(.uppercase)
                 Spacer()
-                Text("\(count) available")
+                Text(L10n.availableCount(count))
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(AppTheme.muted)
             }

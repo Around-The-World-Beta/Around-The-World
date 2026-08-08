@@ -22,9 +22,11 @@ public func configure(_ app: Application) async throws {
     app.migrations.add(CreateGames())
     app.migrations.add(CreateParticipants())
     app.migrations.add(CreateFriendships())
+    app.migrations.add(AddProfileAge())
+    // SeedDemoData is a no-op unless SEED_DEMO=1 (keeps real Supabase DBs empty).
     app.migrations.add(SeedDemoData())
 
-    // Auto-migrate (+ seed) in development so `swift run App serve` just works.
+    // Auto-migrate in development/testing so `swift run App serve` just works.
     if app.environment == .development || app.environment == .testing {
         try await app.autoMigrate()
     }
