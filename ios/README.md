@@ -1,29 +1,34 @@
-# Around The World — iOS (SwiftUI)
+# Around The World — iOS
 
-**Status:** placeholder for Phase 3.
+Native Swift / SwiftUI client for TestFlight and the App Store (free).
 
-This directory will hold the native SwiftUI app targeting TestFlight and the
-App Store (free).
+## Layout
 
-## Planned layout (match the current product UI exactly)
+```
+ios/
+├── README.md                 ← you are here
+└── AroundTheWorld/           ← iOS project directory
+    ├── Package.swift         ← AroundTheWorldKit (Network + Models)
+    ├── Sources/AroundTheWorldKit/
+    │   ├── Network/          ← NetworkManager (async/await)
+    │   ├── Models/           ← Codable structs ≡ Vapor JSON
+    │   └── Services/         ← AroundTheWorldAPI facade
+    ├── App/                  ← SwiftUI app shell for Xcode
+    └── Tests/
+```
 
-| Screen | Source of truth (web prototype) |
+See [`AroundTheWorld/README.md`](AroundTheWorld/README.md) for setup and usage.
+
+## Phase status
+
+| Phase | Status |
 | --- | --- |
-| Matches (list + map + filters) | `src/routes/index.tsx` |
-| Game detail / Claim Spot | `src/routes/games.$gameId.tsx` |
-| Host a Game | `src/routes/host.tsx` |
-| My Games | `src/routes/my-games.tsx` |
-| Friends | `src/routes/friends.tsx` |
-| Profile / Account | `src/routes/profile.tsx`, `src/routes/account.tsx` |
-| Auth (email + Apple) | `src/routes/auth*.tsx` |
+| 1 — Vapor backend | `Backend/` |
+| 2 — Network client + Codable schemas | **`ios/AroundTheWorld/` (this)** |
+| 3 — Exact SwiftUI layout (Matches/Map/Host/…) | next; use `src/routes` as visual source of truth |
 
-## Requirements (Phase 3)
+## Requirements for UI work (Phase 3)
 
-- macOS with Xcode 16+
-- Bundle ID (permanent), signing team, icons, launch screen
-- Network client talking to `Backend` `/api/v1`
-- Supabase Auth (Phase 2) with Keychain session storage
-- Privacy Manifest + location permission copy
-
-Do not start the Xcode project until Phase 1 APIs are stable and Phase 2 auth
-is decided. See `docs/swift-ios-architecture.md`.
+- macOS + Xcode 16+
+- Bundle ID, signing, icons, Privacy Manifest
+- Supabase Auth + Keychain (after JWT middleware on the API)

@@ -14,8 +14,8 @@
 ### Product direction
 
 - **App Store path:** native SwiftUI iOS app + Swift Vapor backend + Supabase (Postgres/Auth). See `docs/swift-ios-architecture.md`.
-- **Phase 1 backend** lives in `Backend/` (Vapor + Fluent). `ios/` is a Phase 3 placeholder. `src/` is the legacy web prototype used as **UI layout reference**.
-- This Cloud Agent environment is **Linux** — it can build/run the Vapor API, not Xcode/SwiftUI. SwiftUI work needs macOS + Xcode.
+- **Phase 1 backend** lives in `Backend/` (Vapor + Fluent). **Phase 2 network client** lives in `ios/AroundTheWorld/` (`AroundTheWorldKit` SwiftPM package). `src/` is the legacy web prototype used as **UI layout reference** for Phase 3 SwiftUI screens.
+- This Cloud Agent environment is **Linux** — it can build/run the Vapor API and `swift test` the networking kit, not a full Xcode/SwiftUI app. SwiftUI UI work needs macOS + Xcode.
 
 ### Vapor backend
 

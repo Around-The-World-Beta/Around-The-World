@@ -22,7 +22,7 @@ Swift / SwiftUI iOS app** backed by a **Swift Vapor API** and **Supabase**
 | Path | Role |
 | --- | --- |
 | `Backend/` | Vapor 4 + Fluent REST API (JSON) |
-| `ios/` | SwiftUI client (Phase 3) |
+| `ios/AroundTheWorld/` | SwiftPM kit (`NetworkManager` + Codable models) + SwiftUI app shell |
 | `supabase/` | Auth / SQL helpers, Supabase project docs |
 | `src/` | Legacy web UI — **layout reference only** until SwiftUI parity |
 
