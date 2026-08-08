@@ -1,37 +1,33 @@
 # Around The World
 
-Native **iOS** pickup-sports app (SwiftUI) with a **Swift Vapor** API and **Supabase** Postgres.
+Native **iOS** pickup-sports app (SwiftUI) + **Swift Vapor** API.
 
-This repository is an **iOS app + backend**, not a website.
+> **Start here:** [`RUN.md`](RUN.md) — step-by-step Xcode + backend checklist.
 
-## Run the iOS app (Xcode)
+## Quick start
 
-1. Open in Xcode:
-   ```
-   ios/AroundTheWorld/AroundTheWorld.xcodeproj
-   ```
-2. Choose an iPhone simulator → press **Run**.
-
-Details: [`ios/AroundTheWorld/README.md`](ios/AroundTheWorld/README.md)
-
-## Run the API (Vapor)
-
+**Terminal (API):**
 ```sh
-cd Backend
-cp .env.example .env
-swift run App serve --env development --hostname 127.0.0.1 --port 8081
+./scripts/run-backend.sh
 ```
 
-Point `DATABASE_URL` at Supabase Postgres for hosted data (`DATABASE_TLS=require`).  
-See [`Backend/README.md`](Backend/README.md).
+**Xcode (app):** open
+```
+ios/AroundTheWorld/AroundTheWorld.xcodeproj
+```
+then press **Run** on an iPhone simulator.
+
+The API defaults to **SQLite** (no Postgres install). Demo matches are seeded automatically.  
+iOS talks to `http://127.0.0.1:8081`.
 
 ## Repo map
 
-| Path | What it is |
+| Path | What |
 | --- | --- |
-| `ios/AroundTheWorld/` | **Xcode iOS app** (open the `.xcodeproj`) |
-| `Backend/` | Vapor + Fluent JSON API |
-| `supabase/` | Optional SQL migrations |
-| `docs/` | Architecture notes |
+| `ios/AroundTheWorld/AroundTheWorld.xcodeproj` | **Open this in Xcode** |
+| `Backend/` | Vapor JSON API |
+| `scripts/run-backend.sh` | One-command API start |
+| `supabase/` | Optional hosted Postgres SQL |
+| `RUN.md` | Troubleshooting |
 
-Never commit `.env`, service-role keys, Apple private keys, or production credentials.
+Never commit `.env`, service-role keys, or Apple private keys.

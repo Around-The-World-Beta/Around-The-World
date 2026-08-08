@@ -1,47 +1,30 @@
-# Around The World — iOS App
+# Around The World — iOS
 
-Native **SwiftUI** iPhone/iPad app. This is not a website.
+## Open in Xcode
 
-## Open & run in Xcode
+Double-click:
 
-1. On a Mac, install **Xcode 16+** from the App Store.
-2. Double-click:
-   ```
-   ios/AroundTheWorld/AroundTheWorld.xcodeproj
-   ```
-3. Select an **iPhone simulator** (or your device).
-4. Set your **Team** under Signing & Capabilities (required for device runs).
-5. Press **▶ Run**.
+```
+AroundTheWorld.xcodeproj
+```
 
-The app talks to the Vapor API at `http://127.0.0.1:8081` by default (simulator → Mac).
+Select an **iPhone simulator** → press **▶ Run**.
 
-### Start the API (separate Terminal)
+Full checklist (API + common errors): see [`../../RUN.md`](../../RUN.md).
+
+## API
+
+The app loads matches from `http://127.0.0.1:8081`.
+
+Start the backend **before** Run if you want live data:
 
 ```sh
-cd Backend
-cp .env.example .env   # first time
-swift run App serve --env development --hostname 127.0.0.1 --port 8081
+../../scripts/run-backend.sh
 ```
 
-Without the API, the Matches screen shows the error/empty states (still a valid app launch).
+Without the API, the UI still launches and shows an error / retry state.
 
-## Project layout
+## Signing
 
-```
-AroundTheWorld.xcodeproj     ← open this in Xcode
-AroundTheWorld/
-  AroundTheWorldApp.swift    ← @main
-  ContentView.swift
-  Views/                     ← Matches dashboard + game detail
-  ViewModels/                ← @StateObject live fetchers
-  Network/                   ← async/await NetworkManager
-  Models/                    ← Codable ≡ Vapor JSON
-  Services/                  ← AroundTheWorldAPI
-  Components/ Theme/ …
-  Info.plist
-  Assets.xcassets
-```
-
-## Bundle ID
-
-`com.aroundtheworld.app` — change in Xcode if you need a different App Store ID.
+- **Simulator:** no Apple Developer team required (project is configured for that).
+- **Physical device:** set your Team under *Signing & Capabilities*.
