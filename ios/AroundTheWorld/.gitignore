@@ -1,6 +1,7 @@
+.builds/
 .build/
 .swiftpm/
 DerivedData/
-*.xcodeproj/xcuserdata/
-*.xcworkspace/xcuserdata/
+xcuserdata/
+*.xcuserstate
 .DS_Store

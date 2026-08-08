@@ -1,73 +1,33 @@
-# Swift / iOS architecture (App Store path)
+# Swift / iOS architecture
 
-Around The World is pivoting from the Lovable web prototype to a **native
-Swift / SwiftUI iOS app** backed by a **Swift Vapor API** and **Supabase**
-(managed Postgres + Auth).
+Around The World ships as a **native iOS app** (SwiftUI) plus a **Swift Vapor** API
+backed by PostgreSQL (local or Supabase).
 
-## Target structure
+## Open the app
 
 ```
-[Phase 1: Database & Backend]
-        │
-        ▼
-[Phase 2: API & Network Client]
-        │
-        ▼
-[Phase 3: SwiftUI Frontend UI]
-        │
-        ▼
-[TestFlight beta → App Store (free)]
+ios/AroundTheWorld/AroundTheWorld.xcodeproj
 ```
+
+Press Run in Xcode (iOS 17+ simulator or device).
+
+## Layout
 
 | Path | Role |
 | --- | --- |
-| `Backend/` | Vapor 4 + Fluent REST API (JSON) |
-| `ios/AroundTheWorld/` | SwiftPM kit (`NetworkManager` + Codable models) + SwiftUI app shell |
-| `supabase/` | Auth / SQL helpers, Supabase project docs |
-| `src/` | Legacy web UI — **layout reference only** until SwiftUI parity |
+| `ios/AroundTheWorld/` | Xcode iOS application |
+| `Backend/` | Vapor REST API (`/api/v1`) |
+| `supabase/` | Optional SQL for Supabase Postgres |
 
-## Backend ownership (Phase 1)
+## Client ↔ API
 
-Vapor owns these tables via Fluent migrations:
+- `NetworkManager` (async/await) + `AroundTheWorldAPI`
+- Codable models match Vapor JSON field-for-field
+- Screens use `@StateObject` view models with loading / error / empty states
 
-- `users` — app identity (`email`, `display_name`, optional `supabase_user_id`)
-- `profiles` — player profile fields (city, bio, position, skill, avatar)
-- `games` — pickup matches (host, venue, skill, format, capacity, geo, price)
-- `participants` — join / waitlist / leave
-- `friendships` — social edges (pending / accepted / blocked)
+## Supabase
 
-All routes under `/api/v1/*` return clean JSON. Errors use:
-
-```json
-{ "error": { "message": "...", "status": 404 } }
-```
-
-## Supabase role
-
-| Concern | Phase | Owner |
-| --- | --- | --- |
-| Managed PostgreSQL | 1 | Supabase Postgres via `DATABASE_URL` |
-| Fluent schema / CRUD | 1 | Vapor |
-| Email + Sign in with Apple | 2 | Supabase Auth |
-| JWT validation on API | 2 | Vapor middleware |
-| SwiftUI screens | 3 | `ios/` |
-
-`users.supabase_user_id` is the bridge from Supabase Auth UUIDs into Fluent-owned rows.
-
-## App Store notes (free app)
-
-- No IAP required for a free app with optional paid pickup games collected
-  outside Apple’s digital goods rules — confirm with counsel before charging
-  in-app for real-world field fees.
-- Need: Apple Developer Program, permanent Bundle ID, Privacy Manifest,
-  Sign in with Apple (if Apple login is offered), location purpose strings,
-  TestFlight, App Privacy labels.
-- SwiftUI / Xcode builds require **macOS + Xcode**. Linux Cloud Agents can
-  build and run the **Vapor backend only**.
-
-## Exact UI layout goal
-
-Phase 3 must reproduce the current product layout from `src/routes` and
-`src/components` (Matches list/map, Filters sheet, Game detail + Claim Spot,
-Host flow, My Games, Friends, Profile/Account). Treat the web prototype as the
-visual source of truth until native screens replace it.
+| Concern | Owner |
+| --- | --- |
+| Postgres | Supabase via `DATABASE_URL` on the Vapor service |
+| Auth (Sign in with Apple, email) | Next iteration — JWT middleware on Vapor |
