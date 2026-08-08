@@ -1,22 +1,34 @@
 # Around The World
 
-Around The World is a mobile-first pickup sports app for hosting, discovering,
-joining, and managing nearby games.
+Around The World is a pickup sports app for hosting, discovering, joining, and
+managing nearby games. The product is being shipped as a **free native iOS app**
+(SwiftUI) with a **Swift Vapor** backend and **Supabase** (Postgres + Auth).
 
-The current product UI is a prototype. Production backend, authentication,
-geospatial search, moderation, and iOS distribution are being added in gated
-milestones documented in [docs/launch-milestones.md](docs/launch-milestones.md).
+## Active build path (Swift / App Store)
 
-Milestone 2 authentication code is implemented. Follow
-[docs/supabase-auth-setup.md](docs/supabase-auth-setup.md) to connect the
-development and staging projects and complete live verification.
+| Phase | Focus | Location |
+| --- | --- | --- |
+| **1 — Database & Backend** | Vapor + Fluent + PostgreSQL CRUD JSON APIs | [`Backend/`](Backend/) |
+| **2 — API & Network Client** | Supabase Auth JWTs + iOS networking | `Backend/` + `ios/` |
+| **3 — SwiftUI Frontend UI** | Exact layout parity with the prototype | [`ios/`](ios/) |
 
-## Local development
+Architecture notes: [docs/swift-ios-architecture.md](docs/swift-ios-architecture.md)
 
-Requirements:
+### Phase 1 backend (Vapor)
 
-- Bun 1.3.14
-- Node.js 22 or newer
+```sh
+cd Backend
+cp .env.example .env
+# Point DATABASE_URL at Supabase Postgres (TLS=require), or use local Postgres.
+swift run App serve --env development --hostname 0.0.0.0 --port 8080
+```
+
+See [`Backend/README.md`](Backend/README.md) for migrations, routes, and examples.
+
+## Legacy web prototype (layout reference)
+
+The existing TanStack / React UI under `src/` remains as the **visual source of
+truth** for Phase 3 SwiftUI screens. It is not the App Store binary.
 
 ```sh
 bun install
@@ -24,17 +36,9 @@ cp .env.example .env.local
 bun run dev
 ```
 
-Before opening a pull request:
+Older gated milestones (web + Capacitor) are still documented in
+[docs/launch-milestones.md](docs/launch-milestones.md). Prefer the Swift phases
+above for App Store work.
 
-```sh
-bun run check
-```
-
-Never commit `.env.local`, `.dev.vars`, service-role keys, Apple private keys,
-or production credentials.
-
-## Project status
-
-Milestone 1 established the launch foundation. Milestone 2 account flows are
-implemented but remain disabled when Supabase environment values are absent.
-Game data remains mocked until Milestone 3.
+Never commit `.env`, `.env.local`, `.dev.vars`, service-role keys, Apple private
+keys, or production credentials.
