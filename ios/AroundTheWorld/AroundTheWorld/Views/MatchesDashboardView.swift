@@ -13,7 +13,7 @@ struct MatchesDashboardView: View {
                     state: viewModel.state,
                     loadingMessage: "Loading matches…",
                     emptyTitle: "No matches yet",
-                    emptyMessage: "The pitch is quiet. Host a game or pull to refresh when the database has listings.",
+                    emptyMessage: "Find. Play. Connect. Host a pickup match for your neighborhood.",
                     emptySystemImage: "sportscourt",
                     onRetry: { Task { await viewModel.load(force: true) } }
                 ) {
@@ -46,15 +46,7 @@ struct MatchesDashboardView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    VStack(spacing: 2) {
-                        Text("Matches")
-                            .font(.headline.weight(.black))
-                            .foregroundStyle(AppTheme.foreground)
-                            .textCase(.uppercase)
-                        Text("Choose pickup games to attend")
-                            .font(.caption2)
-                            .foregroundStyle(AppTheme.muted)
-                    }
+                    BrandHeader(compact: true)
                 }
             }
             .toolbarBackground(AppTheme.background, for: .navigationBar)
@@ -70,11 +62,12 @@ struct MatchesDashboardView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Find a game")
-                .font(.system(size: 28, weight: .black, design: .rounded))
+            BrandHeader()
+            Text("Soccer. Anyone. Anywhere.")
+                .font(AppTheme.displayFont)
                 .foregroundStyle(AppTheme.foreground)
                 .textCase(.uppercase)
-            Text("Live listings from the Around The World API.")
+            Text("Find pickup games near you. Free to play. Open to everyone.")
                 .font(.subheadline)
                 .foregroundStyle(AppTheme.muted)
         }

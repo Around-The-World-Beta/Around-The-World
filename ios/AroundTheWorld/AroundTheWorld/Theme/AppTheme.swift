@@ -1,19 +1,25 @@
 import SwiftUI
 
-/// Visual tokens inspired by the KickUp web prototype (dark base + gold accent).
-/// Easy to restyle later when the product UI is updated.
+/// Brand tokens from the Around the World identity system.
+/// Black `#0D0D0D` · White `#FFFFFF` · Gold `#D4AF37`
 enum AppTheme {
-    static let background = Color(red: 0.09, green: 0.09, blue: 0.08)
-    static let card = Color(red: 0.14, green: 0.13, blue: 0.12)
-    static let border = Color(red: 0.24, green: 0.22, blue: 0.18)
-    static let primary = Color(red: 0.90, green: 0.72, blue: 0.28)
-    static let primaryForeground = Color(red: 0.09, green: 0.09, blue: 0.08)
-    static let muted = Color(red: 0.62, green: 0.58, blue: 0.50)
-    static let foreground = Color(red: 0.97, green: 0.95, blue: 0.90)
-    static let secondaryFill = Color(red: 0.18, green: 0.17, blue: 0.14)
+    static let black = Color(red: 0x0D / 255, green: 0x0D / 255, blue: 0x0D / 255)
+    static let white = Color.white
+    static let gold = Color(red: 0xD4 / 255, green: 0xAF / 255, blue: 0x37 / 255)
 
-    static let displayFont: Font = .system(.title2, design: .rounded).weight(.black)
-    static let cardTitleFont: Font = .system(.title3, design: .rounded).weight(.heavy)
+    static let background = black
+    static let card = Color(red: 0.12, green: 0.12, blue: 0.12)
+    static let border = Color(red: 0.22, green: 0.22, blue: 0.22)
+    static let primary = gold
+    static let primaryForeground = black
+    static let muted = Color(red: 0.70, green: 0.70, blue: 0.70)
+    static let foreground = white
+    static let secondaryFill = Color(red: 0.16, green: 0.16, blue: 0.16)
+
+    /// Condensed bold display style (Gotham Condensed stand-in).
+    static let displayFont: Font = .system(size: 28, weight: .heavy, design: .default).width(.condensed)
+    static let cardTitleFont: Font = .system(size: 20, weight: .heavy, design: .default).width(.condensed)
+    static let sectionFont: Font = .system(size: 18, weight: .bold, design: .default).width(.condensed)
 }
 
 extension View {
