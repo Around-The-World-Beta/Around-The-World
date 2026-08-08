@@ -1,39 +1,28 @@
 <!-- LOVABLE:BEGIN -->
 > [!IMPORTANT]
-> This project is connected to [Lovable](https://lovable.dev). Avoid rewriting
-> published git history — force pushing, or rebasing/amending/squashing commits
-> that are already pushed — as it rewrites history on Lovable's side and the
-> user will likely lose their project history.
->
-> Commits you push to the connected branch sync back to Lovable and show up in
-> the editor, so keep the branch in a working state.
+> This project was previously connected to Lovable for a web prototype. The product
+> is now a **native iOS app + Vapor backend**. Prefer not to force-push or rewrite
+> published git history on shared branches.
 <!-- LOVABLE:END -->
 
 ## Cursor Cloud specific instructions
 
-### Product direction
+### Product
 
-- **App Store path:** native SwiftUI iOS app + Swift Vapor backend + Supabase (Postgres/Auth). See `docs/swift-ios-architecture.md`.
-- **Phase 1 backend** lives in `Backend/` (Vapor + Fluent). **Phase 2 network client** lives in `ios/AroundTheWorld/` (`AroundTheWorldKit` SwiftPM package). `src/` is the legacy web prototype used as **UI layout reference** for Phase 3 SwiftUI screens.
-- This Cloud Agent environment is **Linux** — it can build/run the Vapor API and `swift test` the networking kit, not a full Xcode/SwiftUI app. SwiftUI UI work needs macOS + Xcode.
+- **iOS app (Xcode):** `ios/AroundTheWorld/AroundTheWorld.xcodeproj` — open this on macOS and Run.
+- **API:** `Backend/` (Swift Vapor + Fluent + PostgreSQL / Supabase).
+- This Cloud Agent is **Linux** — it cannot launch the iOS Simulator or Xcode. It can build/run the Vapor API.
+
+### iOS app
+
+- Single app target; sources live under `ios/AroundTheWorld/AroundTheWorld/`.
+- Default API base URL: `http://127.0.0.1:8081` (simulator → Mac host).
+- Signing: set Development Team in Xcode before device runs.
 
 ### Vapor backend
 
-- Requires Swift 6+ on `PATH` (install under `/opt/swift/current/usr/bin` if missing).
+- Swift under `/opt/swift/current/usr/bin` when present; needs `libstdc++-14-dev` on this image.
 - Local Postgres defaults: user `atw`, password `atw_dev_password`, db `around_the_world`, `DATABASE_TLS=disable`.
-- Supabase: set `DATABASE_URL` + `DATABASE_TLS=require` (see `Backend/.env.example`).
-- Run from `Backend/`: `swift run App serve --env development --hostname 127.0.0.1 --port 8081` (prefer **8081** when the legacy web `bun run dev` already owns 8080).
-- Health: `GET /health`. CRUD under `/api/v1/{users,profiles,games,participants,friendships}`.
-- System deps for Vapor on this image: Swift under `/opt/swift/current`, `libstdc++-14-dev` / `g++-14`, local Postgres (`atw` / `atw_dev_password` / `around_the_world`).
+- Run: `cd Backend && swift run App serve --env development --hostname 127.0.0.1 --port 8081`
+- Prefer **8081** so it does not collide with other local servers.
 - Standard commands: `Backend/README.md`.
-
-### iOS networking kit + SwiftUI App
-
-- Package: `ios/AroundTheWorld` (`AroundTheWorldKit`). Run `swift test` from that directory.
-- Default API base URL: `http://127.0.0.1:8081` (`APIConfiguration.localDevelopment`).
-- SwiftUI screens live under `ios/AroundTheWorld/App/` (`MatchesDashboardView`, `GameDetailView` + `@StateObject` view models). They are **not** part of the SwiftPM target — add them to an Xcode iOS app target on macOS. Kit tests still run on Linux.
-
-### Legacy web prototype
-
-- Bun 1.3.14 + `bun install` / `bun run dev` (port **8080** via Lovable sandbox detection). Runs without Supabase secrets on mock game data.
-- `bun test` and `bun run build` pass; `bun run lint` / `bun run typecheck` may report pre-existing failures on `main`.

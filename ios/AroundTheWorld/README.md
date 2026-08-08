@@ -1,81 +1,47 @@
-# AroundTheWorld (iOS)
+# Around The World — iOS App
 
-Native iOS project directory for the App Store client.
+Native **SwiftUI** iPhone/iPad app. This is not a website.
 
-| Piece | Path | Role |
-| --- | --- | --- |
-| **AroundTheWorldKit** | `Sources/AroundTheWorldKit/` | NetworkManager + Codable models (SwiftPM) |
-| **App UI** | `App/` | SwiftUI dashboard + detail (add to Xcode app target) |
-| **Tests** | `Tests/AroundTheWorldKitTests/` | Schema + live API tests |
+## Open & run in Xcode
 
-## App UI (SwiftUI)
+1. On a Mac, install **Xcode 16+** from the App Store.
+2. Double-click:
+   ```
+   ios/AroundTheWorld/AroundTheWorld.xcodeproj
+   ```
+3. Select an **iPhone simulator** (or your device).
+4. Set your **Team** under Signing & Capabilities (required for device runs).
+5. Press **▶ Run**.
 
-Inspired by the original KickUp web prototype (`src/routes/index.tsx`, `games.$gameId.tsx`, `GameCard.tsx`).
+The app talks to the Vapor API at `http://127.0.0.1:8081` by default (simulator → Mac).
 
-```
-App/
-├── AroundTheWorldApp.swift          ← @main, configures NetworkManager
-├── ContentView.swift                ← root → MatchesDashboardView
-├── Theme/AppTheme.swift             ← dark + gold tokens (easy to restyle)
-├── ViewModels/
-│   ├── MatchesViewModel.swift       ← @StateObject, live listGames()
-│   └── GameDetailViewModel.swift    ← @StateObject, getGame + participants
-├── Views/
-│   ├── MatchesDashboardView.swift   ← main dashboard
-│   └── GameDetailView.swift         ← detail / Claim Spot
-├── Components/                      ← loading, error, empty, cards, tiles
-└── Extensions/GameDisplay.swift
-```
-
-### State handling
-
-Each screen uses `@StateObject` + `LoadState`:
-
-| State | UI |
-| --- | --- |
-| `loading` | `ProgressView` + message |
-| `failed` | Error copy + **Try again** |
-| `empty` | Empty database / not-found copy |
-| `loaded` | Live cards / detail from Vapor |
-
-Pull-to-refresh reloads the dashboard.
-
-### Usage sketch
-
-```swift
-@StateObject private var viewModel = MatchesViewModel()
-
-// Inside .task / retry:
-await viewModel.load()
-```
-
-`MatchesViewModel` and `GameDetailViewModel` call `AroundTheWorldAPI` → `NetworkManager`.
-
-## Network stack
-
-```swift
-import AroundTheWorldKit
-
-await NetworkManager.shared.setConfiguration(.localDevelopment) // :8081
-let api = AroundTheWorldAPI()
-let games = try await api.listGames()
-```
-
-## Open in Xcode (Mac)
-
-1. `File → New → Project → App` (SwiftUI, iOS 17+).
-2. Add local package: this `ios/AroundTheWorld` folder → link `AroundTheWorldKit`.
-3. Add **all** files under `App/` to the app target (not the kit target).
-4. Start Vapor (`Backend/` on port **8081**), then Run.
-
-## Verify kit on Linux / CI
+### Start the API (separate Terminal)
 
 ```sh
-cd ios/AroundTheWorld
-swift test
+cd Backend
+cp .env.example .env   # first time
+swift run App serve --env development --hostname 127.0.0.1 --port 8081
 ```
 
-## Schema map
+Without the API, the Matches screen shows the error/empty states (still a valid app launch).
 
-Swift Codable types mirror `Backend/.../APIResponses.swift` field-for-field.
-See `Sources/AroundTheWorldKit/Models/`.
+## Project layout
+
+```
+AroundTheWorld.xcodeproj     ← open this in Xcode
+AroundTheWorld/
+  AroundTheWorldApp.swift    ← @main
+  ContentView.swift
+  Views/                     ← Matches dashboard + game detail
+  ViewModels/                ← @StateObject live fetchers
+  Network/                   ← async/await NetworkManager
+  Models/                    ← Codable ≡ Vapor JSON
+  Services/                  ← AroundTheWorldAPI
+  Components/ Theme/ …
+  Info.plist
+  Assets.xcassets
+```
+
+## Bundle ID
+
+`com.aroundtheworld.app` — change in Xcode if you need a different App Store ID.
