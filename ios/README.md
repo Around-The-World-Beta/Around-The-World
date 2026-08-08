@@ -24,8 +24,8 @@ See [`AroundTheWorld/README.md`](AroundTheWorld/README.md) for setup and usage.
 | Phase | Status |
 | --- | --- |
 | 1 — Vapor backend | `Backend/` |
-| 2 — Network client + Codable schemas | **`ios/AroundTheWorld/` (this)** |
-| 3 — Exact SwiftUI layout (Matches/Map/Host/…) | next; use `src/routes` as visual source of truth |
+| 2 — Network client + Codable schemas | `ios/AroundTheWorld/Sources/AroundTheWorldKit/` |
+| 3 — SwiftUI dashboard + detail (live data) | **`ios/AroundTheWorld/App/`** (inspired by `src/`; iterate visually next) |
 
 ## Requirements for UI work (Phase 3)
 

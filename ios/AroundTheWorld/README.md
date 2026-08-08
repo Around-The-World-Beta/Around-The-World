@@ -4,48 +4,71 @@ Native iOS project directory for the App Store client.
 
 | Piece | Path | Role |
 | --- | --- | --- |
-| **AroundTheWorldKit** | `Sources/AroundTheWorldKit/` | Reusable networking + Codable models (SwiftPM) |
-| **App shell** | `App/` | SwiftUI `@main` entry (add to an Xcode iOS app target) |
-| **Tests** | `Tests/AroundTheWorldKitTests/` | Schema decode/encode tests |
+| **AroundTheWorldKit** | `Sources/AroundTheWorldKit/` | NetworkManager + Codable models (SwiftPM) |
+| **App UI** | `App/` | SwiftUI dashboard + detail (add to Xcode app target) |
+| **Tests** | `Tests/AroundTheWorldKitTests/` | Schema + live API tests |
+
+## App UI (SwiftUI)
+
+Inspired by the original KickUp web prototype (`src/routes/index.tsx`, `games.$gameId.tsx`, `GameCard.tsx`).
+
+```
+App/
+├── AroundTheWorldApp.swift          ← @main, configures NetworkManager
+├── ContentView.swift                ← root → MatchesDashboardView
+├── Theme/AppTheme.swift             ← dark + gold tokens (easy to restyle)
+├── ViewModels/
+│   ├── MatchesViewModel.swift       ← @StateObject, live listGames()
+│   └── GameDetailViewModel.swift    ← @StateObject, getGame + participants
+├── Views/
+│   ├── MatchesDashboardView.swift   ← main dashboard
+│   └── GameDetailView.swift         ← detail / Claim Spot
+├── Components/                      ← loading, error, empty, cards, tiles
+└── Extensions/GameDisplay.swift
+```
+
+### State handling
+
+Each screen uses `@StateObject` + `LoadState`:
+
+| State | UI |
+| --- | --- |
+| `loading` | `ProgressView` + message |
+| `failed` | Error copy + **Try again** |
+| `empty` | Empty database / not-found copy |
+| `loaded` | Live cards / detail from Vapor |
+
+Pull-to-refresh reloads the dashboard.
+
+### Usage sketch
+
+```swift
+@StateObject private var viewModel = MatchesViewModel()
+
+// Inside .task / retry:
+await viewModel.load()
+```
+
+`MatchesViewModel` and `GameDetailViewModel` call `AroundTheWorldAPI` → `NetworkManager`.
 
 ## Network stack
-
-- `NetworkManager` — `actor`, async/await `URLSession`, generic GET/POST/PATCH/DELETE
-- `AroundTheWorldAPI` — typed methods for every Vapor `/api/v1` route
-- Models mirror backend DTOs in `Backend/Sources/App/DTOs/APIResponses.swift` **field-for-field** (camelCase)
 
 ```swift
 import AroundTheWorldKit
 
+await NetworkManager.shared.setConfiguration(.localDevelopment) // :8081
 let api = AroundTheWorldAPI()
-
-// Point at your Vapor server (default: http://127.0.0.1:8081)
-await NetworkManager.shared.setConfiguration(.localDevelopment)
-
-let health = try await api.health()
 let games = try await api.listGames()
-
-let user = try await api.createUser(
-    CreateUserRequest(
-        email: "player@example.com",
-        displayName: "Priya N.",
-        city: "Brooklyn, NY",
-        skillLevel: "Casual"
-    )
-)
 ```
 
 ## Open in Xcode (Mac)
 
-1. `File → New → Project → App` (SwiftUI, iOS 17+, product name `AroundTheWorld`).
-2. `File → Add Package Dependencies…` → **Add Local…** → select this `ios/AroundTheWorld` folder.
-3. Link `AroundTheWorldKit` to the app target.
-4. Replace the template app files with `App/AroundTheWorldApp.swift` + `App/ContentView.swift`.
-5. Start the Vapor API (`Backend/`), then Run on a simulator.
+1. `File → New → Project → App` (SwiftUI, iOS 17+).
+2. Add local package: this `ios/AroundTheWorld` folder → link `AroundTheWorldKit`.
+3. Add **all** files under `App/` to the app target (not the kit target).
+4. Start Vapor (`Backend/` on port **8081**), then Run.
 
-> App Transport Security: `http://127.0.0.1` is allowed for local networking in recent iOS simulators. For a LAN device IP, add an ATS exception in Info.plist during development.
-
-## Verify on this machine (Linux / CI)
+## Verify kit on Linux / CI
 
 ```sh
 cd ios/AroundTheWorld
@@ -54,13 +77,5 @@ swift test
 
 ## Schema map
 
-| Swift type | Vapor type | Endpoint family |
-| --- | --- | --- |
-| `HealthResponse` | `HealthResponse` | `GET /health` |
-| `UserResponse` / `CreateUserRequest` / `UpdateUserRequest` | same names | `/api/v1/users` |
-| `ProfileResponse` / `UpdateProfileRequest` | same | `/api/v1/profiles` |
-| `GameResponse` / `CreateGameRequest` / `UpdateGameRequest` | same | `/api/v1/games` |
-| `ParticipantResponse` / create+update | same | `/api/v1/participants` |
-| `FriendshipResponse` / create+update | same | `/api/v1/friendships` |
-| `APIErrorBody` | `JSONErrorMiddleware.ErrorBody` | all error responses |
-| `APIMessage` | `APIMessage` | delete confirmations |
+Swift Codable types mirror `Backend/.../APIResponses.swift` field-for-field.
+See `Sources/AroundTheWorldKit/Models/`.

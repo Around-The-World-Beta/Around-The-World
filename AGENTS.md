@@ -27,6 +27,12 @@
 - System deps for Vapor on this image: Swift under `/opt/swift/current`, `libstdc++-14-dev` / `g++-14`, local Postgres (`atw` / `atw_dev_password` / `around_the_world`).
 - Standard commands: `Backend/README.md`.
 
+### iOS networking kit + SwiftUI App
+
+- Package: `ios/AroundTheWorld` (`AroundTheWorldKit`). Run `swift test` from that directory.
+- Default API base URL: `http://127.0.0.1:8081` (`APIConfiguration.localDevelopment`).
+- SwiftUI screens live under `ios/AroundTheWorld/App/` (`MatchesDashboardView`, `GameDetailView` + `@StateObject` view models). They are **not** part of the SwiftPM target — add them to an Xcode iOS app target on macOS. Kit tests still run on Linux.
+
 ### Legacy web prototype
 
 - Bun 1.3.14 + `bun install` / `bun run dev` (port **8080** via Lovable sandbox detection). Runs without Supabase secrets on mock game data.
