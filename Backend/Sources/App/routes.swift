@@ -6,6 +6,10 @@ func routes(_ app: Application) throws {
         HealthResponse(status: "ok", service: "around-the-world-api")
     }
 
+    app.get("api", "v1", "meta", "bay-area") { _ async -> BayAreaMetaResponse in
+        .default
+    }
+
     try app.register(collection: UsersController())
     try app.register(collection: ProfilesController())
     try app.register(collection: GamesController())

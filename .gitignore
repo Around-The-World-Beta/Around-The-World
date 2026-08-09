@@ -34,8 +34,11 @@ Backend/.env
 .idea
 .vscode/*
 !.vscode/extensions.json
+!.vscode/tasks.json
 
-# Leftover web tooling (should not return)
+# Web (Vite / Bun)
+web/node_modules/
+web/dist/
 node_modules/
 dist/
 .output/

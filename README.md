@@ -1,32 +1,49 @@
-# Around The World
+# Around the World — Bay Area
 
-Native **iOS** pickup-sports app (SwiftUI) + **Swift Vapor** API.
+Pickup soccer across **all nine SF Bay Area counties**.
 
-> **Start here:** [`RUN.md`](RUN.md) — step-by-step Xcode + backend checklist.
+Primary workflow is **Cursor / VS Code / any IDE** (web app + Vapor API).  
+The native iOS project under `ios/` remains optional for TestFlight later.
 
-## Quick start
+## Quick start (Cursor / VS Code)
 
-**Terminal (API):**
 ```sh
-./scripts/run-backend.sh
+./scripts/dev.sh
 ```
 
-**Xcode (app):** open
-```
-ios/AroundTheWorld/AroundTheWorld.xcodeproj
-```
-then press **Run** on an iPhone simulator.
+Then open **http://127.0.0.1:5173**
 
-The API defaults to **SQLite** (no Postgres install). Demo matches are seeded automatically.  
-iOS talks to `http://127.0.0.1:8081`.
+Or two terminals:
+
+```sh
+./scripts/run-backend.sh   # API :8081 — seeds Bay Area demos
+cd web && bun install && bun run dev   # Web :5173
+```
+
+## What you get
+
+| Surface | Path | How to run |
+| --- | --- | --- |
+| **Web app (primary)** | `web/` | `bun run dev` in Cursor/VS Code |
+| **API** | `Backend/` | `./scripts/run-backend.sh` |
+| iOS (optional) | `ios/AroundTheWorld/` | Xcode on a Mac |
+
+## Bay Area coverage
+
+Seed + browse region include the nine counties:
+
+San Francisco · San Mateo · Santa Clara · Alameda · Contra Costa · Marin · Solano · Napa · Sonoma
+
+Cities/venues are listed via `GET /api/v1/meta/bay-area`.
 
 ## Repo map
 
 | Path | What |
 | --- | --- |
-| `ios/AroundTheWorld/AroundTheWorld.xcodeproj` | **Open this in Xcode** |
-| `Backend/` | Vapor JSON API |
-| `scripts/run-backend.sh` | One-command API start |
+| `web/` | Vite + React client — open in Cursor/VS Code |
+| `Backend/` | Swift Vapor JSON API |
+| `scripts/dev.sh` | One-command API + web |
+| `ios/` | Optional SwiftUI app |
 | `supabase/` | Optional hosted Postgres SQL |
 | `RUN.md` | Troubleshooting |
 

@@ -9,9 +9,10 @@
 
 ### Product
 
-- **iOS app (Xcode):** `ios/AroundTheWorld/AroundTheWorld.xcodeproj` — open this on macOS and Run.
-- **API:** `Backend/` (Swift Vapor + Fluent + PostgreSQL / Supabase).
-- This Cloud Agent is **Linux** — it cannot launch the iOS Simulator or Xcode. It can build/run the Vapor API.
+- **Primary client (Cursor / VS Code):** `web/` Vite + React — `./scripts/dev.sh` or `cd web && bun run dev`.
+- **API:** `Backend/` (Swift Vapor + Fluent + SQLite / Supabase Postgres).
+- **iOS (optional):** `ios/AroundTheWorld/AroundTheWorld.xcodeproj` on macOS only.
+- This Cloud Agent is **Linux** — run the **web + API** stack here; it cannot launch the iOS Simulator.
 
 ### iOS app
 
