@@ -28,3 +28,5 @@
 - Postgres/Supabase: set `DATABASE_URL` or `DATABASE_DRIVER=postgres`. See `Backend/README.md` and `RUN.md`.
 - Bay Area beta notes: `docs/bay-area-beta.md`, TestFlight gaps: `docs/TESTFLIGHT-CHECKLIST.md`.
 - iOS launch diagnostics: Console filter `subsystem:app.aroundtheworld.boot`. Location/MapKit must not run in `App.init`.
+- **This Linux VM cannot run the iOS Simulator / Xcode.** Validate the API with `./scripts/run-backend.sh` + `./scripts/smoke-api.sh`. When regenerating `project.pbxproj`, always sync `AroundTheWorld.xcscheme` `BlueprintIdentifier` to the `PBXNativeTarget` id or Xcode Run breaks.
+- Local API convenience: `SEED_DEMO` defaults to `1` in `scripts/run-backend.sh`.

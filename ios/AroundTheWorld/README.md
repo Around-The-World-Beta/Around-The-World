@@ -2,27 +2,21 @@
 
 ## Open in Xcode
 
-Double-click:
+1. Pull latest `main` (scheme target ID must match the project — older commits break Run).
+2. Double-click:
 
 ```
 AroundTheWorld.xcodeproj
 ```
 
-Select an **iPhone simulator** → press **▶ Run**.
+3. Select an **iPhone simulator (iOS 17+)** → press **▶ Run**.
+4. In a Terminal first: `../../scripts/run-backend.sh` (seeds Bay Area demo games).
 
-Full checklist (API + common errors): see [`../../RUN.md`](../../RUN.md).
+Full checklist: [`../../RUN.md`](../../RUN.md).
 
 ## API
 
-The app loads matches from `http://127.0.0.1:8081`.
-
-Start the backend **before** Run if you want live data:
-
-```sh
-../../scripts/run-backend.sh
-```
-
-Without the API, the UI still launches and shows an error / retry state.
+Default: `http://127.0.0.1:8081`. Without the API the app still launches and shows error/retry within ~8s (not a hang).
 
 ## Signing
 
