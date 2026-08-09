@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @ObservedObject private var languageStore = LanguageStore.shared
+    @EnvironmentObject private var languageStore: LanguageStore
 
     var body: some View {
         NavigationStack {

@@ -15,6 +15,8 @@ fi
 # Zero-config local DB. Override with DATABASE_URL / DATABASE_DRIVER=postgres if needed.
 export DATABASE_DRIVER="${DATABASE_DRIVER:-sqlite}"
 export SQLITE_PATH="${SQLITE_PATH:-around_the_world.sqlite}"
+# Local Mac/Simulator convenience: seed Bay Area demo listings unless explicitly disabled.
+export SEED_DEMO="${SEED_DEMO:-1}"
 
-echo "→ Building & starting API on http://127.0.0.1:8081  (driver=${DATABASE_DRIVER})"
+echo "→ Building & starting API on http://127.0.0.1:8081  (driver=${DATABASE_DRIVER}, SEED_DEMO=${SEED_DEMO})"
 exec swift run App serve --env development --hostname 127.0.0.1 --port 8081

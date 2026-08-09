@@ -29,9 +29,7 @@ enum AppLanguage: String, CaseIterable, Identifiable {
 /// Persists language preference per install (and later per signed-in user id).
 @MainActor
 final class LanguageStore: ObservableObject {
-    static let shared = LanguageStore()
-
-    private static let defaultsKey = "atw.language.preference"
+    static let defaultsKey = "atw.language.preference"
     private static let perUserPrefix = "atw.language.user."
 
     @Published var language: AppLanguage {

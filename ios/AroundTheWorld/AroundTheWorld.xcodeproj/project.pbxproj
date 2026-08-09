@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D58690C41E834988890A624A /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6891AB3DA0643BCBD01579C /* MapKit.framework */; };
+		7227CD08B3FD428F8ADCF29C /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECE0432F4AAB47419430B432 /* CoreLocation.framework */; };
 		A889C8F77FAF44B0912121DF /* AroundTheWorldApp.swift in Build */ = {isa = PBXBuildFile; fileRef = BDC28306160047A4811A6E6C /* AroundTheWorldApp.swift */; };
 		3211B763620D41D89B052A01 /* AppBootstrap.swift in Build */ = {isa = PBXBuildFile; fileRef = D3FCC951D8AB42E789204DCE /* AppBootstrap.swift */; };
 		DDBC78AE69E04D1A889C190A /* AppEnvironment.swift in Build */ = {isa = PBXBuildFile; fileRef = 5B88E0351809480CAF33D87D /* AppEnvironment.swift */; };
@@ -49,6 +51,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D6891AB3DA0643BCBD01579C /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		ECE0432F4AAB47419430B432 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		BFA82DBFD0F248E0BA91E0EF /* AroundTheWorld.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AroundTheWorld.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BDC28306160047A4811A6E6C /* AroundTheWorldApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AroundTheWorldApp.swift; sourceTree = "<group>"; };
 		D3FCC951D8AB42E789204DCE /* AppBootstrap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppBootstrap.swift; sourceTree = "<group>"; };
@@ -97,6 +101,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D58690C41E834988890A624A /* MapKit.framework in Frameworks */,
+				7227CD08B3FD428F8ADCF29C /* CoreLocation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

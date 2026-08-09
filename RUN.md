@@ -45,25 +45,28 @@ Leave this Terminal window running.
 
 ## 2. Run the iOS app in Xcode
 
-1. Open **exactly** this file (not the repo root folder):
+1. **Pull latest `main`** (important — an older scheme pointed at a deleted target ID and Xcode couldn’t Run).
+2. Open **exactly** this file (not the repo root folder):
    ```
    ios/AroundTheWorld/AroundTheWorld.xcodeproj
    ```
-2. Wait for Xcode to finish indexing.
-3. Top bar: choose **AroundTheWorld** scheme + an **iPhone 16** (or any) simulator.
-4. Press **▶ Run** (`Cmd + R`).
+3. Wait for Xcode to finish indexing.
+4. Top bar: choose **AroundTheWorld** scheme + an **iPhone 16** (or any) **iOS 17+** simulator.
+5. Press **▶ Run** (`Cmd + R`).
 
 ### If Xcode won’t open / build / run
 
 | Symptom | Fix |
 | --- | --- |
-| “No such file” / project won’t open | You opened the wrong path. Use the `.xcodeproj` above. Pull latest `main`. |
+| Scheme missing / “does not contain a scheme” / Run greyed out | Pull latest `main`. Product → Scheme → Manage Schemes → ensure **AroundTheWorld** is shared/checked. |
+| “No such file” / project won’t open | You opened the wrong path. Use the `.xcodeproj` above. |
 | Signing / Team errors | Simulator builds are set to not require a team. For a **physical iPhone**, set **Signing & Capabilities → Team** to your Apple ID. |
-| App Icon / asset catalog errors | Pull latest `main` (placeholder App Icon is included). |
-| Build fails after old cache | Xcode → **Product → Clean Build Folder**, delete DerivedData, reopen project. |
-| Simulator black screen / crash on launch | Check the Xcode console. Confirm deployment target iOS 17+ simulator. |
-| App opens but “Something broke” / empty matches | Backend isn’t running. Do step 1 and confirm `curl` health works. |
-| Physical device can’t load games | `127.0.0.1` is the phone itself. Point `APIConfiguration` at your Mac’s LAN IP (e.g. `http://192.168.x.x:8081`). |
+| App Icon / asset catalog errors | Pull latest `main` (App Icon is included). |
+| Build fails after old cache | Xcode → **Product → Clean Build Folder**, delete DerivedData (`~/Library/Developer/Xcode/DerivedData`), reopen project. |
+| Simulator black screen / crash on launch | Console filter `app.aroundtheworld.boot`. Confirm iOS 17+ simulator. |
+| Freeze / infinite spinner | Pull latest hang fix; start the API (step 1). Without API you should get an error/retry within ~8s, not a hang. |
+| App opens but “Something broke” / empty matches | Backend isn’t running. Do step 1; `./scripts/smoke-api.sh` should list Bay Area games. |
+| Physical device can’t load games | `127.0.0.1` is the phone itself. Set scheme env `API_BASE_URL=http://<your-mac-lan-ip>:8081`. |
 
 ---
 

@@ -3,11 +3,11 @@ import SwiftUI
 /// Native iOS app entry point. Open `AroundTheWorld.xcodeproj` in Xcode and press Run.
 @main
 struct AroundTheWorldApp: App {
-    @StateObject private var languageStore = LanguageStore.shared
+    /// Owned by SwiftUI (do not assign `LanguageStore.shared` into `@StateObject`).
+    @StateObject private var languageStore = LanguageStore()
 
     init() {
         BootLogger.step("App.init — UI first; no location/MapKit/auth await")
-        // Network config is applied asynchronously in AppBootstrap — never blocks first frame.
     }
 
     var body: some Scene {

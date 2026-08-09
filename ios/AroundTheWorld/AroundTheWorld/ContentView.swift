@@ -28,5 +28,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .environmentObject(LanguageStore.shared)
+        .environmentObject(LanguageStore())
 }

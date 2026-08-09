@@ -16,10 +16,10 @@ enum AppTheme {
     static let foreground = white
     static let secondaryFill = Color(red: 0.16, green: 0.16, blue: 0.16)
 
-    /// Condensed bold display style (Gotham Condensed stand-in).
-    static let displayFont: Font = .system(size: 28, weight: .heavy, design: .default).width(.condensed)
-    static let cardTitleFont: Font = .system(size: 20, weight: .heavy, design: .default).width(.condensed)
-    static let sectionFont: Font = .system(size: 18, weight: .bold, design: .default).width(.condensed)
+    /// Bold display style (Gotham Condensed stand-in — avoids `.width(.condensed)` SDK quirks).
+    static let displayFont: Font = .system(size: 28, weight: .heavy)
+    static let cardTitleFont: Font = .system(size: 20, weight: .heavy)
+    static let sectionFont: Font = .system(size: 18, weight: .bold)
 }
 
 extension View {

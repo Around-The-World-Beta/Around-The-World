@@ -98,15 +98,7 @@ struct GameCardView: View {
                 .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 6, style: .continuous))
                 .padding(12)
         }
-        .clipShape(
-            UnevenRoundedRectangle(
-                topLeadingRadius: 18,
-                bottomLeadingRadius: 0,
-                bottomTrailingRadius: 0,
-                topTrailingRadius: 18,
-                style: .continuous
-            )
-        )
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 
     private func chip(_ text: String) -> some View {
