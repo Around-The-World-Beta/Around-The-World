@@ -57,6 +57,7 @@
 		A108B2C3D4E5F6A7B8C9D0E1 /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A107B2C3D4E5F6A7B8C9D0E1 /* SignInView.swift */; };
 		A10AB2C3D4E5F6A7B8C9D0E1 /* MeModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A109B2C3D4E5F6A7B8C9D0E1 /* MeModels.swift */; };
 		A10FB2C3D4E5F6A7B8C9D0E1 /* AuthenticationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A10EB2C3D4E5F6A7B8C9D0E1 /* AuthenticationServices.framework */; };
+		C302A2B3C4D5E6F7A8B9C0D1 /* EditProfileSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C301A2B3C4D5E6F7A8B9C0D1 /* EditProfileSheet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -98,6 +99,7 @@
 		F39BBA60A37E4866BC48342B /* MatchesDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchesDashboardView.swift; sourceTree = "<group>"; };
 		4713A154357A400BB1D351A7 /* MyGamesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyGamesView.swift; sourceTree = "<group>"; };
 		543EA2E6225743DD805D0978 /* PlayerProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerProfileView.swift; sourceTree = "<group>"; };
+		C301A2B3C4D5E6F7A8B9C0D1 /* EditProfileSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileSheet.swift; sourceTree = "<group>"; };
 		D528D027C99643ED9012308A /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		584686BAD8274DBF8690AD31 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F0728EDD81734860B0D292FA /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
@@ -318,6 +320,7 @@
 			isa = PBXGroup;
 			children = (
 				543EA2E6225743DD805D0978 /* PlayerProfileView.swift */,
+				C301A2B3C4D5E6F7A8B9C0D1 /* EditProfileSheet.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -463,6 +466,7 @@
 				A05FF0545CBD48BEA0916D80 /* MatchesDashboardView.swift in Sources */,
 				991E3A4995B947B8A450C9D6 /* MyGamesView.swift in Sources */,
 				68CA171D65F7420F9C1DEF94 /* PlayerProfileView.swift in Sources */,
+				C302A2B3C4D5E6F7A8B9C0D1 /* EditProfileSheet.swift in Sources */,
 				EB837DEF88B04E2798E3895E /* SettingsView.swift in Sources */,
 				8F5D2B03C9E1507FB42D0C31 /* TabChrome.swift in Sources */,
 				2B7C9D3E5F608192A3B4C5D6 /* FilterSheetView.swift in Sources */,

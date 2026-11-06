@@ -9,7 +9,7 @@ Team / signing is left blank on purpose. Do not type a Team ID until Apple has g
 1. Matches still work if nobody is signed in.
 2. Claim Spot, the gold **+** (Host), My Games, and Profile ask you to **Sign in with Apple**.
 3. After Apple says yes, the phone trades that login with Supabase, stores the session in the iOS Keychain (so it survives closing the app), then calls the server at `GET /api/v1/me`. That is how Claim Spot / My Games / Host / Profile know who you are.
-4. **Sign out** and **Delete account** live in Settings (gear on the profile screen). Delete account is required by Apple; it calls `DELETE /api/v1/me` and then signs you out.
+4. **Sign out** and **Delete account** live in Settings (the Settings card on the profile screen). Delete account is required by Apple; it calls `DELETE /api/v1/me` and then signs you out. Profile and the full Settings list are documented in [`profile-and-settings.md`](profile-and-settings.md).
 
 ## One-time Apple setup
 
@@ -50,8 +50,8 @@ Our server also needs `SUPABASE_JWT_SECRET` and `SUPABASE_URL` when it runs, or 
 8. In the app: tap the avatar → **Sign in with Apple** → browse still works if you cancel
 9. After a successful sign-in: Profile shows your name; My Games loads your list; Claim Spot sends `POST /api/v1/participants` with only the game id
 10. Force-quit the app and reopen — you should still be signed in
-11. Settings → **Sign out** → reopen — signed out, Matches still list games
-12. Sign in again → Settings → **Delete account** → confirm. That is the Apple-required in-app deletion path
+11. Profile → Settings → **Log Out** → reopen — signed out, Matches still list games
+12. Sign in again → Profile → Settings → **Delete Account** → confirm. That is the Apple-required in-app deletion path
 
 ## If something fails
 

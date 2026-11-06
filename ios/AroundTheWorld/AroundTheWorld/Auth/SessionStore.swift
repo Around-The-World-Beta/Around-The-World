@@ -145,6 +145,63 @@ final class SessionStore: ObservableObject {
         await loadCurrentUser(allowTransportFailure: true)
     }
 
+    /// Saves the edit-profile sheet. Name goes to `PATCH /api/v1/me`; the rest
+    /// to `PATCH /api/v1/me/profile`. Does not invent a photo-upload endpoint.
+    func saveProfile(
+        displayName: String,
+        city: String,
+        age: Int?,
+        position: String?,
+        bio: String
+    ) async -> Bool {
+        lastError = nil
+        isWorking = true
+        defer { isWorking = false }
+
+        guard isSignedIn else {
+            lastError = L10n.authSignInRequired
+            return false
+        }
+
+        let trimmedName = displayName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmedName.count >= 2, trimmedName.count <= 60 else {
+            lastError = L10n.profileNameTooShort
+            return false
+        }
+
+        let trimmedCity = String(city.trimmingCharacters(in: .whitespacesAndNewlines).prefix(100))
+        let trimmedBio = String(bio.trimmingCharacters(in: .whitespacesAndNewlines).prefix(200))
+        let validPosition = PlayerPosition(rawValue: position ?? "")?.rawValue
+        let validAge: Int?
+        if let age, (4...99).contains(age) {
+            validAge = age
+        } else {
+            validAge = nil
+        }
+
+        do {
+            if trimmedName != user?.displayName {
+                let me = try await api.updateCurrentUser(UpdateMeRequest(displayName: trimmedName))
+                user = me.user
+                profile = me.profile
+            }
+            let updated = try await api.updateCurrentProfile(
+                UpdateProfileRequest(
+                    city: trimmedCity,
+                    bio: trimmedBio,
+                    favoritePosition: validPosition,
+                    age: validAge
+                )
+            )
+            profile = updated
+            return true
+        } catch {
+            lastError = error.localizedDescription
+            BootLogger.fail("profile.save", error)
+            return false
+        }
+    }
+
     private func install(_ session: StoredAuthSession) async {
         storedSession = session
         hasSession = true
