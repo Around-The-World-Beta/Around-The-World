@@ -79,7 +79,8 @@ contains the words `YOUR-PASSWORD` in brackets.
 **Do not paste these values into a chat message.** Send them through a password manager
 share, 1Password, or an encrypted note.
 
-When the server is hosted, the same names go into Railway as environment variables:
+When the server is hosted, the same names go into Railway as environment variables.
+The click-by-click deploy guide is [`railway-setup.md`](./railway-setup.md):
 `SUPABASE_JWT_SECRET`, `SUPABASE_URL`, `DATABASE_URL`. Optional: `CORS_ALLOWED_ORIGINS`,
 `RATE_LIMIT_PER_MINUTE`. How the iPhone uses the JWT is in [`auth-contract.md`](./auth-contract.md).
 
@@ -205,8 +206,9 @@ Two notes for later:
   seeding fake games into the database real people use. Repeat this guide to create the
   second one.
 
-Deploying the server itself, and pointing it at this `DATABASE_URL`, is the next piece of
-work. It is not something you do by hand.
+Deploying the server itself, and pointing it at this `DATABASE_URL`, is
+[`railway-setup.md`](./railway-setup.md). You paste the same names into Railway; you do
+not run Docker on your Mac.
 
 ---
 

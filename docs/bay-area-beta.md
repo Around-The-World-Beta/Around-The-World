@@ -43,7 +43,7 @@ Cancellation (`participants.status = cancelled`) lowers `joinedCount` so the lis
 
 | Key | Where | Status |
 | --- | --- | --- |
-| `API_BASE_URL` | Info.plist / build setting | Defaults to `http://127.0.0.1:8081` |
+| `API_BASE_URL` | `Config/Debug.xcconfig` (simulator) / `Config/Release.xcconfig` (TestFlight) | Debug defaults to `http://127.0.0.1:8081`. Release is the Railway HTTPS URL — [`railway-setup.md`](./railway-setup.md) Step 8 |
 | `SUPABASE_URL` | Info.plist / env | **Missing** until you set it |
 | `SUPABASE_ANON_KEY` | Info.plist / env | **Missing** until you set it |
 | `GOOGLE_PLACES_API_KEY` | Info.plist / env | **Missing** until you set it |

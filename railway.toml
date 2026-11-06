@@ -1,0 +1,17 @@
+# Railway build + deploy for the Vapor API.
+#
+# Newer Railway projects may ignore this file (Config as Code is deprecated for
+# new services). The Dockerfile at the repo root is still auto-detected. If
+# /health does not appear as the health check in the dashboard, set it by hand
+# — every click is in docs/railway-setup.md.
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+watchPatterns = ["Dockerfile", ".dockerignore", "railway.toml", "Backend/**"]
+
+[deploy]
+healthcheckPath = "/health"
+healthcheckTimeout = 120
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 5

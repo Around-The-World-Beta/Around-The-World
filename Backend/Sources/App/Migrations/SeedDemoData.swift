@@ -3,8 +3,14 @@ import Vapor
 
 /// Local / staging seed covering all nine Bay Area counties.
 /// Enable with `SEED_DEMO=1` (default in `scripts/run-backend.sh`).
+/// Never inserts when `VAPOR_ENV=production` — production listings come from real hosts.
 struct SeedDemoData: AsyncMigration {
     func prepare(on database: any Database) async throws {
+        let vaporEnv = (Environment.get("VAPOR_ENV") ?? "").lowercased()
+        if vaporEnv == "production" {
+            return
+        }
+
         let enabled = (Environment.get("SEED_DEMO") ?? "").lowercased()
         guard enabled == "1" || enabled == "true" || enabled == "yes" else {
             return

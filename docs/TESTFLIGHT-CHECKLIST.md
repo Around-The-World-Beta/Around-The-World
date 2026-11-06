@@ -17,7 +17,7 @@
 
 ## Still missing for testers next week
 1. **Auth** — Sign in with Apple / Supabase Auth + JWT middleware. Claim Spot / My Games / Profile stay empty without a `currentUserID`.
-2. **Hosted API** — Deploy Vapor (or Fly/Railway) against Supabase Postgres; point iOS `API_BASE_URL` at HTTPS (ATS).
+2. **Hosted API** — Follow [`railway-setup.md`](./railway-setup.md). Confirm `GET /health` returns `{"status":"ok","service":"around-the-world-api","database":"ok"}`, then set iOS `API_BASE_URL` in `Config/Release.xcconfig`. Do not seed production.
 3. **Real Bay Area listings** — Create host accounts + games in Supabase (or temporarily `SEED_DEMO=1` on a staging DB).
 4. **Signing** — Set `DEVELOPMENT_TEAM`, archive, upload to TestFlight; add external/internal testers.
 5. **Privacy** — Privacy Nutrition Labels, location purpose string review, Privacy Manifest if required by SDKs.

@@ -1,3 +1,4 @@
+import Foundation
 import Vapor
 import Logging
 import NIOCore
@@ -17,7 +18,9 @@ enum Entrypoint {
         } catch {
             app.logger.report(error: error)
             try? await app.asyncShutdown()
-            throw error
+            // Exit 1 instead of rethrowing so a missing Railway variable is a
+            // failed deploy with a log line, not a Swift crash dump.
+            Foundation.exit(1)
         }
         try await app.asyncShutdown()
     }

@@ -35,6 +35,15 @@ Copy `web/.env.example` → `web/.env`. Leave blank for local proxy.
 
 ---
 
+## Hosted API (Railway)
+
+Do not run Docker on your Mac for this. Owner steps, exact variable names, and
+`/health` check: [`docs/railway-setup.md`](./docs/railway-setup.md).
+
+```sh
+./scripts/verify-deploy.sh https://YOUR-SERVICE.up.railway.app
+```
+
 ## Optional: Xcode iOS app
 
 Only needed for Simulator / TestFlight on a Mac:

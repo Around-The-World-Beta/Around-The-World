@@ -1,0 +1,6 @@
+// Simulator / local Xcode Run. The scheme also sets API_BASE_URL to this value
+// so a Debug run can override it (for example to a staging HTTPS URL) without
+// editing this file.
+//
+// xcconfig treats // as a comment, so write http:/$()/host — not http://host.
+API_BASE_URL = http:/$()/127.0.0.1:8081

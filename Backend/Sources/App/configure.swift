@@ -8,6 +8,9 @@ import Vapor
 public func configure(_ app: Application) async throws {
     if let host = Environment.get("HOST") {
         app.http.server.configuration.hostname = host
+    } else if AuthConfiguration.requiresHostedSecrets(for: app.environment) {
+        // Railway / Docker must accept traffic from the proxy, not only loopback.
+        app.http.server.configuration.hostname = "0.0.0.0"
     }
     if let port = Environment.get("PORT").flatMap(Int.init) {
         app.http.server.configuration.port = port
@@ -16,6 +19,7 @@ public func configure(_ app: Application) async throws {
         app.http.server.configuration.port = 8081
     }
 
+    try AuthConfiguration.requireBootConfiguration(for: app.environment)
     try configureDatabase(app)
     try await configureAuth(app)
 
@@ -27,13 +31,21 @@ public func configure(_ app: Application) async throws {
     app.migrations.add(AddProfileAge())
     app.migrations.add(NormalizeSkillTiers())
     app.migrations.add(EnableRowLevelSecurity())
-    // SeedDemoData is a no-op unless SEED_DEMO=1 (keeps real Supabase DBs empty).
-    app.migrations.add(SeedDemoData())
-
-    // Auto-migrate in development/testing so `swift run App serve` just works.
-    if app.environment == .development || app.environment == .testing {
-        try await app.autoMigrate()
+    // Demo Bay Area listings: local/staging only. Never registered in production,
+    // even if someone sets SEED_DEMO=1 on the production Railway service.
+    let seedRequested = ["1", "true", "yes"].contains((Environment.get("SEED_DEMO") ?? "").lowercased())
+    if app.environment == .production {
+        if seedRequested {
+            app.logger.warning("SEED_DEMO is set but this is production — demo games will not be inserted. Unset SEED_DEMO. Use a staging project if you want demo listings.")
+        }
+    } else {
+        app.migrations.add(SeedDemoData())
     }
+
+    // Idempotent. On a database that already ran docs/supabase-setup.md this is a
+    // no-op except SeedDemoData on staging. Required on hosted boots so a fresh
+    // DATABASE_URL still gets tables.
+    try await app.autoMigrate()
 
     app.middleware.use(JSONErrorMiddleware())
     app.middleware.use(RateLimitMiddleware())
@@ -79,7 +91,9 @@ private func configureAuth(_ app: Application) async throws {
 
 private func configureDatabase(_ app: Application) throws {
     // Prefer hosted/local Postgres when configured; otherwise use SQLite so Mac
-    // developers can run the API with zero database setup.
+    // developers can run the API with zero database setup. Hosted environments
+    // already failed the boot check above if DATABASE_URL is missing, so they
+    // never fall through to SQLite.
     if let databaseURL = Environment.get("DATABASE_URL"), !databaseURL.isEmpty {
         try configurePostgresURL(app, databaseURL)
         app.logger.info("Using Postgres (DATABASE_URL)")

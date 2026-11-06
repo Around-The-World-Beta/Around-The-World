@@ -13,6 +13,7 @@ struct AppTests {
                 let body = try res.content.decode(HealthResponse.self)
                 #expect(body.status == "ok")
                 #expect(body.service == "around-the-world-api")
+                #expect(body.database == "ok")
             }
         }
     }
