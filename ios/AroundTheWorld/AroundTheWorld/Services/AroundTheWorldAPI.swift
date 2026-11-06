@@ -15,48 +15,31 @@ public struct AroundTheWorldAPI: Sendable {
         try await network.get("health")
     }
 
-    // MARK: Users
+    // MARK: Account (`/api/v1/me`)
 
-    public func listUsers() async throws -> [UserResponse] {
-        try await network.get("api/v1/users")
+    /// First authenticated call creates the app user + empty profile from the token.
+    public func currentUser() async throws -> MeResponse {
+        try await network.get("api/v1/me")
     }
 
-    public func getUser(id: UUID) async throws -> UserResponse {
-        try await network.get("api/v1/users/\(id.uuidString)")
+    public func updateCurrentUser(_ request: UpdateMeRequest) async throws -> MeResponse {
+        try await network.patch("api/v1/me", body: request)
     }
 
-    public func createUser(_ request: CreateUserRequest) async throws -> UserResponse {
-        try await network.post("api/v1/users", body: request)
+    public func deleteCurrentUser() async throws -> APIMessage {
+        try await network.delete("api/v1/me")
     }
 
-    public func updateUser(id: UUID, _ request: UpdateUserRequest) async throws -> UserResponse {
-        try await network.patch("api/v1/users/\(id.uuidString)", body: request)
+    public func currentProfile() async throws -> ProfileResponse {
+        try await network.get("api/v1/me/profile")
     }
 
-    public func deleteUser(id: UUID) async throws -> APIMessage {
-        try await network.delete("api/v1/users/\(id.uuidString)")
+    public func updateCurrentProfile(_ request: UpdateProfileRequest) async throws -> ProfileResponse {
+        try await network.patch("api/v1/me/profile", body: request)
     }
 
-    // MARK: Profiles
-
-    public func listProfiles() async throws -> [ProfileResponse] {
-        try await network.get("api/v1/profiles")
-    }
-
-    public func getProfile(id: UUID) async throws -> ProfileResponse {
-        try await network.get("api/v1/profiles/\(id.uuidString)")
-    }
-
-    public func getProfile(userId: UUID) async throws -> ProfileResponse {
-        try await network.get("api/v1/profiles/user/\(userId.uuidString)")
-    }
-
-    public func updateProfile(id: UUID, _ request: UpdateProfileRequest) async throws -> ProfileResponse {
-        try await network.patch("api/v1/profiles/\(id.uuidString)", body: request)
-    }
-
-    public func deleteProfile(id: UUID) async throws -> APIMessage {
-        try await network.delete("api/v1/profiles/\(id.uuidString)")
+    public func listMyFriendships() async throws -> [FriendshipResponse] {
+        try await network.get("api/v1/me/friendships")
     }
 
     // MARK: Games
@@ -72,12 +55,9 @@ public struct AroundTheWorldAPI: Sendable {
         )
     }
 
-    /// Sessions the user already joined/waitlisted — includes full games.
-    public func listMyGames(userId: UUID) async throws -> [GameResponse] {
-        try await network.get(
-            "api/v1/games/mine",
-            queryItems: [URLQueryItem(name: "userId", value: userId.uuidString)]
-        )
+    /// Sessions you host or have joined/waitlisted — includes full games.
+    public func listMyGames() async throws -> [GameResponse] {
+        try await network.get("api/v1/me/games")
     }
 
     public func getGame(id: UUID) async throws -> GameResponse {
@@ -97,10 +77,6 @@ public struct AroundTheWorldAPI: Sendable {
     }
 
     // MARK: Participants
-
-    public func listParticipants() async throws -> [ParticipantResponse] {
-        try await network.get("api/v1/participants")
-    }
 
     public func listParticipants(gameId: UUID) async throws -> [ParticipantResponse] {
         try await network.get("api/v1/participants/game/\(gameId.uuidString)")
@@ -123,14 +99,6 @@ public struct AroundTheWorldAPI: Sendable {
     }
 
     // MARK: Friendships
-
-    public func listFriendships() async throws -> [FriendshipResponse] {
-        try await network.get("api/v1/friendships")
-    }
-
-    public func listFriendships(userId: UUID) async throws -> [FriendshipResponse] {
-        try await network.get("api/v1/friendships/user/\(userId.uuidString)")
-    }
 
     public func getFriendship(id: UUID) async throws -> FriendshipResponse {
         try await network.get("api/v1/friendships/\(id.uuidString)")

@@ -109,6 +109,7 @@ enum L10n {
     static var noPaidSessions: String { tr("section.no_paid") }
 
     static var settingsTitle: String { tr("settings.title") }
+    static var settingsAccount: String { tr("settings.account") }
     static var settingsLanguage: String { tr("settings.language") }
     static var settingsLanguageSystem: String { tr("settings.language.system") }
     static var settingsLanguageEnglish: String { tr("settings.language.english") }
@@ -122,12 +123,33 @@ enum L10n {
     static var tryAgain: String { tr("action.try_again") }
     static var somethingBroke: String { tr("error.something_broke") }
     static var signInToClaim: String { tr("auth.sign_in_to_claim") }
+    static var authSignIn: String { tr("auth.sign_in") }
+    static var authSignInWithApple: String { tr("auth.sign_in_with_apple") }
+    static var authHeadline: String { tr("auth.headline") }
+    static var authSubtitle: String { tr("auth.subtitle") }
+    static var authPrivacyNote: String { tr("auth.privacy_note") }
+    static var authKeepBrowsing: String { tr("auth.keep_browsing") }
+    static var authClose: String { tr("auth.close") }
+    static var authNotConfigured: String { tr("auth.not_configured") }
+    static var authFailed: String { tr("auth.failed") }
+    static var authSignInRequired: String { tr("auth.sign_in_required") }
+    static var authSignOut: String { tr("auth.sign_out") }
+    static var authSignOutConfirm: String { tr("auth.sign_out_confirm") }
+    static var authDeleteAccount: String { tr("auth.delete_account") }
+    static var authDeleteConfirm: String { tr("auth.delete_confirm") }
+    static var authCancel: String { tr("auth.cancel") }
+    static var authMyGamesSignedOut: String { tr("auth.my_games_signed_out") }
+    static var authProfileSignedOut: String { tr("auth.profile_signed_out") }
+    static var claimJoined: String { tr("claim.joined") }
+    static var claimWaitlisted: String { tr("claim.waitlisted") }
 
     static var hostTitle: String { tr("host.title") }
     static var hostSearchPlaceholder: String { tr("host.search_placeholder") }
     static var hostDropPin: String { tr("host.drop_pin") }
     static var hostSelectedLocation: String { tr("host.selected_location") }
     static var hostCreate: String { tr("host.create") }
+    static func hostAs(_ name: String) -> String { tr("host.as", name) }
+    static var hostPublishPending: String { tr("host.publish_pending") }
 
     static var profileTitle: String { tr("profile.title") }
     static var profileAge: String { tr("profile.age") }

@@ -3,6 +3,7 @@ import SwiftUI
 /// Root shell: Matches, My Games, Friends, floating Host "+", profile via the header avatar.
 struct ContentView: View {
     @EnvironmentObject private var languageStore: LanguageStore
+    @EnvironmentObject private var session: SessionStore
     @StateObject private var matchesViewModel = MatchesViewModel()
     @StateObject private var location = LocationPermissionService()
     @State private var tab: MainTab = .matches
@@ -41,9 +42,18 @@ struct ContentView: View {
         .tint(AppTheme.gold)
         .fullScreenCover(isPresented: $showHost) {
             HostSessionView()
+                .environmentObject(session)
+                .environmentObject(languageStore)
+        }
+        .sheet(isPresented: $session.isSignInPresented) {
+            SignInView()
+                .environmentObject(session)
         }
         .onChange(of: showFilters) { _, show in
             if show { filtersMounted = true }
+        }
+        .onChange(of: session.userID) { _, userID in
+            languageStore.currentUserID = userID
         }
         .id(languageStore.language)
     }
@@ -71,7 +81,11 @@ struct ContentView: View {
 
     private var hostFab: some View {
         Button {
-            showHost = true
+            if session.isSignedIn {
+                showHost = true
+            } else {
+                session.requestSignIn()
+            }
         } label: {
             Image(systemName: "plus")
                 .font(.system(size: 26, weight: .bold))
@@ -90,4 +104,5 @@ struct ContentView: View {
 #Preview {
     ContentView()
         .environmentObject(LanguageStore())
+        .environmentObject(SessionStore.shared)
 }

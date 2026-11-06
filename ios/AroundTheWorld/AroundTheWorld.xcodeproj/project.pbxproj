@@ -51,6 +51,12 @@
 		8F5D2B03C9E1507FB42D0C31 /* TabChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E4C1A92B8D04F6EA31C9B20 /* TabChrome.swift */; };
 		2B7C9D3E5F608192A3B4C5D6 /* FilterSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A6B8C2D4E5F60718293A4B5 /* FilterSheetView.swift */; };
 		4D9E1F50718293A4B5C6D7E8 /* FriendsPlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C8D0E4F60718293A4B5C6D7 /* FriendsPlaceholderView.swift */; };
+		A102B2C3D4E5F6A7B8C9D0E1 /* KeychainSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = A101B2C3D4E5F6A7B8C9D0E1 /* KeychainSession.swift */; };
+		A104B2C3D4E5F6A7B8C9D0E1 /* SessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A103B2C3D4E5F6A7B8C9D0E1 /* SessionStore.swift */; };
+		A106B2C3D4E5F6A7B8C9D0E1 /* SupabaseAuthClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A105B2C3D4E5F6A7B8C9D0E1 /* SupabaseAuthClient.swift */; };
+		A108B2C3D4E5F6A7B8C9D0E1 /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A107B2C3D4E5F6A7B8C9D0E1 /* SignInView.swift */; };
+		A10AB2C3D4E5F6A7B8C9D0E1 /* MeModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A109B2C3D4E5F6A7B8C9D0E1 /* MeModels.swift */; };
+		A10FB2C3D4E5F6A7B8C9D0E1 /* AuthenticationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A10EB2C3D4E5F6A7B8C9D0E1 /* AuthenticationServices.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -100,6 +106,13 @@
 		7E4C1A92B8D04F6EA31C9B20 /* TabChrome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabChrome.swift; sourceTree = "<group>"; };
 		1A6B8C2D4E5F60718293A4B5 /* FilterSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterSheetView.swift; sourceTree = "<group>"; };
 		3C8D0E4F60718293A4B5C6D7 /* FriendsPlaceholderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsPlaceholderView.swift; sourceTree = "<group>"; };
+		A101B2C3D4E5F6A7B8C9D0E1 /* KeychainSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainSession.swift; sourceTree = "<group>"; };
+		A103B2C3D4E5F6A7B8C9D0E1 /* SessionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionStore.swift; sourceTree = "<group>"; };
+		A105B2C3D4E5F6A7B8C9D0E1 /* SupabaseAuthClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseAuthClient.swift; sourceTree = "<group>"; };
+		A107B2C3D4E5F6A7B8C9D0E1 /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
+		A109B2C3D4E5F6A7B8C9D0E1 /* MeModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeModels.swift; sourceTree = "<group>"; };
+		A10BB2C3D4E5F6A7B8C9D0E1 /* AroundTheWorld.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AroundTheWorld.entitlements; sourceTree = "<group>"; };
+		A10EB2C3D4E5F6A7B8C9D0E1 /* AuthenticationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AuthenticationServices.framework; path = System/Library/Frameworks/AuthenticationServices.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +122,7 @@
 			files = (
 				D58690C41E834988890A624A /* MapKit.framework in Frameworks */,
 				7227CD08B3FD428F8ADCF29C /* CoreLocation.framework in Frameworks */,
+				A10FB2C3D4E5F6A7B8C9D0E1 /* AuthenticationServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -119,7 +133,9 @@
 			isa = PBXGroup;
 			children = (
 				BDC28306160047A4811A6E6C /* AroundTheWorldApp.swift */,
+				A10BB2C3D4E5F6A7B8C9D0E1 /* AroundTheWorld.entitlements */,
 				584686BAD8274DBF8690AD31 /* Assets.xcassets */,
+				A10CB2C3D4E5F6A7B8C9D0E1 /* Auth */,
 				A151683B2A5648DBAE9ADD61 /* Bootstrap */,
 				24182EC3C59F419984332DE3 /* Components */,
 				81354F98D5B1493F935BB504 /* ContentView.swift */,
@@ -137,6 +153,15 @@
 				B3ACDFF8C700453497BF0B7B /* Products */,
 			);
 			path = AroundTheWorld;
+			sourceTree = "<group>";
+		};
+		A10CB2C3D4E5F6A7B8C9D0E1 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				A101B2C3D4E5F6A7B8C9D0E1 /* KeychainSession.swift */,
+				A103B2C3D4E5F6A7B8C9D0E1 /* SessionStore.swift */,
+			);
+			path = Auth;
 			sourceTree = "<group>";
 		};
 		A151683B2A5648DBAE9ADD61 /* Bootstrap */ = {
@@ -183,6 +208,7 @@
 			isa = PBXGroup;
 			children = (
 				F35A8601D497440CB47BCE16 /* APIMessage.swift */,
+				A109B2C3D4E5F6A7B8C9D0E1 /* MeModels.swift */,
 				E8A3E952773747709F32B72C /* FriendshipModels.swift */,
 				B2A529B3ED794A53AA5FA213 /* GameModels.swift */,
 				99CE91BC936348EABE18C444 /* JSONCoding.swift */,
@@ -207,6 +233,7 @@
 			isa = PBXGroup;
 			children = (
 				A205C7AFD45244A5B77AB5B2 /* AroundTheWorldAPI.swift */,
+				A105B2C3D4E5F6A7B8C9D0E1 /* SupabaseAuthClient.swift */,
 				356C2D14115C486DB575C6D3 /* GooglePlacesPhotoService.swift */,
 				3631382FECE94C13B7144710 /* LocationPermissionService.swift */,
 			);
@@ -233,6 +260,7 @@
 		41F165F7C0A9451AACF32AB6 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				A10DB2C3D4E5F6A7B8C9D0E1 /* Auth */,
 				5125DD7B820B4557A36D490F /* GameDetailView.swift */,
 				1A6B8C2D4E5F60718293A4B5 /* FilterSheetView.swift */,
 				5E0F21618293A4B5C6D7E8F9 /* Friends */,
@@ -300,6 +328,14 @@
 				D528D027C99643ED9012308A /* SettingsView.swift */,
 			);
 			path = Settings;
+			sourceTree = "<group>";
+		};
+		A10DB2C3D4E5F6A7B8C9D0E1 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				A107B2C3D4E5F6A7B8C9D0E1 /* SignInView.swift */,
+			);
+			path = Auth;
 			sourceTree = "<group>";
 		};
 		5E0F21618293A4B5C6D7E8F9 /* Friends */ = {
@@ -431,6 +467,11 @@
 				8F5D2B03C9E1507FB42D0C31 /* TabChrome.swift in Sources */,
 				2B7C9D3E5F608192A3B4C5D6 /* FilterSheetView.swift in Sources */,
 				4D9E1F50718293A4B5C6D7E8 /* FriendsPlaceholderView.swift in Sources */,
+				A102B2C3D4E5F6A7B8C9D0E1 /* KeychainSession.swift in Sources */,
+				A104B2C3D4E5F6A7B8C9D0E1 /* SessionStore.swift in Sources */,
+				A106B2C3D4E5F6A7B8C9D0E1 /* SupabaseAuthClient.swift in Sources */,
+				A108B2C3D4E5F6A7B8C9D0E1 /* SignInView.swift in Sources */,
+				A10AB2C3D4E5F6A7B8C9D0E1 /* MeModels.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -480,6 +521,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = AroundTheWorld/AroundTheWorld.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
@@ -518,6 +560,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = AroundTheWorld/AroundTheWorld.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";

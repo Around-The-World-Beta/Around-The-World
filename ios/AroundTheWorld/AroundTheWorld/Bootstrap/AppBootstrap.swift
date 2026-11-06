@@ -17,16 +17,17 @@ enum AppBootstrap {
         didConfigureNetwork = true
         BootLogger.done("1/4 network → \(config.baseURL.absoluteString) timeout=\(Int(config.timeoutInterval))s")
 
-        BootLogger.step("2/4 auth check (deferred — no session store yet)")
-        BootLogger.done("2/4 auth skipped (Phase 2)")
+        BootLogger.step("2/4 auth restore (Keychain, after first frame)")
+        await NetworkManager.shared.setRefreshHandler { await AuthTokenBroker.refresh() }
+        await SessionStore.shared.restoreIfNeeded()
 
-        BootLogger.step("3/4 Supabase client (not initialized at launch)")
+        BootLogger.step("3/4 Supabase client")
         if AppEnvironment.supabaseURL == nil {
-            BootLogger.step("3/4", "SUPABASE_URL unset — API uses Vapor base URL only")
+            BootLogger.step("3/4", "SUPABASE_URL unset — Sign in with Apple needs it in Xcode")
         } else {
-            BootLogger.step("3/4", "SUPABASE_URL present — Auth client deferred until sign-in")
+            BootLogger.step("3/4", "SUPABASE_URL present")
         }
-        BootLogger.done("3/4 Supabase deferred")
+        BootLogger.done("3/4 Supabase ready for sign-in")
 
         BootLogger.step("4/4 location/MapKit (deferred until Map or Host tab)")
         BootLogger.done("4/4 location/MapKit deferred")

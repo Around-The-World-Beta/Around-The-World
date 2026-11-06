@@ -12,25 +12,25 @@ final class GameDetailViewModel: ObservableObject {
 
     let gameID: UUID
     private let api: AroundTheWorldAPI
+    private let session: SessionStore
 
-    /// Optional signed-in user for Claim Spot (Phase 2 auth will populate this).
-    var currentUserID: UUID?
-
-    init(gameID: UUID, api: AroundTheWorldAPI = AroundTheWorldAPI(), currentUserID: UUID? = nil) {
+    init(
+        gameID: UUID,
+        api: AroundTheWorldAPI = AroundTheWorldAPI(),
+        session: SessionStore = .shared
+    ) {
         self.gameID = gameID
         self.api = api
-        self.currentUserID = currentUserID
+        self.session = session
     }
 
     func load() async {
         state = .loading
         actionMessage = nil
         do {
-            async let gameTask = api.getGame(id: gameID)
-            async let participantsTask = api.listParticipants(gameId: gameID)
-            let (fetchedGame, fetchedParticipants) = try await (gameTask, participantsTask)
+            let fetchedGame = try await api.getGame(id: gameID)
             game = fetchedGame
-            participants = fetchedParticipants.filter { $0.status == "joined" || $0.status == "waitlist" }
+            participants = await loadSquadIfSignedIn()
             state = .loaded
         } catch let error as APIError {
             game = nil
@@ -49,8 +49,8 @@ final class GameDetailViewModel: ObservableObject {
 
     func claimSpot() async {
         guard let game else { return }
-        guard let userID = currentUserID else {
-            actionMessage = L10n.signInToClaim
+        guard session.isSignedIn else {
+            session.requestSignIn()
             return
         }
 
@@ -58,13 +58,23 @@ final class GameDetailViewModel: ObservableObject {
         defer { isActing = false }
 
         do {
-            _ = try await api.createParticipant(
-                CreateParticipantRequest(gameId: game.id, userId: userID)
-            )
-            actionMessage = game.isFull ? "Added to waitlist." : "You're in — see you on the pitch."
+            let participant = try await api.createParticipant(CreateParticipantRequest(gameId: game.id))
+            actionMessage = participant.status == "waitlist" ? L10n.claimWaitlisted : L10n.claimJoined
             await load()
         } catch {
             actionMessage = error.localizedDescription
+        }
+    }
+
+    /// Squad listing requires a token after W1. Signed-out browse still shows the public card.
+    private func loadSquadIfSignedIn() async -> [ParticipantResponse] {
+        guard session.isSignedIn else { return [] }
+        do {
+            let fetched = try await api.listParticipants(gameId: gameID)
+            return fetched.filter { $0.status == "joined" || $0.status == "waitlist" }
+        } catch {
+            BootLogger.fail("game.participants", error)
+            return []
         }
     }
 }

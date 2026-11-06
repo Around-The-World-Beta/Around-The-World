@@ -30,6 +30,7 @@ struct TabHeaderView: View {
 
 /// Bell + circular avatar. Avatar opens Profile. Bell is a honest placeholder (no push in 1.0).
 struct HeaderActionsView: View {
+    @EnvironmentObject private var session: SessionStore
     @State private var showNotificationsNote = false
 
     var body: some View {
@@ -50,11 +51,7 @@ struct HeaderActionsView: View {
             NavigationLink {
                 PlayerProfileView()
             } label: {
-                Image(systemName: "person.crop.circle.fill")
-                    .font(.system(size: 36))
-                    .foregroundStyle(AppTheme.muted)
-                    .frame(width: 40, height: 40)
-                    .overlay(Circle().stroke(AppTheme.border, lineWidth: 1))
+                avatar
             }
             .buttonStyle(.plain)
             .accessibilityLabel(L10n.tabProfile)
@@ -63,6 +60,24 @@ struct HeaderActionsView: View {
             Button("OK", role: .cancel) {}
         } message: {
             Text(L10n.notificationsPlaceholder)
+        }
+    }
+
+    @ViewBuilder
+    private var avatar: some View {
+        if session.isSignedIn, let initial = session.user?.displayName.trimmingCharacters(in: .whitespacesAndNewlines).first {
+            Text(String(initial).uppercased())
+                .font(.system(size: 16, weight: .black))
+                .foregroundStyle(AppTheme.primaryForeground)
+                .frame(width: 40, height: 40)
+                .background(AppTheme.gold, in: Circle())
+                .overlay(Circle().stroke(AppTheme.border, lineWidth: 1))
+        } else {
+            Image(systemName: "person.crop.circle.fill")
+                .font(.system(size: 36))
+                .foregroundStyle(AppTheme.muted)
+                .frame(width: 40, height: 40)
+                .overlay(Circle().stroke(AppTheme.border, lineWidth: 1))
         }
     }
 }

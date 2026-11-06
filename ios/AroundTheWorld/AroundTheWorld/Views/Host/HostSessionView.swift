@@ -16,6 +16,7 @@ struct HostSessionView: View {
     @State private var neighborhood = ""
     @State private var query = ""
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var session: SessionStore
 
     var body: some View {
         NavigationStack {
@@ -91,6 +92,12 @@ struct HostSessionView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(AppTheme.card, in: RoundedRectangle(cornerRadius: 12))
 
+                    if let name = session.user?.displayName {
+                        Text(L10n.hostAs(name))
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(AppTheme.gold)
+                    }
+
                     Text(L10n.hostCreate)
                         .font(.headline.weight(.black))
                         .foregroundStyle(AppTheme.primaryForeground)
@@ -99,7 +106,7 @@ struct HostSessionView: View {
                         .background(AppTheme.gold, in: RoundedRectangle(cornerRadius: 14))
                         .opacity(0.45)
                         .overlay(alignment: .bottom) {
-                            Text("Publish wires to API after auth (hostUserId). Location picker is ready.")
+                            Text(L10n.hostPublishPending)
                                 .font(.caption2)
                                 .foregroundStyle(AppTheme.muted)
                                 .padding(.top, 8)
