@@ -44,25 +44,28 @@ struct GameCardView: View {
                     }
                     chip(game.skill)
                     chip(game.format)
+                    if game.isCancelled {
+                        chip(L10n.myGamesCancelled)
+                    }
                     Text(game.priceLabel.uppercased())
                         .font(.system(size: 10, weight: .bold))
                         .foregroundStyle(AppTheme.muted)
                 }
 
                 HStack(spacing: 8) {
-                    Text(game.isFull ? "JOIN WAITLIST" : "JOIN MATCH")
+                    Text(cardActionTitle)
                         .font(.headline.weight(.black))
                         .italic()
-                        .foregroundStyle(game.isFull ? AppTheme.muted : AppTheme.primaryForeground)
+                        .foregroundStyle(cardActionMuted ? AppTheme.muted : AppTheme.primaryForeground)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
                         .background(
-                            game.isFull ? AppTheme.secondaryFill : AppTheme.primary,
+                            cardActionMuted ? AppTheme.secondaryFill : AppTheme.primary,
                             in: RoundedRectangle(cornerRadius: AppTheme.controlRadius, style: .continuous)
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: AppTheme.controlRadius, style: .continuous)
-                                .stroke(AppTheme.border, lineWidth: game.isFull ? 1 : 0)
+                                .stroke(AppTheme.border, lineWidth: cardActionMuted ? 1 : 0)
                         )
 
                     Text("DETAILS")
@@ -91,6 +94,15 @@ struct GameCardView: View {
             RoundedRectangle(cornerRadius: AppTheme.cardRadius, style: .continuous)
                 .stroke(AppTheme.border, lineWidth: 1)
         )
+    }
+
+    private var cardActionMuted: Bool {
+        game.isCancelled || game.isFull
+    }
+
+    private var cardActionTitle: String {
+        if game.isCancelled { return L10n.myGamesCancelled.uppercased() }
+        return game.isFull ? "JOIN WAITLIST" : "JOIN MATCH"
     }
 
     private var distanceLine: String {

@@ -22,5 +22,5 @@
 4. **Signing** — Set `DEVELOPMENT_TEAM`, archive, upload to TestFlight; add external/internal testers.
 5. **Privacy** — Privacy Nutrition Labels, location purpose string review, Privacy Manifest if required by SDKs.
 6. **Push / email** — Optional for beta; not implemented.
-7. **Publish host flow** — Location picker is ready; create-game API call still needs signed-in `hostUserId`.
+7. **Host a game** — Form + publish is in the iPhone app (title, venue search/pin, date, kickoff, format, skill, max players, notes). Posts as the signed-in user (no user id in the body). Free only — no checkout. See [`host-a-game.md`](host-a-game.md).
 8. **Physical device API** — Simulator uses `127.0.0.1`; devices need LAN IP or hosted URL.

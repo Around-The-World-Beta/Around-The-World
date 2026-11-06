@@ -55,6 +55,11 @@ struct ContentView: View {
         .onChange(of: session.userID) { _, userID in
             languageStore.currentUserID = userID
         }
+        .onReceive(NotificationCenter.default.publisher(for: GamesDidChange.notification)) { note in
+            if note.userInfo?[GamesDidChange.revealInBrowseKey] as? Bool == true {
+                tab = .matches
+            }
+        }
         .id(languageStore.language)
     }
 

@@ -43,6 +43,15 @@ struct MatchesDashboardView: View {
                 location.requestWhenInUseIfNeeded()
             }
         }
+        .onReceive(NotificationCenter.default.publisher(for: GamesDidChange.notification)) { note in
+            Task {
+                await viewModel.load(force: true)
+                let reveal = note.userInfo?[GamesDidChange.revealInBrowseKey] as? Bool ?? false
+                if reveal, let game = note.userInfo?[GamesDidChange.gameKey] as? GameResponse {
+                    viewModel.reveal(game)
+                }
+            }
+        }
     }
 
     private var viewToggle: some View {

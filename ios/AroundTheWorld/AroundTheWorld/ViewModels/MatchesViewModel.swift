@@ -240,6 +240,20 @@ final class MatchesViewModel: ObservableObject {
         radiusMiles = Self.defaultRadiusMiles
     }
 
+    /// After a host publishes, land on that day and make sure distance filters are not hiding it.
+    func reveal(_ game: GameResponse) {
+        let days = week
+        if let idx = days.firstIndex(where: { calendar.isDate(game.startsAt, inSameDayAs: $0.date) }) {
+            selectedDayIndex = idx
+        }
+        selectedTimes = []
+        selectedDifficulties = []
+        let miles = game.distanceMiles(from: origin)
+        if miles > radiusMiles {
+            radiusMiles = min(50, ceil(miles + 0.5))
+        }
+    }
+
     func load(force: Bool = false) async {
         if case .loading = state, !force { return }
 
