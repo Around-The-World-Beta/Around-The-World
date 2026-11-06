@@ -14,6 +14,7 @@ struct AroundTheWorldApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(languageStore)
+                .environmentObject(SessionStore.shared)
                 .environment(\.locale, languageStore.locale)
                 .atwScreenBackground()
                 .id(languageStore.language)

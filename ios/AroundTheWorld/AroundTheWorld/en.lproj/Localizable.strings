@@ -58,7 +58,7 @@
 "empty.matches.title" = "No open games nearby";
 "empty.matches.message" = "Bay Area listings with open spots will show up here. Pull to refresh, or host a session.";
 "empty.my_games.title" = "No games yet";
-"empty.my_games.message" = "Sign in to see games you've joined or are hosting. Nothing is stored on this phone until then.";
+"empty.my_games.message" = "You haven't joined or hosted a match yet. Claim a spot from Matches, or tap + to host.";
 "empty.map.title" = "No sessions on the map";
 "empty.map.message" = "Open spots in the Bay Area appear as pins when hosts publish games.";
 
@@ -71,6 +71,7 @@
 "section.no_paid" = "No paid sessions match";
 
 "settings.title" = "Settings";
+"settings.account" = "Account";
 "settings.language" = "Language";
 "settings.language.system" = "Device default";
 "settings.language.english" = "English";
@@ -83,13 +84,34 @@
 "action.join_waitlist" = "JOIN WAITLIST";
 "action.try_again" = "Try again";
 "error.something_broke" = "Something broke";
-"auth.sign_in_to_claim" = "Sign in to claim a spot. Auth lands in the next phase.";
+"auth.sign_in_to_claim" = "SIGN IN TO CLAIM";
+"auth.sign_in" = "Sign in";
+"auth.sign_in_with_apple" = "Sign in with Apple";
+"auth.headline" = "You're on the pitch.";
+"auth.subtitle" = "Sign in to claim a spot, keep My Games, and host in the Bay Area. Browsing stays open without an account.";
+"auth.privacy_note" = "We never post to your feed. Hide My Email is fine — that's the address we store.";
+"auth.keep_browsing" = "Keep browsing";
+"auth.close" = "Close";
+"auth.not_configured" = "Sign in isn't set up on this build yet. In Xcode, add your Supabase URL and anon key (see the Sign in with Apple checklist).";
+"auth.failed" = "Couldn't finish Sign in with Apple. Try again.";
+"auth.sign_in_required" = "Sign in first.";
+"auth.sign_out" = "Sign out";
+"auth.sign_out_confirm" = "You'll stay signed out until you use Sign in with Apple again. Your games stay on the server.";
+"auth.delete_account" = "Delete account";
+"auth.delete_confirm" = "This permanently deletes your Around The World account and the games and signups attached to it. Apple requires this in the app. This cannot be undone.";
+"auth.cancel" = "Cancel";
+"auth.my_games_signed_out" = "Sign in to see games you've joined or are hosting. Nothing is stored on this phone until then.";
+"auth.profile_signed_out" = "Sign in to see your name, city, and bio. You can still browse matches without an account.";
+"claim.joined" = "You're in — see you on the pitch.";
+"claim.waitlisted" = "Added to waitlist.";
 
 "host.title" = "Host a session";
 "host.search_placeholder" = "Search Bay Area venues";
 "host.drop_pin" = "Drop pin on map";
 "host.selected_location" = "Selected location";
 "host.create" = "Publish session";
+"host.as" = "Hosting as %@";
+"host.publish_pending" = "You're signed in. The rest of the host form (title, time, format) is the next piece of work.";
 
 "profile.title" = "Player profile";
 "profile.age" = "Age";

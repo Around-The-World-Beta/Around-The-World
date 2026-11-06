@@ -1,35 +1,43 @@
 import SwiftUI
-import Combine
 
 /// Player profile scaffold — fields: age, skill tier, position, bio, based-in.
 /// Visual layout will be rebuilt to match Lovable screenshots once shared (item 7).
 struct PlayerProfileView: View {
-    @StateObject private var viewModel = PlayerProfileViewModel()
+    @EnvironmentObject private var session: SessionStore
 
     var body: some View {
         ZStack {
             AppTheme.background.ignoresSafeArea()
 
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    Text(L10n.profileTitle)
-                        .font(AppTheme.displayFont)
-                        .italic()
-                        .foregroundStyle(AppTheme.foreground)
-                        .textCase(.uppercase)
+            if session.isRestoring {
+                LoadingStateView(message: L10n.loadingMatches)
+            } else if !session.isSignedIn {
+                SignedOutGateView(
+                    title: L10n.profileTitle,
+                    message: L10n.authProfileSignedOut,
+                    systemImage: "person.crop.circle"
+                )
+            } else {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 20) {
+                        Text(L10n.profileTitle)
+                            .font(AppTheme.displayFont)
+                            .italic()
+                            .foregroundStyle(AppTheme.foreground)
+                            .textCase(.uppercase)
 
-                    if let profile = viewModel.profile {
-                        profileCard(profile)
-                    } else {
-                        EmptyStateView(
-                            title: L10n.profileTitle,
-                            message: L10n.profileEmpty,
-                            systemImage: "person.crop.circle"
-                        )
-                        .frame(minHeight: 220)
+                        identityCard
+
+                        if let profile = session.profile {
+                            profileCard(profile)
+                        }
+
+                        Text(L10n.profilePendingLayout)
+                            .font(.caption)
+                            .foregroundStyle(AppTheme.muted)
                     }
+                    .padding(20)
                 }
-                .padding(20)
             }
         }
         .navigationBarTitleDisplayMode(.inline)
@@ -47,7 +55,32 @@ struct PlayerProfileView: View {
             }
         }
         .atwScreenBackground()
-        .task { await viewModel.load() }
+        .task { await session.reloadProfile() }
+        .onChange(of: session.isSignedIn) { _, signedIn in
+            if signedIn {
+                Task { await session.reloadProfile() }
+            }
+        }
+    }
+
+    private var identityCard: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(session.user?.displayName ?? L10n.profileTitle)
+                .font(.title2.weight(.black))
+                .foregroundStyle(AppTheme.foreground)
+            if let email = session.user?.email {
+                Text(email)
+                    .font(.subheadline)
+                    .foregroundStyle(AppTheme.muted)
+            }
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(AppTheme.card, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(AppTheme.border, lineWidth: 1)
+        )
     }
 
     private func profileCard(_ profile: ProfileResponse) -> some View {
@@ -76,20 +109,5 @@ struct PlayerProfileView: View {
                 .font(.body.weight(.semibold))
                 .foregroundStyle(AppTheme.foreground)
         }
-    }
-}
-
-@MainActor
-final class PlayerProfileViewModel: ObservableObject {
-    @Published var profile: ProfileResponse?
-    @Published var errorMessage: String?
-
-    private let api = AroundTheWorldAPI()
-
-    func load() async {
-        // Until auth lands there is no current user — leave empty (no mock profile).
-        profile = nil
-        errorMessage = nil
-        _ = api
     }
 }

@@ -21,4 +21,6 @@ Default: `http://127.0.0.1:8081`. Without the API the app still launches and sho
 ## Signing
 
 - **Simulator:** no Apple Developer team required (project is configured for that).
-- **Physical device:** set your Team under *Signing & Capabilities*.
+- **Physical device:** set your Team under *Signing & Capabilities*. Leave **DEVELOPMENT_TEAM** empty in the project until Apple has given you a Team ID. Do not invent one.
+- **Bundle ID:** `com.aroundtheworld.app` (do not change it).
+- **Sign in with Apple:** see [`../../docs/sign-in-with-apple.md`](../../docs/sign-in-with-apple.md) for the Xcode + Apple + Supabase checklist.

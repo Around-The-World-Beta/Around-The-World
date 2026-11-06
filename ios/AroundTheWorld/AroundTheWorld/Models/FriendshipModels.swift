@@ -26,16 +26,24 @@ public struct FriendshipResponse: Codable, Sendable, Identifiable, Equatable {
     }
 }
 
-/// Matches Vapor `CreateFriendshipRequest`.
+/// Matches Vapor `CreateFriendshipRequest`. Follower is the token — do not send `userId`.
 public struct CreateFriendshipRequest: Codable, Sendable, Equatable {
-    public let userId: UUID
     public let friendUserId: UUID
     public let status: String?
 
-    public init(userId: UUID, friendUserId: UUID, status: String? = nil) {
-        self.userId = userId
+    public init(friendUserId: UUID, status: String? = nil) {
         self.friendUserId = friendUserId
         self.status = status
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(friendUserId, forKey: .friendUserId)
+        try container.encodeIfPresent(status, forKey: .status)
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case friendUserId, status
     }
 }
 

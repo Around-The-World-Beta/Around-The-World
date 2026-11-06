@@ -15,6 +15,8 @@ public actor NetworkManager {
     private let session: URLSession
     private let decoder: JSONDecoder
     private let encoder: JSONEncoder
+    private var bearerToken: String?
+    private var refreshHandler: (@Sendable () async -> String?)?
 
     public init(
         configuration: APIConfiguration = .localDevelopment,
@@ -46,6 +48,21 @@ public actor NetworkManager {
 
     public func currentConfiguration() -> APIConfiguration {
         configuration
+    }
+
+    /// Auth contract: send `Authorization: Bearer <access_token>` on every
+    /// non-public request. Pass `nil` on sign-out.
+    public func setBearerToken(_ token: String?) {
+        bearerToken = token
+        if let token, !token.isEmpty {
+            BootLogger.step("network.setBearerToken", "present")
+        } else {
+            BootLogger.step("network.setBearerToken", "cleared")
+        }
+    }
+
+    public func setRefreshHandler(_ handler: (@Sendable () async -> String?)?) {
+        refreshHandler = handler
     }
 
     // MARK: - Generic verbs
@@ -88,7 +105,8 @@ public actor NetworkManager {
         method: String,
         path: String,
         queryItems: [URLQueryItem] = [],
-        body: Body?
+        body: Body?,
+        allowRefreshRetry: Bool = true
     ) async throws -> Response {
         let request = try makeRequest(
             method: method,
@@ -110,6 +128,19 @@ public actor NetworkManager {
 
         guard let http = response as? HTTPURLResponse else {
             throw APIError.invalidResponse
+        }
+
+        if http.statusCode == 401, allowRefreshRetry, let refreshHandler {
+            if let token = await refreshHandler() {
+                bearerToken = token
+                return try await send(
+                    method: method,
+                    path: path,
+                    queryItems: queryItems,
+                    body: body,
+                    allowRefreshRetry: false
+                )
+            }
         }
 
         guard (200...299).contains(http.statusCode) else {
@@ -142,6 +173,10 @@ public actor NetworkManager {
 
         for (header, value) in configuration.defaultHeaders {
             request.setValue(value, forHTTPHeaderField: header)
+        }
+
+        if let bearerToken, !bearerToken.isEmpty {
+            request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
         }
 
         if let body {

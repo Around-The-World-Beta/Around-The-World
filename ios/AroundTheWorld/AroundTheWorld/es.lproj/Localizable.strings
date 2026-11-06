@@ -58,7 +58,7 @@
 "empty.matches.title" = "No hay juegos abiertos cerca";
 "empty.matches.message" = "Los partidos del Área de la Bahía con cupos aparecerán aquí. Desliza para actualizar u organiza una sesión.";
 "empty.my_games.title" = "Aún no tienes juegos";
-"empty.my_games.message" = "Inicia sesión para ver los partidos a los que te uniste o que organizas. Nada se guarda en este teléfono hasta entonces.";
+"empty.my_games.message" = "Aún no te uniste ni organizaste un partido. Reserva un lugar en Partidos, o toca + para organizar.";
 "empty.map.title" = "No hay sesiones en el mapa";
 "empty.map.message" = "Los cupos abiertos en el Área de la Bahía aparecen como pines cuando se publican juegos.";
 
@@ -71,6 +71,7 @@
 "section.no_paid" = "No hay sesiones de pago que coincidan";
 
 "settings.title" = "Ajustes";
+"settings.account" = "Cuenta";
 "settings.language" = "Idioma";
 "settings.language.system" = "Predeterminado del dispositivo";
 "settings.language.english" = "Inglés";
@@ -83,13 +84,34 @@
 "action.join_waitlist" = "LISTA DE ESPERA";
 "action.try_again" = "Reintentar";
 "error.something_broke" = "Algo falló";
-"auth.sign_in_to_claim" = "Inicia sesión para reservar un lugar. La autenticación llega en la siguiente fase.";
+"auth.sign_in_to_claim" = "INICIA SESIÓN PARA RESERVAR";
+"auth.sign_in" = "Iniciar sesión";
+"auth.sign_in_with_apple" = "Iniciar sesión con Apple";
+"auth.headline" = "Estás en la cancha.";
+"auth.subtitle" = "Inicia sesión para reservar un lugar, guardar Mis juegos y organizar en el Área de la Bahía. Puedes explorar sin una cuenta.";
+"auth.privacy_note" = "Nunca publicamos en tu feed. Ocultar mi correo está bien — esa es la dirección que guardamos.";
+"auth.keep_browsing" = "Seguir explorando";
+"auth.close" = "Cerrar";
+"auth.not_configured" = "Iniciar sesión aún no está configurado en esta versión. En Xcode, agrega la URL y la clave anónima de Supabase (consulta la lista de Sign in with Apple).";
+"auth.failed" = "No se pudo completar Iniciar sesión con Apple. Inténtalo de nuevo.";
+"auth.sign_in_required" = "Primero inicia sesión.";
+"auth.sign_out" = "Cerrar sesión";
+"auth.sign_out_confirm" = "Seguirás sin sesión hasta que uses Iniciar sesión con Apple otra vez. Tus partidos se quedan en el servidor.";
+"auth.delete_account" = "Eliminar cuenta";
+"auth.delete_confirm" = "Esto borra para siempre tu cuenta de Around The World y los partidos y reservas ligados a ella. Apple exige este botón en la app. No se puede deshacer.";
+"auth.cancel" = "Cancelar";
+"auth.my_games_signed_out" = "Inicia sesión para ver los partidos a los que te uniste o que organizas. Nada se guarda en este teléfono hasta entonces.";
+"auth.profile_signed_out" = "Inicia sesión para ver tu nombre, ciudad y bio. Puedes seguir explorando partidos sin una cuenta.";
+"claim.joined" = "Ya estás dentro. Nos vemos en la cancha.";
+"claim.waitlisted" = "Te agregamos a la lista de espera.";
 
 "host.title" = "Organizar una sesión";
 "host.search_placeholder" = "Buscar sedes en el Área de la Bahía";
 "host.drop_pin" = "Colocar pin en el mapa";
 "host.selected_location" = "Ubicación seleccionada";
 "host.create" = "Publicar sesión";
+"host.as" = "Organizas como %@";
+"host.publish_pending" = "Ya iniciaste sesión. El resto del formulario (título, hora, formato) es el siguiente trabajo.";
 
 "profile.title" = "Perfil del jugador";
 "profile.age" = "Edad";

@@ -2,12 +2,11 @@ import SwiftUI
 
 /// Game detail / Claim Spot — inspired by `src/routes/games.$gameId.tsx`.
 struct GameDetailView: View {
+    @EnvironmentObject private var session: SessionStore
     @StateObject private var viewModel: GameDetailViewModel
 
-    init(gameID: UUID, currentUserID: UUID? = nil) {
-        _viewModel = StateObject(
-            wrappedValue: GameDetailViewModel(gameID: gameID, currentUserID: currentUserID)
-        )
+    init(gameID: UUID) {
+        _viewModel = StateObject(wrappedValue: GameDetailViewModel(gameID: gameID))
     }
 
     var body: some View {
@@ -31,6 +30,11 @@ struct GameDetailView: View {
         .toolbarBackground(.hidden, for: .navigationBar)
         .atwScreenBackground()
         .task { await viewModel.load() }
+        .onChange(of: session.isSignedIn) { _, signedIn in
+            if signedIn {
+                Task { await viewModel.load() }
+            }
+        }
         .alert(
             "Match update",
             isPresented: Binding(
@@ -162,30 +166,34 @@ struct GameDetailView: View {
     }
 
     private func claimButton(_ game: GameResponse) -> some View {
-        Button {
+        let signedOut = !session.isSignedIn
+        let waitlist = !signedOut && game.isFull
+        return Button {
             Task { await viewModel.claimSpot() }
         } label: {
             Group {
                 if viewModel.isActing {
                     ProgressView()
                         .tint(AppTheme.primaryForeground)
-                } else if game.isFull {
+                } else if signedOut {
+                    Text(L10n.signInToClaim)
+                } else if waitlist {
                     Text(L10n.joinWaitlist)
                 } else {
                     Text(L10n.claimSpot(game.spotsLeft))
                 }
             }
             .font(.title3.weight(.black))
-            .foregroundStyle(game.isFull ? AppTheme.muted : AppTheme.primaryForeground)
+            .foregroundStyle(waitlist ? AppTheme.muted : AppTheme.primaryForeground)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 18)
             .background(
-                game.isFull ? AppTheme.secondaryFill : AppTheme.primary,
+                waitlist ? AppTheme.secondaryFill : AppTheme.primary,
                 in: RoundedRectangle(cornerRadius: 14, style: .continuous)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .stroke(AppTheme.border, lineWidth: game.isFull ? 1 : 0)
+                    .stroke(AppTheme.border, lineWidth: waitlist ? 1 : 0)
             )
         }
         .buttonStyle(.plain)
