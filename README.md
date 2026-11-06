@@ -47,4 +47,6 @@ Cities/venues are listed via `GET /api/v1/meta/bay-area`.
 | `supabase/` | Optional hosted Postgres SQL |
 | `RUN.md` | Troubleshooting |
 
-Never commit `.env`, service-role keys, or Apple private keys.
+Hosted API (HTTPS + Supabase Postgres): [`docs/railway-setup.md`](./docs/railway-setup.md).
+Do not deploy `main` until the lock-down is on it. Never commit `.env`, service-role keys,
+or Apple private keys.

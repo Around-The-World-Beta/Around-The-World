@@ -11,6 +11,11 @@ struct RateLimitMiddleware: AsyncMiddleware {
             return try await next.respond(to: request)
         }
 
+        // Railway (and Docker) probe this path. Do not spend the per-IP budget on it.
+        if request.url.path == "/health" || request.url.path == "health" {
+            return try await next.respond(to: request)
+        }
+
         let limiter = request.application.rateLimiter
         let key = clientKey(for: request)
         let decision = limiter.allow(key: key, limit: AuthConfiguration.rateLimitPerMinute)

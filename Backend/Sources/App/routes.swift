@@ -2,8 +2,23 @@ import Fluent
 import Vapor
 
 func routes(_ app: Application) throws {
-    app.get("health") { _ async -> HealthResponse in
-        HealthResponse(status: "ok", service: "around-the-world-api")
+    app.get("health") { req async throws -> Response in
+        var database = "ok"
+        var bodyStatus = "ok"
+        var httpStatus: HTTPStatus = .ok
+        do {
+            try await pingDatabase(req)
+        } catch {
+            req.logger.error("Health check could not reach the database: \(error)")
+            database = "error"
+            bodyStatus = "unhealthy"
+            httpStatus = .serviceUnavailable
+        }
+        return try await HealthResponse(
+            status: bodyStatus,
+            service: "around-the-world-api",
+            database: database
+        ).encodeResponse(status: httpStatus, for: req)
     }
 
     let v1 = app.grouped("api", "v1")
@@ -67,4 +82,10 @@ func routes(_ app: Application) throws {
 struct HealthResponse: Content {
     let status: String
     let service: String
+    var database: String = "ok"
+}
+
+/// Cheap round-trip so Railway can mark the deploy unhealthy if Postgres is unreachable.
+private func pingDatabase(_ req: Request) async throws {
+    _ = try await User.query(on: req.db).limit(1).all()
 }

@@ -364,11 +364,29 @@ extension AppTests {
     func rateLimited() async throws {
         try await withATWApp(rateLimitPerMinute: 3) { app in
             for _ in 0..<3 {
-                try await app.testing().test(.GET, "health") { res async throws in
+                try await app.testing().test(.GET, "api/v1/meta/bay-area") { res async throws in
                     #expect(res.status == .ok)
                 }
             }
+            try await app.testing().test(.GET, "api/v1/meta/bay-area") { res async throws in
+                #expect(res.status == .tooManyRequests)
+            }
+        }
+    }
+
+    @Test("health is not rate limited so a host probe cannot starve the API")
+    func healthSkipsRateLimit() async throws {
+        try await withATWApp(rateLimitPerMinute: 1) { app in
             try await app.testing().test(.GET, "health") { res async throws in
+                #expect(res.status == .ok)
+            }
+            try await app.testing().test(.GET, "health") { res async throws in
+                #expect(res.status == .ok)
+            }
+            try await app.testing().test(.GET, "api/v1/meta/bay-area") { res async throws in
+                #expect(res.status == .ok)
+            }
+            try await app.testing().test(.GET, "api/v1/meta/bay-area") { res async throws in
                 #expect(res.status == .tooManyRequests)
             }
         }

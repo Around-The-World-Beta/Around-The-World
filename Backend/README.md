@@ -62,9 +62,11 @@ only from a verified JWT and is rejected if a client sends it — see `Sources/A
 
 **How the iPhone signs in:** [`../docs/auth-contract.md`](../docs/auth-contract.md).
 
-## Railway environment variables
+## Railway / HTTPS
 
-Paste these names (values from Supabase, never into chat):
+Owner walkthrough (what to click, exact variable names, how to know `/health` worked): [`../docs/railway-setup.md`](../docs/railway-setup.md).
+
+The deployable unit is the `Dockerfile` at the repo root. Hosted boots refuse to start without `SUPABASE_JWT_SECRET`, `SUPABASE_URL`, and `DATABASE_URL`. They never use SQLite. `SEED_DEMO` is ignored in production.
 
 | Name | Where it comes from |
 | --- | --- |
@@ -73,8 +75,9 @@ Paste these names (values from Supabase, never into chat):
 | `DATABASE_URL` | Project Settings → Database → Connection string → URI |
 | `CORS_ALLOWED_ORIGINS` | Leave empty unless a specific website must call the API |
 | `RATE_LIMIT_PER_MINUTE` | Optional; default `120` |
-
-Do not deploy this service publicly until authentication is merged and those secrets are set.
+| `SEED_DEMO` | Staging only (`1`), never production |
+| `VAPOR_ENV` | Unset on production. Staging: `staging` |
+| `PORT` | Leave unset — Railway injects it |
 
 ## API (`/api/v1`)
 

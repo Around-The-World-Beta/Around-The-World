@@ -1,0 +1,11 @@
+// TestFlight / Archive / a physical iPhone.
+//
+// After Railway shows an HTTPS domain (docs/railway-setup.md Step 3), replace
+// the host below. No trailing slash.
+//
+// xcconfig treats // as a comment, so this must be written as https:/$()/host
+// not https://host. A public API URL is not a secret — commit the real one.
+//
+// Until you paste the Railway host, a Release build still talks to localhost
+// and will not see games on a real device.
+API_BASE_URL = http:/$()/127.0.0.1:8081

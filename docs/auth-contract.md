@@ -168,4 +168,21 @@ Unit tests mint HS256 tokens with `test-jwt-secret-for-unit-tests-only`.
 
 `swift run` in development will boot with `local-dev-jwt-secret-not-for-production` if `SUPABASE_JWT_SECRET` is unset, so browse still works. **Real Sign in with Apple tokens will not verify until the real secret is set.** Put it in the environment; never commit it.
 
-To talk to a local server with a real Supabase login, set `SUPABASE_JWT_SECRET` and `SUPABASE_URL` to the values from the Supabase project (see Railway list below).
+To talk to a local server with a real Supabase login, set `SUPABASE_JWT_SECRET` and `SUPABASE_URL` to the values from the Supabase project.
+
+## Railway variable names
+
+Paste these into the hosted API (values from your secrets file, never into chat). Full click-by-click steps: [`railway-setup.md`](./railway-setup.md).
+
+| Name | Required on production? |
+| --- | --- |
+| `SUPABASE_JWT_SECRET` | Yes |
+| `SUPABASE_URL` | Yes |
+| `DATABASE_URL` | Yes |
+| `CORS_ALLOWED_ORIGINS` | No — leave unset |
+| `RATE_LIMIT_PER_MINUTE` | No — default `120` |
+| `SEED_DEMO` | **No on production.** Staging only, and only with `VAPOR_ENV=staging` |
+| `PORT` | No — Railway sets it |
+| `VAPOR_ENV` | No on production. Staging: `staging` |
+
+The iPhone is pointed at the HTTPS URL with `API_BASE_URL` (`ios/AroundTheWorld/Config/Release.xcconfig` for TestFlight). Sign-in itself is Workstream 2.

@@ -4,10 +4,15 @@ import Foundation
 /// Never commit real secrets — set via Xcode scheme env, xcconfig, or CI secrets.
 enum AppEnvironment {
     /// Vapor API used by the native client.
+    ///
+    /// Scheme environment variables win over Info.plist so a Debug run can point
+    /// at a hosted staging URL without rebuilding. Release/TestFlight reads
+    /// `Config/Release.xcconfig` via Info.plist. Placeholder hosts are ignored.
     static var apiBaseURL: URL {
-        if let raw = cleaned("API_BASE_URL") ?? cleanedEnv("API_BASE_URL"),
+        if let raw = cleanedEnv("API_BASE_URL") ?? cleaned("API_BASE_URL"),
            let url = URL(string: raw),
-           url.scheme == "http" || url.scheme == "https" {
+           (url.scheme == "http" || url.scheme == "https"),
+           isUsableAPIBaseURL(raw) {
             return url
         }
         return URL(string: "http://127.0.0.1:8081")!
@@ -48,6 +53,13 @@ enum AppEnvironment {
             baseURL: apiBaseURL,
             timeoutInterval: 8
         )
+    }
+
+    private static func isUsableAPIBaseURL(_ raw: String) -> Bool {
+        let lowered = raw.lowercased()
+        if lowered.contains("your-service") || lowered.contains("paste-") { return false }
+        if lowered.contains("replace") || lowered.contains("example.up.railway") { return false }
+        return true
     }
 
     private static func string(_ key: String) -> String? {
