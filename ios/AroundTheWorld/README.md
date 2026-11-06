@@ -26,3 +26,4 @@ Default: `http://127.0.0.1:8081`. Without the API the app still launches and sho
 - **Sign in with Apple:** see [`../../docs/sign-in-with-apple.md`](../../docs/sign-in-with-apple.md) for the Xcode + Apple + Supabase checklist.
 - **Profile and Settings:** see [`../../docs/profile-and-settings.md`](../../docs/profile-and-settings.md).
 - **Host a game:** see [`../../docs/host-a-game.md`](../../docs/host-a-game.md). Gold **+** → form → **Post Game**. Needs sign-in. No payments.
+- **Store listing, screenshots, TestFlight, submit:** [`../../docs/release/README.md`](../../docs/release/README.md).

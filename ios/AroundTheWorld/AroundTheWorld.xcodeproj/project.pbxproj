@@ -62,6 +62,7 @@
 		E802A2B3C4D5E6F7A8B9C0D1 /* UserContentLimits.swift in Sources */ = {isa = PBXBuildFile; fileRef = E801A2B3C4D5E6F7A8B9C0D1 /* UserContentLimits.swift */; };
 		E804A2B3C4D5E6F7A8B9C0D1 /* SafetyModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E803A2B3C4D5E6F7A8B9C0D1 /* SafetyModels.swift */; };
 		E806A2B3C4D5E6F7A8B9C0D1 /* ReportSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E805A2B3C4D5E6F7A8B9C0D1 /* ReportSheet.swift */; };
+		F902B2C3D4E5F6A7B8C9D0E1 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F901B2C3D4E5F6A7B8C9D0E1 /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -123,6 +124,7 @@
 		E801A2B3C4D5E6F7A8B9C0D1 /* UserContentLimits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserContentLimits.swift; sourceTree = "<group>"; };
 		E803A2B3C4D5E6F7A8B9C0D1 /* SafetyModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafetyModels.swift; sourceTree = "<group>"; };
 		E805A2B3C4D5E6F7A8B9C0D1 /* ReportSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportSheet.swift; sourceTree = "<group>"; };
+		F901B2C3D4E5F6A7B8C9D0E1 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -144,6 +146,7 @@
 			children = (
 				BDC28306160047A4811A6E6C /* AroundTheWorldApp.swift */,
 				A10BB2C3D4E5F6A7B8C9D0E1 /* AroundTheWorld.entitlements */,
+				F901B2C3D4E5F6A7B8C9D0E1 /* PrivacyInfo.xcprivacy */,
 				584686BAD8274DBF8690AD31 /* Assets.xcassets */,
 				A10CB2C3D4E5F6A7B8C9D0E1 /* Auth */,
 				A151683B2A5648DBAE9ADD61 /* Bootstrap */,
@@ -439,6 +442,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CA1DDD07E64B475291D40533 /* Assets.xcassets in Resources */,
+				F902B2C3D4E5F6A7B8C9D0E1 /* PrivacyInfo.xcprivacy in Resources */,
 				E38418DFCFDE4647A6F3B32C /* Localizable.strings in Resources */,
 				479A2B00261743D8897F5779 /* Localizable.strings in Resources */,
 			);
@@ -556,8 +560,10 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AroundTheWorld/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Around the World";
+				INFOPLIST_KEY_CFBundleDisplayName = "Around The World";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Around The World uses your location to find nearby pickup games in the Bay Area.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -598,8 +604,10 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AroundTheWorld/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Around the World";
+				INFOPLIST_KEY_CFBundleDisplayName = "Around The World";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Around The World uses your location to find nearby pickup games in the Bay Area.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
