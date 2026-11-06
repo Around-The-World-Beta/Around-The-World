@@ -12,27 +12,30 @@ enum L10n {
     }
 
     private static var activeLocale: Locale {
-        switch UserDefaults.standard.string(forKey: defaultsKey) {
-        case "en": return Locale(identifier: "en")
-        case "es": return Locale(identifier: "es")
-        default: return Locale.autoupdatingCurrent
-        }
+        Locale(identifier: resolvedLanguageCode)
     }
 
     private static var bundle: Bundle {
-        let code: String
-        switch UserDefaults.standard.string(forKey: defaultsKey) {
-        case "en": code = "en"
-        case "es": code = "es"
-        default:
-            let preferred = Locale.preferredLanguages.first ?? "en"
-            code = preferred.hasPrefix("es") ? "es" : "en"
-        }
+        let code = resolvedLanguageCode
         if let path = Bundle.main.path(forResource: code, ofType: "lproj"),
            let bundle = Bundle(path: path) {
             return bundle
         }
         return .main
+    }
+
+    /// Only English and Spanish have string catalogs. Other stored languages
+    /// keep English copy until those translations ship.
+    private static var resolvedLanguageCode: String {
+        switch UserDefaults.standard.string(forKey: defaultsKey) {
+        case "es": return "es"
+        case "en": return "en"
+        case nil:
+            let preferred = Locale.preferredLanguages.first ?? "en"
+            return preferred.hasPrefix("es") ? "es" : "en"
+        default:
+            return "en"
+        }
     }
 
     static var tabMatches: String { tr("tab.matches") }
@@ -110,13 +113,34 @@ enum L10n {
 
     static var settingsTitle: String { tr("settings.title") }
     static var settingsAccount: String { tr("settings.account") }
+    static var settingsSubtitle: String { tr("settings.subtitle") }
+    static var settingsClose: String { tr("settings.close") }
     static var settingsLanguage: String { tr("settings.language") }
-    static var settingsLanguageSystem: String { tr("settings.language.system") }
     static var settingsLanguageEnglish: String { tr("settings.language.english") }
     static var settingsLanguageSpanish: String { tr("settings.language.spanish") }
-    static var settingsAPIKeys: String { tr("settings.api_keys") }
-    static func settingsMissingKeys(_ list: String) -> String { tr("settings.missing_keys", list) }
-    static var settingsKeysOK: String { tr("settings.keys_ok") }
+    static var settingsLanguageMandarin: String { tr("settings.language.mandarin") }
+    static var settingsLanguageHindi: String { tr("settings.language.hindi") }
+    static var settingsLanguageArabic: String { tr("settings.language.arabic") }
+    static var settingsLanguagePortuguese: String { tr("settings.language.portuguese") }
+    static var settingsLanguageFrench: String { tr("settings.language.french") }
+    static var settingsLanguageGerman: String { tr("settings.language.german") }
+    static var settingsLanguageJapanese: String { tr("settings.language.japanese") }
+    static var settingsLanguageRussian: String { tr("settings.language.russian") }
+    static var settingsLanguageKorean: String { tr("settings.language.korean") }
+    static var settingsLanguageIndonesian: String { tr("settings.language.indonesian") }
+    static var settingsLanguagePending: String { tr("settings.language.pending") }
+    static var settingsLocation: String { tr("settings.location") }
+    static var settingsLocationOn: String { tr("settings.location.on") }
+    static var settingsLocationOff: String { tr("settings.location.off") }
+    static var settingsLocationDenied: String { tr("settings.location.denied") }
+    static var settingsNotifications: String { tr("settings.notifications") }
+    static var settingsNotificationsSoon: String { tr("settings.notifications.soon") }
+    static var settingsPayments: String { tr("settings.payments") }
+    static var settingsPaymentsSubtitle: String { tr("settings.payments.subtitle") }
+    static var settingsHelp: String { tr("settings.help") }
+    static var settingsTerms: String { tr("settings.terms") }
+    static var settingsPrivacy: String { tr("settings.privacy") }
+    static var settingsLogOut: String { tr("settings.log_out") }
 
     static func claimSpot(_ left: Int) -> String { tr("action.claim_spot", left) }
     static var joinWaitlist: String { tr("action.join_waitlist") }
@@ -158,7 +182,26 @@ enum L10n {
     static var profileBio: String { tr("profile.bio") }
     static var profileBasedIn: String { tr("profile.based_in") }
     static var profileEmpty: String { tr("profile.empty") }
-    static var profilePendingLayout: String { tr("profile.pending_layout") }
+    static var profileEdit: String { tr("profile.edit") }
+    static var profileEditTitle: String { tr("profile.edit_title") }
+    static var profileSave: String { tr("profile.save") }
+    static var profileName: String { tr("profile.name") }
+    static var profileCity: String { tr("profile.city") }
+    static var profileCityPlaceholder: String { tr("profile.city_placeholder") }
+    static var profileNamePlaceholder: String { tr("profile.name_placeholder") }
+    static var profileBioPlaceholder: String { tr("profile.bio_placeholder") }
+    static var profileChangePhoto: String { tr("profile.change_photo") }
+    static var profilePhotoPending: String { tr("profile.photo_pending") }
+    static var profileAddAge: String { tr("profile.add_age") }
+    static func profileAgeYears(_ age: Int) -> String { tr("profile.age_years", age) }
+    static func profileBioCount(_ n: Int) -> String { tr("profile.bio_count", n) }
+    static var profileGamesPlayed: String { tr("profile.games_played") }
+    static var profileHosted: String { tr("profile.hosted") }
+    static var profilePositionGK: String { tr("profile.position.gk") }
+    static var profilePositionDef: String { tr("profile.position.def") }
+    static var profilePositionMid: String { tr("profile.position.mid") }
+    static var profilePositionFwd: String { tr("profile.position.fwd") }
+    static var profileNameTooShort: String { tr("profile.name_too_short") }
 
     static var mapTitle: String { tr("map.title") }
     static var logoPending: String { tr("brand.logo_pending") }

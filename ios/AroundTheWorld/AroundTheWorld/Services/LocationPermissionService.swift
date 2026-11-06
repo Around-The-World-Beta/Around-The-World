@@ -1,6 +1,7 @@
 import Foundation
 import CoreLocation
 import Combine
+import UIKit
 
 /// Requests When-In-Use location **only** when Map / Host needs it — never during app launch.
 @MainActor
@@ -17,6 +18,21 @@ final class LocationPermissionService: NSObject, ObservableObject {
         manager.desiredAccuracy = kCLLocationAccuracyHundredMeters
     }
 
+    var isAuthorized: Bool {
+        authorization == .authorizedWhenInUse || authorization == .authorizedAlways
+    }
+
+    var settingsSubtitle: String {
+        switch authorization {
+        case .authorizedAlways, .authorizedWhenInUse:
+            return L10n.settingsLocationOn
+        case .denied, .restricted:
+            return L10n.settingsLocationDenied
+        default:
+            return L10n.settingsLocationOff
+        }
+    }
+
     func requestWhenInUseIfNeeded() {
         BootLogger.step("location.requestWhenInUse", "status=\(authorization.rawValue)")
         switch manager.authorizationStatus {
@@ -27,6 +43,25 @@ final class LocationPermissionService: NSObject, ObservableObject {
         default:
             BootLogger.step("location.denied_or_restricted")
         }
+    }
+
+    /// Settings row: ask once, or jump to iPhone Settings if the user already said no.
+    func handleSettingsTap() {
+        switch authorization {
+        case .notDetermined:
+            requestWhenInUseIfNeeded()
+        case .denied, .restricted:
+            openAppSettings()
+        case .authorizedAlways, .authorizedWhenInUse:
+            manager.requestLocation()
+        @unknown default:
+            break
+        }
+    }
+
+    func openAppSettings() {
+        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+        UIApplication.shared.open(url)
     }
 }
 

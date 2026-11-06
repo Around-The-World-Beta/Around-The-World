@@ -15,6 +15,8 @@ enum AppTheme {
     static let muted = Color(red: 173 / 255, green: 158 / 255, blue: 130 / 255)
     static let foreground = white
     static let secondaryFill = Color(red: 62 / 255, green: 56 / 255, blue: 48 / 255)
+    /// Delete-account red from the Lovable settings list — not a neon system red.
+    static let destructive = Color(red: 214 / 255, green: 92 / 255, blue: 78 / 255)
 
     /// Lovable `--radius` 0.75rem and `rounded-2xl` cards — not squircle / 24pt chrome.
     static let cardRadius: CGFloat = 16

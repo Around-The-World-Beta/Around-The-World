@@ -62,4 +62,37 @@ public struct UpdateProfileRequest: Codable, Sendable, Equatable {
         self.avatarUrl = avatarUrl
         self.age = age
     }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encodeIfPresent(city, forKey: .city)
+        try container.encodeIfPresent(bio, forKey: .bio)
+        try container.encodeIfPresent(favoritePosition, forKey: .favoritePosition)
+        try container.encodeIfPresent(skillLevel, forKey: .skillLevel)
+        try container.encodeIfPresent(avatarUrl, forKey: .avatarUrl)
+        try container.encodeIfPresent(age, forKey: .age)
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case city, bio, favoritePosition, skillLevel, avatarUrl, age
+    }
+}
+
+/// Positions the server accepts on `PATCH /api/v1/me/profile`.
+enum PlayerPosition: String, CaseIterable, Identifiable, Sendable {
+    case goalkeeper = "Goalkeeper"
+    case defender = "Defender"
+    case midfielder = "Midfielder"
+    case forward = "Forward"
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .goalkeeper: return L10n.profilePositionGK
+        case .defender: return L10n.profilePositionDef
+        case .midfielder: return L10n.profilePositionMid
+        case .forward: return L10n.profilePositionFwd
+        }
+    }
 }

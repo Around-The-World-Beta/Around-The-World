@@ -51,7 +51,13 @@ struct HeaderActionsView: View {
             NavigationLink {
                 PlayerProfileView()
             } label: {
-                avatar
+                ProfileAvatarView(
+                    name: session.user?.displayName,
+                    avatarURL: session.profile?.httpAvatarURL,
+                    size: 40,
+                    goldBorder: session.isSignedIn,
+                    signedIn: session.isSignedIn
+                )
             }
             .buttonStyle(.plain)
             .accessibilityLabel(L10n.tabProfile)
@@ -62,23 +68,57 @@ struct HeaderActionsView: View {
             Text(L10n.notificationsPlaceholder)
         }
     }
+}
+
+/// Circular avatar used in the header and on Profile. Falls back to an initial.
+struct ProfileAvatarView: View {
+    var name: String?
+    var avatarURL: URL?
+    var size: CGFloat = 40
+    var goldBorder: Bool = false
+    var signedIn: Bool = false
+
+    var body: some View {
+        Group {
+            if let avatarURL {
+                AsyncImage(url: avatarURL) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image.resizable().scaledToFill()
+                    default:
+                        fallback
+                    }
+                }
+            } else {
+                fallback
+            }
+        }
+        .frame(width: size, height: size)
+        .clipShape(Circle())
+        .overlay(
+            Circle().stroke(goldBorder ? AppTheme.gold : AppTheme.border, lineWidth: goldBorder ? 2 : 1)
+        )
+    }
 
     @ViewBuilder
-    private var avatar: some View {
-        if session.isSignedIn, let initial = session.user?.displayName.trimmingCharacters(in: .whitespacesAndNewlines).first {
-            Text(String(initial).uppercased())
-                .font(.system(size: 16, weight: .black))
+    private var fallback: some View {
+        if signedIn, let initial {
+            Text(initial)
+                .font(.system(size: size * 0.40, weight: .black))
                 .foregroundStyle(AppTheme.primaryForeground)
-                .frame(width: 40, height: 40)
+                .frame(width: size, height: size)
                 .background(AppTheme.gold, in: Circle())
-                .overlay(Circle().stroke(AppTheme.border, lineWidth: 1))
         } else {
             Image(systemName: "person.crop.circle.fill")
-                .font(.system(size: 36))
+                .font(.system(size: size * 0.92))
                 .foregroundStyle(AppTheme.muted)
-                .frame(width: 40, height: 40)
-                .overlay(Circle().stroke(AppTheme.border, lineWidth: 1))
+                .frame(width: size, height: size)
         }
+    }
+
+    private var initial: String? {
+        guard let char = name?.trimmingCharacters(in: .whitespacesAndNewlines).first else { return nil }
+        return String(char).uppercased()
     }
 }
 
