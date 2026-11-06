@@ -56,9 +56,11 @@ struct GameDetailView: View {
                     }
 
                     Text(game.title)
-                        .font(.system(size: 30, weight: .black, design: .rounded))
+                        .font(.system(size: 30, weight: .black))
+                        .italic()
                         .foregroundStyle(AppTheme.foreground)
                         .textCase(.uppercase)
+                        .tracking(-0.6)
 
                     Text("\(game.neighborhood) · \(game.venue)")
                         .font(.subheadline)
@@ -101,6 +103,7 @@ struct GameDetailView: View {
                     claimButton(game)
                 }
                 .padding(20)
+                .padding(.bottom, 72)
             }
         }
     }

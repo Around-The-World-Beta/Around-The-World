@@ -39,8 +39,57 @@ enum L10n {
     static var tabMap: String { tr("tab.map") }
     static var tabHost: String { tr("tab.host") }
     static var tabMyGames: String { tr("tab.my_games") }
+    static var tabFriends: String { tr("tab.friends") }
     static var tabProfile: String { tr("tab.profile") }
     static var tabSettings: String { tr("tab.settings") }
+
+    static var matchesSubtitle: String { tr("matches.subtitle") }
+    static var myGamesSubtitle: String { tr("my_games.subtitle") }
+    static var friendsSubtitle: String { tr("friends.subtitle") }
+    static var viewList: String { tr("view.list") }
+    static var viewMap: String { tr("view.map") }
+    static var dateToday: String { tr("date.today") }
+
+    static var filtersTitle: String { tr("filters.title") }
+    static var filtersClose: String { tr("filters.close") }
+    static var filtersPreferredTime: String { tr("filters.preferred_time") }
+    static var filtersDistance: String { tr("filters.distance") }
+    static var filtersDistanceHelp: String { tr("filters.distance_help") }
+    static func filtersDistanceValue(_ miles: Int) -> String { tr("filters.distance_value", miles) }
+    static var filtersDifficulty: String { tr("filters.difficulty") }
+    static var filtersClear: String { tr("filters.clear") }
+    static func filtersSeeGames(_ n: Int) -> String {
+        n == 1 ? tr("filters.see_game") : tr("filters.see_games", n)
+    }
+    static var filterMorning: String { tr("filters.morning") }
+    static var filterAfternoon: String { tr("filters.afternoon") }
+    static var filterEvening: String { tr("filters.evening") }
+    static var filterLateNight: String { tr("filters.late_night") }
+    static var filterMorningRange: String { tr("filters.morning.range") }
+    static var filterAfternoonRange: String { tr("filters.afternoon.range") }
+    static var filterEveningRange: String { tr("filters.evening.range") }
+    static var filterLateNightRange: String { tr("filters.late_night.range") }
+
+    static var sortLabel: String { tr("sort.label") }
+    static var sortTime: String { tr("sort.time") }
+    static var sortPrice: String { tr("sort.price") }
+    static var sortDistance: String { tr("sort.distance") }
+    static var sortDifficulty: String { tr("sort.difficulty") }
+
+    static var friendsFollowing: String { tr("friends.following") }
+    static var friendsFollowers: String { tr("friends.followers") }
+    static var friendsPlaceholderTitle: String { tr("friends.placeholder.title") }
+    static var friendsPlaceholderMessage: String { tr("friends.placeholder.message") }
+
+    static var notificationsTitle: String { tr("notifications.title") }
+    static var notificationsPlaceholder: String { tr("notifications.placeholder") }
+
+    static var mapYou: String { tr("map.you") }
+    static var mapTurnOnLocation: String { tr("map.turn_on_location") }
+    static var mapLocationDenied: String { tr("map.location_denied") }
+    static var mapLocationHelp: String { tr("map.location_help") }
+    static var mapViewGame: String { tr("map.view_game") }
+    static var hostClose: String { tr("host.close") }
 
     static var loadingMatches: String { tr("loading.matches") }
     static var loadingMatch: String { tr("loading.match") }

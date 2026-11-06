@@ -2,15 +2,63 @@
 "tab.map" = "Map";
 "tab.host" = "Host";
 "tab.my_games" = "My Games";
+"tab.friends" = "Friends";
 "tab.profile" = "Profile";
 "tab.settings" = "Settings";
+
+"matches.subtitle" = "Choose pickup games to attend";
+"my_games.subtitle" = "Matches you've joined or are hosting";
+"friends.subtitle" = "Follow players and see who's playing near you.";
+"view.list" = "List";
+"view.map" = "Map";
+"date.today" = "Today";
+
+"filters.title" = "Filters";
+"filters.close" = "Close filters";
+"filters.preferred_time" = "Preferred time";
+"filters.distance" = "Distance away";
+"filters.distance_help" = "See games based on proximity of your location";
+"filters.distance_value" = "0 mi - %d mi";
+"filters.difficulty" = "Game difficulty";
+"filters.clear" = "Clear";
+"filters.see_game" = "See 1 Game";
+"filters.see_games" = "See %d Games";
+"filters.morning" = "Morning";
+"filters.afternoon" = "Afternoon";
+"filters.evening" = "Evening";
+"filters.late_night" = "Late night";
+"filters.morning.range" = "7am - 12pm";
+"filters.afternoon.range" = "12pm - 5pm";
+"filters.evening.range" = "5pm - 10pm";
+"filters.late_night.range" = "10pm - 2am";
+
+"sort.label" = "Sort:";
+"sort.time" = "Time";
+"sort.price" = "Price";
+"sort.distance" = "Distance";
+"sort.difficulty" = "Difficulty";
+
+"friends.following" = "Following";
+"friends.followers" = "Followers";
+"friends.placeholder.title" = "Friends comes later";
+"friends.placeholder.message" = "Following, Followers, and Friends Playing Nearby are not in this release. This tab is here so the app matches the approved layout.";
+
+"notifications.title" = "Notifications";
+"notifications.placeholder" = "Game reminders and waitlist alerts are not in this release.";
+
+"map.you" = "You";
+"map.turn_on_location" = "Turn On Location";
+"map.location_denied" = "Location Off";
+"map.location_help" = "We'll zoom into your neighborhood";
+"map.view_game" = "View";
+"host.close" = "Close";
 
 "loading.matches" = "Loading matches…";
 "loading.match" = "Loading match…";
 "empty.matches.title" = "No open games nearby";
 "empty.matches.message" = "Bay Area listings with open spots will show up here. Pull to refresh, or host a session.";
 "empty.my_games.title" = "No games yet";
-"empty.my_games.message" = "Sessions you join stay here — even when they're full.";
+"empty.my_games.message" = "Sign in to see games you've joined or are hosting. Nothing is stored on this phone until then.";
 "empty.map.title" = "No sessions on the map";
 "empty.map.message" = "Open spots in the Bay Area appear as pins when hosts publish games.";
 
@@ -19,8 +67,8 @@
 "section.free" = "Free Sessions";
 "section.paid" = "Paid Sessions";
 "section.available_count" = "%d available";
-"section.no_free" = "No free sessions with open spots";
-"section.no_paid" = "No paid sessions with open spots";
+"section.no_free" = "No free sessions match";
+"section.no_paid" = "No paid sessions match";
 
 "settings.title" = "Settings";
 "settings.language" = "Language";

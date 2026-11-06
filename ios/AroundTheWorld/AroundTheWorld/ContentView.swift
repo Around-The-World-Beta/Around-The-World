@@ -1,28 +1,89 @@
 import SwiftUI
 
-/// Root tab shell for Bay Area beta: Matches, Map, Host, My Games, Profile/Settings.
+/// Root shell: Matches, My Games, Friends, floating Host "+", profile via the header avatar.
 struct ContentView: View {
     @EnvironmentObject private var languageStore: LanguageStore
+    @StateObject private var matchesViewModel = MatchesViewModel()
+    @StateObject private var location = LocationPermissionService()
+    @State private var tab: MainTab = .matches
+    @State private var showHost = false
+    @State private var showFilters = false
+    @State private var filtersMounted = false
 
     var body: some View {
-        TabView {
-            MatchesDashboardView()
-                .tabItem { Label(L10n.tabMatches, systemImage: "sportscourt") }
+        GeometryReader { geo in
+            ZStack(alignment: .bottomTrailing) {
+                VStack(spacing: 0) {
+                    tabBody
+                    MainTabBar(tab: $tab)
+                }
 
-            SessionsMapView()
-                .tabItem { Label(L10n.tabMap, systemImage: "map") }
+                if !filtersMounted {
+                    hostFab
+                }
 
+                if filtersMounted {
+                    FilterSheetView(
+                        viewModel: matchesViewModel,
+                        screenHeight: geo.size.height,
+                        onDismiss: {
+                            filtersMounted = false
+                            showFilters = false
+                        }
+                    )
+                    .zIndex(40)
+                }
+            }
+            .frame(width: geo.size.width, height: geo.size.height)
+        }
+        .background(AppTheme.background.ignoresSafeArea())
+        .preferredColorScheme(.dark)
+        .tint(AppTheme.gold)
+        .fullScreenCover(isPresented: $showHost) {
             HostSessionView()
-                .tabItem { Label(L10n.tabHost, systemImage: "plus.circle") }
+        }
+        .onChange(of: showFilters) { _, show in
+            if show { filtersMounted = true }
+        }
+        .id(languageStore.language)
+    }
+
+    private var tabBody: some View {
+        ZStack {
+            MatchesDashboardView(
+                viewModel: matchesViewModel,
+                location: location,
+                showFilters: $showFilters
+            )
+            .opacity(tab == .matches ? 1 : 0)
+            .allowsHitTesting(tab == .matches)
 
             MyGamesView()
-                .tabItem { Label(L10n.tabMyGames, systemImage: "calendar") }
+                .opacity(tab == .myGames ? 1 : 0)
+                .allowsHitTesting(tab == .myGames)
 
-            PlayerProfileView()
-                .tabItem { Label(L10n.tabProfile, systemImage: "person.crop.circle") }
+            FriendsPlaceholderView()
+                .opacity(tab == .friends ? 1 : 0)
+                .allowsHitTesting(tab == .friends)
         }
-        .tint(AppTheme.gold)
-        .id(languageStore.language)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private var hostFab: some View {
+        Button {
+            showHost = true
+        } label: {
+            Image(systemName: "plus")
+                .font(.system(size: 26, weight: .bold))
+                .foregroundStyle(AppTheme.primaryForeground)
+                .frame(width: 56, height: 56)
+                .background(AppTheme.gold, in: Circle())
+                .shadow(color: AppTheme.gold.opacity(0.45), radius: 12)
+        }
+        .buttonStyle(ATWPressScaleStyle())
+        .accessibilityLabel(L10n.hostTitle)
+        .padding(.trailing, 20)
+        .padding(.bottom, 88)
     }
 }
 

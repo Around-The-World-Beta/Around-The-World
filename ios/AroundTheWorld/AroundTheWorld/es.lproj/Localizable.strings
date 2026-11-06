@@ -2,15 +2,63 @@
 "tab.map" = "Mapa";
 "tab.host" = "Organizar";
 "tab.my_games" = "Mis juegos";
+"tab.friends" = "Amigos";
 "tab.profile" = "Perfil";
 "tab.settings" = "Ajustes";
+
+"matches.subtitle" = "Elige partidos para jugar";
+"my_games.subtitle" = "Partidos a los que te uniste o que organizas";
+"friends.subtitle" = "Sigue jugadores y mira quién juega cerca.";
+"view.list" = "Lista";
+"view.map" = "Mapa";
+"date.today" = "Hoy";
+
+"filters.title" = "Filtros";
+"filters.close" = "Cerrar filtros";
+"filters.preferred_time" = "Horario preferido";
+"filters.distance" = "Distancia";
+"filters.distance_help" = "Ver partidos según la cercanía a tu ubicación";
+"filters.distance_value" = "0 mi - %d mi";
+"filters.difficulty" = "Dificultad del partido";
+"filters.clear" = "Borrar";
+"filters.see_game" = "Ver 1 partido";
+"filters.see_games" = "Ver %d partidos";
+"filters.morning" = "Mañana";
+"filters.afternoon" = "Tarde";
+"filters.evening" = "Noche";
+"filters.late_night" = "Madrugada";
+"filters.morning.range" = "7am - 12pm";
+"filters.afternoon.range" = "12pm - 5pm";
+"filters.evening.range" = "5pm - 10pm";
+"filters.late_night.range" = "10pm - 2am";
+
+"sort.label" = "Orden:";
+"sort.time" = "Hora";
+"sort.price" = "Precio";
+"sort.distance" = "Distancia";
+"sort.difficulty" = "Dificultad";
+
+"friends.following" = "Siguiendo";
+"friends.followers" = "Seguidores";
+"friends.placeholder.title" = "Amigos llega después";
+"friends.placeholder.message" = "Seguir, seguidores y Amigos jugando cerca no están en esta versión. Esta pestaña existe para coincidir con el diseño aprobado.";
+
+"notifications.title" = "Notificaciones";
+"notifications.placeholder" = "Los recordatorios de partidos no están en esta versión.";
+
+"map.you" = "Tú";
+"map.turn_on_location" = "Activar ubicación";
+"map.location_denied" = "Ubicación desactivada";
+"map.location_help" = "Haremos zoom a tu barrio";
+"map.view_game" = "Ver";
+"host.close" = "Cerrar";
 
 "loading.matches" = "Cargando partidos…";
 "loading.match" = "Cargando partido…";
 "empty.matches.title" = "No hay juegos abiertos cerca";
 "empty.matches.message" = "Los partidos del Área de la Bahía con cupos aparecerán aquí. Desliza para actualizar u organiza una sesión.";
 "empty.my_games.title" = "Aún no tienes juegos";
-"empty.my_games.message" = "Las sesiones en las que te unes permanecen aquí, incluso si están llenas.";
+"empty.my_games.message" = "Inicia sesión para ver los partidos a los que te uniste o que organizas. Nada se guarda en este teléfono hasta entonces.";
 "empty.map.title" = "No hay sesiones en el mapa";
 "empty.map.message" = "Los cupos abiertos en el Área de la Bahía aparecen como pines cuando se publican juegos.";
 
@@ -19,8 +67,8 @@
 "section.free" = "Sesiones gratis";
 "section.paid" = "Sesiones de pago";
 "section.available_count" = "%d disponibles";
-"section.no_free" = "No hay sesiones gratis con cupos";
-"section.no_paid" = "No hay sesiones de pago con cupos";
+"section.no_free" = "No hay sesiones gratis que coincidan";
+"section.no_paid" = "No hay sesiones de pago que coincidan";
 
 "settings.title" = "Ajustes";
 "settings.language" = "Idioma";

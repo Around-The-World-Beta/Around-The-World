@@ -7,47 +7,43 @@ struct PlayerProfileView: View {
     @StateObject private var viewModel = PlayerProfileViewModel()
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                AppTheme.background.ignoresSafeArea()
+        ZStack {
+            AppTheme.background.ignoresSafeArea()
 
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 20) {
-                        BrandHeader()
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    Text(L10n.profileTitle)
+                        .font(AppTheme.displayFont)
+                        .italic()
+                        .foregroundStyle(AppTheme.foreground)
+                        .textCase(.uppercase)
 
-                        Text(L10n.profileTitle)
-                            .font(AppTheme.displayFont)
-                            .foregroundStyle(AppTheme.foreground)
-                            .textCase(.uppercase)
-
-                        Text(L10n.profilePendingLayout)
-                            .font(.caption)
-                            .foregroundStyle(AppTheme.muted)
-
-                        if let profile = viewModel.profile {
-                            profileCard(profile)
-                        } else {
-                            EmptyStateView(
-                                title: L10n.profileTitle,
-                                message: L10n.profileEmpty,
-                                systemImage: "person.crop.circle"
-                            )
-                            .frame(minHeight: 220)
-                        }
+                    if let profile = viewModel.profile {
+                        profileCard(profile)
+                    } else {
+                        EmptyStateView(
+                            title: L10n.profileTitle,
+                            message: L10n.profileEmpty,
+                            systemImage: "person.crop.circle"
+                        )
+                        .frame(minHeight: 220)
                     }
-                    .padding(20)
                 }
+                .padding(20)
             }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink {
-                        SettingsView()
-                    } label: {
-                        Image(systemName: "gearshape")
-                            .foregroundStyle(AppTheme.gold)
-                    }
+        }
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(AppTheme.background, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationLink {
+                    SettingsView()
+                } label: {
+                    Image(systemName: "gearshape")
+                        .foregroundStyle(AppTheme.gold)
                 }
+                .accessibilityLabel(L10n.tabSettings)
             }
         }
         .atwScreenBackground()
