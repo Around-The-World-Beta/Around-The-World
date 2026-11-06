@@ -3,21 +3,14 @@ import Vapor
 
 struct ParticipantsController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
-        let participants = routes.grouped("api", "v1", "participants")
-        participants.get(use: index)
+        let participants = routes.grouped("participants")
         participants.post(use: create)
+        participants.get("game", ":gameID", use: listByGame)
         participants.group(":participantID") { participant in
             participant.get(use: show)
             participant.patch(use: update)
             participant.delete(use: delete)
         }
-        participants.get("game", ":gameID", use: listByGame)
-    }
-
-    @Sendable
-    func index(req: Request) async throws -> [ParticipantResponse] {
-        let participants = try await Participant.query(on: req.db).sort(\.$createdAt, .descending).all()
-        return try participants.map { try ParticipantResponse(participant: $0) }
     }
 
     @Sendable
@@ -34,13 +27,11 @@ struct ParticipantsController: RouteCollection {
 
     @Sendable
     func create(req: Request) async throws -> Response {
+        let userID = try req.requireAuthUserID()
         let body = try req.content.decode(CreateParticipantRequest.self)
 
         guard let game = try await Game.find(body.gameId, on: req.db) else {
             throw Abort(.badRequest, reason: "gameId does not reference an existing game")
-        }
-        guard try await User.find(body.userId, on: req.db) != nil else {
-            throw Abort(.badRequest, reason: "userId does not reference an existing user")
         }
         guard game.status == GameStatus.scheduled.rawValue else {
             throw Abort(.badRequest, reason: "Cannot join a game that is not scheduled")
@@ -48,7 +39,7 @@ struct ParticipantsController: RouteCollection {
 
         if try await Participant.query(on: req.db)
             .filter(\.$game.$id == body.gameId)
-            .filter(\.$user.$id == body.userId)
+            .filter(\.$user.$id == userID)
             .first() != nil
         {
             throw Abort(.conflict, reason: "User is already a participant of this game")
@@ -67,7 +58,11 @@ struct ParticipantsController: RouteCollection {
             }
         }
 
-        let participant = Participant(gameID: body.gameId, userID: body.userId, status: ParticipantStatus(rawValue: status) ?? .joined)
+        let participant = Participant(
+            gameID: body.gameId,
+            userID: userID,
+            status: ParticipantStatus(rawValue: status) ?? .joined
+        )
         participant.status = status
         try await participant.save(on: req.db)
 
@@ -80,12 +75,14 @@ struct ParticipantsController: RouteCollection {
     @Sendable
     func show(req: Request) async throws -> ParticipantResponse {
         let participant = try await findParticipant(req)
+        try await requireOwnerOrHost(participant, on: req)
         return try ParticipantResponse(participant: participant)
     }
 
     @Sendable
     func update(req: Request) async throws -> ParticipantResponse {
         let participant = try await findParticipant(req)
+        try requireSelf(participant, on: req)
         let body = try req.content.decode(UpdateParticipantRequest.self)
         let status = try APIValidation.validateParticipantStatus(body.status)
 
@@ -111,6 +108,7 @@ struct ParticipantsController: RouteCollection {
     @Sendable
     func delete(req: Request) async throws -> APIMessage {
         let participant = try await findParticipant(req)
+        try requireSelf(participant, on: req)
         try await participant.delete(on: req.db)
         return APIMessage(message: "Participant removed")
     }
@@ -123,5 +121,22 @@ struct ParticipantsController: RouteCollection {
             throw Abort(.notFound, reason: "Participant not found")
         }
         return participant
+    }
+
+    private func requireSelf(_ participant: Participant, on req: Request) throws {
+        let userID = try req.requireAuthUserID()
+        guard participant.$user.id == userID else {
+            throw Abort(.forbidden, reason: "You can only change your own signup")
+        }
+    }
+
+    private func requireOwnerOrHost(_ participant: Participant, on req: Request) async throws {
+        let userID = try req.requireAuthUserID()
+        if participant.$user.id == userID { return }
+        guard let game = try await Game.find(participant.$game.id, on: req.db),
+              game.$host.id == userID
+        else {
+            throw Abort(.forbidden, reason: "You cannot view this signup")
+        }
     }
 }

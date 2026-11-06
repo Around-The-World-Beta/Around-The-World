@@ -79,6 +79,10 @@ contains the words `YOUR-PASSWORD` in brackets.
 **Do not paste these values into a chat message.** Send them through a password manager
 share, 1Password, or an encrypted note.
 
+When the server is hosted, the same names go into Railway as environment variables:
+`SUPABASE_JWT_SECRET`, `SUPABASE_URL`, `DATABASE_URL`. Optional: `CORS_ALLOWED_ORIGINS`,
+`RATE_LIMIT_PER_MINUTE`. How the iPhone uses the JWT is in [`auth-contract.md`](./auth-contract.md).
+
 ---
 
 ## Step 3 — Only if you already ran the old SQL files

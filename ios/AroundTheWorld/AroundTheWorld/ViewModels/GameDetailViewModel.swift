@@ -26,11 +26,14 @@ final class GameDetailViewModel: ObservableObject {
         state = .loading
         actionMessage = nil
         do {
-            async let gameTask = api.getGame(id: gameID)
-            async let participantsTask = api.listParticipants(gameId: gameID)
-            let (fetchedGame, fetchedParticipants) = try await (gameTask, participantsTask)
+            let fetchedGame = try await api.getGame(id: gameID)
             game = fetchedGame
-            participants = fetchedParticipants.filter { $0.status == "joined" || $0.status == "waitlist" }
+            if currentUserID != nil {
+                let fetchedParticipants = (try? await api.listParticipants(gameId: gameID)) ?? []
+                participants = fetchedParticipants.filter { $0.status == "joined" || $0.status == "waitlist" }
+            } else {
+                participants = []
+            }
             state = .loaded
         } catch let error as APIError {
             game = nil
@@ -59,7 +62,7 @@ final class GameDetailViewModel: ObservableObject {
 
         do {
             _ = try await api.createParticipant(
-                CreateParticipantRequest(gameId: game.id, userId: userID)
+                CreateParticipantRequest(gameId: game.id)
             )
             actionMessage = game.isFull ? "Added to waitlist." : "You're in — see you on the pitch."
             await load()

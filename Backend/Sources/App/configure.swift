@@ -2,6 +2,7 @@ import NIOSSL
 import Fluent
 import FluentPostgresDriver
 import FluentSQLiteDriver
+import JWT
 import Vapor
 
 public func configure(_ app: Application) async throws {
@@ -16,6 +17,7 @@ public func configure(_ app: Application) async throws {
     }
 
     try configureDatabase(app)
+    try await configureAuth(app)
 
     app.migrations.add(CreateUsers())
     app.migrations.add(CreateProfiles())
@@ -34,11 +36,12 @@ public func configure(_ app: Application) async throws {
     }
 
     app.middleware.use(JSONErrorMiddleware())
+    app.middleware.use(RateLimitMiddleware())
 
-    let corsOrigin = Environment.get("CORS_ORIGIN") ?? "*"
+    let allowedOrigins = AuthConfiguration.allowedCORSOrigins(for: app.environment)
     let cors = CORSMiddleware(
         configuration: .init(
-            allowedOrigin: corsOrigin == "*" ? .all : .originBased,
+            allowedOrigin: allowedOrigins.isEmpty ? .none : .any(allowedOrigins),
             allowedMethods: [.GET, .POST, .PUT, .PATCH, .DELETE, .OPTIONS],
             allowedHeaders: [
                 .accept,
@@ -47,7 +50,6 @@ public func configure(_ app: Application) async throws {
                 .origin,
                 .xRequestedWith,
                 .userAgent,
-                .accessControlAllowOrigin,
             ]
         )
     )
@@ -58,6 +60,21 @@ public func configure(_ app: Application) async throws {
     app.logger.info(
         "API ready — health at http://\(app.http.server.configuration.hostname):\(app.http.server.configuration.port)/health"
     )
+}
+
+private func configureAuth(_ app: Application) async throws {
+    let secret = try AuthConfiguration.jwtSecret(for: app.environment)
+    if secret == AuthConfiguration.developmentJWTSecret {
+        app.logger.warning(
+            "Using the built-in local JWT secret. Real Sign in with Apple tokens will not verify until SUPABASE_JWT_SECRET is set."
+        )
+    }
+    await app.jwt.keys.add(hmac: HMACKey(from: secret), digestAlgorithm: .sha256)
+    if let issuer = AuthConfiguration.expectedIssuer {
+        app.logger.info("JWT issuer required: \(issuer)")
+    } else if app.environment != .testing {
+        app.logger.warning("SUPABASE_URL is not set; token issuer will not be checked")
+    }
 }
 
 private func configureDatabase(_ app: Application) throws {

@@ -46,8 +46,7 @@ export const api = {
   health: () => get<{ status: string; service: string }>("/health"),
   listGames: (includeFull = false) =>
     get<Game[]>(`/api/v1/games?includeFull=${includeFull}&region=bay-area`),
-  listMyGames: (userId: string) =>
-    get<Game[]>(`/api/v1/games/mine?userId=${encodeURIComponent(userId)}`),
+  listMyGames: () => get<Game[]>("/api/v1/me/games"),
   getGame: (id: string) => get<Game>(`/api/v1/games/${id}`),
   bayAreaMeta: () => get<BayAreaMeta>("/api/v1/meta/bay-area"),
 };

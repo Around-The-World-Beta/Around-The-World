@@ -60,18 +60,41 @@ This service owns `users`, `profiles`, `games`, `participants`, and `friendships
 owns `auth.users` and nothing else. They are linked by `users.supabase_user_id`, which is written
 only from a verified JWT and is rejected if a client sends it — see `Sources/App/IdentityLink.swift`.
 
+**How the iPhone signs in:** [`../docs/auth-contract.md`](../docs/auth-contract.md).
+
+## Railway environment variables
+
+Paste these names (values from Supabase, never into chat):
+
+| Name | Where it comes from |
+| --- | --- |
+| `SUPABASE_JWT_SECRET` | Project Settings → API → JWT Secret |
+| `SUPABASE_URL` | Project Settings → API → Project URL |
+| `DATABASE_URL` | Project Settings → Database → Connection string → URI |
+| `CORS_ALLOWED_ORIGINS` | Leave empty unless a specific website must call the API |
+| `RATE_LIMIT_PER_MINUTE` | Optional; default `120` |
+
+Do not deploy this service publicly until authentication is merged and those secrets are set.
+
 ## API (`/api/v1`)
+
+Public (no token): `GET /health`, `GET /meta/bay-area`, `GET /games`, `GET /games/:id`.
+
+Authenticated (`Authorization: Bearer <supabase access token>`):
 
 | Resource | Endpoints |
 | --- | --- |
-| Users | `GET/POST /users`, `GET/PATCH/DELETE /users/:id` |
-| Profiles | `GET /profiles`, `GET/PATCH/DELETE /profiles/:id`, `GET /profiles/user/:userId` |
-| Games | `GET/POST /games`, `GET/PATCH/DELETE /games/:id` |
-| Participants | `GET/POST /participants`, … |
-| Friendships | `GET/POST /friendships`, … |
+| Account | `GET/PATCH/DELETE /me` |
+| Profile | `GET/PATCH /me/profile` |
+| My games / friends | `GET /me/games`, `GET /me/friendships` |
+| Host | `POST /games`, `PATCH/DELETE /games/:id` (host only) |
+| Claim spot | `POST /participants` (player = token) |
+| Player card | `GET /players/:id` (no email) |
+
+Dump endpoints (`GET /users`, `GET /profiles`, `GET /games/mine?userId=`, …) return `401`.
 
 Errors:
 
 ```json
-{ "error": { "message": "User not found", "status": 404 } }
+{ "error": { "message": "Sign in required", "status": 401 } }
 ```

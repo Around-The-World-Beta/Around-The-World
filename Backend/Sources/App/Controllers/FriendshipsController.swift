@@ -3,54 +3,29 @@ import Vapor
 
 struct FriendshipsController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
-        let friendships = routes.grouped("api", "v1", "friendships")
-        friendships.get(use: index)
+        let friendships = routes.grouped("friendships")
         friendships.post(use: create)
         friendships.group(":friendshipID") { friendship in
             friendship.get(use: show)
             friendship.patch(use: update)
             friendship.delete(use: delete)
         }
-        friendships.get("user", ":userID", use: listByUser)
-    }
-
-    @Sendable
-    func index(req: Request) async throws -> [FriendshipResponse] {
-        let friendships = try await Friendship.query(on: req.db).sort(\.$createdAt, .descending).all()
-        return try friendships.map { try FriendshipResponse(friendship: $0) }
-    }
-
-    @Sendable
-    func listByUser(req: Request) async throws -> [FriendshipResponse] {
-        guard let userID = req.parameters.get("userID", as: UUID.self) else {
-            throw Abort(.badRequest, reason: "Invalid user id")
-        }
-        let friendships = try await Friendship.query(on: req.db)
-            .group(.or) { group in
-                group.filter(\.$user.$id == userID)
-                group.filter(\.$friend.$id == userID)
-            }
-            .sort(\.$createdAt, .descending)
-            .all()
-        return try friendships.map { try FriendshipResponse(friendship: $0) }
     }
 
     @Sendable
     func create(req: Request) async throws -> Response {
+        let userID = try req.requireAuthUserID()
         let body = try req.content.decode(CreateFriendshipRequest.self)
 
-        guard body.userId != body.friendUserId else {
-            throw Abort(.badRequest, reason: "userId and friendUserId must be different")
-        }
-        guard try await User.find(body.userId, on: req.db) != nil else {
-            throw Abort(.badRequest, reason: "userId does not reference an existing user")
+        guard userID != body.friendUserId else {
+            throw Abort(.badRequest, reason: "You cannot follow yourself")
         }
         guard try await User.find(body.friendUserId, on: req.db) != nil else {
             throw Abort(.badRequest, reason: "friendUserId does not reference an existing user")
         }
 
         if try await Friendship.query(on: req.db)
-            .filter(\.$user.$id == body.userId)
+            .filter(\.$user.$id == userID)
             .filter(\.$friend.$id == body.friendUserId)
             .first() != nil
         {
@@ -59,7 +34,7 @@ struct FriendshipsController: RouteCollection {
 
         let status = try APIValidation.validateFriendshipStatus(body.status ?? FriendshipStatus.pending.rawValue)
         let friendship = Friendship(
-            userID: body.userId,
+            userID: userID,
             friendUserID: body.friendUserId,
             status: FriendshipStatus(rawValue: status) ?? .pending
         )
@@ -75,12 +50,14 @@ struct FriendshipsController: RouteCollection {
     @Sendable
     func show(req: Request) async throws -> FriendshipResponse {
         let friendship = try await findFriendship(req)
+        try requireParty(friendship, on: req)
         return try FriendshipResponse(friendship: friendship)
     }
 
     @Sendable
     func update(req: Request) async throws -> FriendshipResponse {
         let friendship = try await findFriendship(req)
+        try requireParty(friendship, on: req)
         let body = try req.content.decode(UpdateFriendshipRequest.self)
         friendship.status = try APIValidation.validateFriendshipStatus(body.status)
         try await friendship.update(on: req.db)
@@ -90,6 +67,7 @@ struct FriendshipsController: RouteCollection {
     @Sendable
     func delete(req: Request) async throws -> APIMessage {
         let friendship = try await findFriendship(req)
+        try requireParty(friendship, on: req)
         try await friendship.delete(on: req.db)
         return APIMessage(message: "Friendship deleted")
     }
@@ -102,5 +80,12 @@ struct FriendshipsController: RouteCollection {
             throw Abort(.notFound, reason: "Friendship not found")
         }
         return friendship
+    }
+
+    private func requireParty(_ friendship: Friendship, on req: Request) throws {
+        let userID = try req.requireAuthUserID()
+        guard friendship.$user.id == userID || friendship.$friend.id == userID else {
+            throw Abort(.forbidden, reason: "You can only change your own friend list")
+        }
     }
 }

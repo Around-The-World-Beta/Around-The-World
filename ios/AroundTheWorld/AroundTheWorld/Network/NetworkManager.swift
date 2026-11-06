@@ -12,6 +12,7 @@ public actor NetworkManager {
     public static let shared = NetworkManager()
 
     private var configuration: APIConfiguration
+    private var bearerToken: String?
     private let session: URLSession
     private let decoder: JSONDecoder
     private let encoder: JSONEncoder
@@ -46,6 +47,11 @@ public actor NetworkManager {
 
     public func currentConfiguration() -> APIConfiguration {
         configuration
+    }
+
+    /// Supabase access token from Sign in with Apple. Sent as `Authorization: Bearer`.
+    public func setBearerToken(_ token: String?) {
+        bearerToken = token
     }
 
     // MARK: - Generic verbs
@@ -142,6 +148,10 @@ public actor NetworkManager {
 
         for (header, value) in configuration.defaultHeaders {
             request.setValue(value, forHTTPHeaderField: header)
+        }
+
+        if let bearerToken, !bearerToken.isEmpty {
+            request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
         }
 
         if let body {

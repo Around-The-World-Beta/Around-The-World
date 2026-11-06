@@ -26,14 +26,12 @@ public struct FriendshipResponse: Codable, Sendable, Identifiable, Equatable {
     }
 }
 
-/// Matches Vapor `CreateFriendshipRequest`.
+/// Matches Vapor `CreateFriendshipRequest`. Follower is the signed-in user.
 public struct CreateFriendshipRequest: Codable, Sendable, Equatable {
-    public let userId: UUID
     public let friendUserId: UUID
     public let status: String?
 
-    public init(userId: UUID, friendUserId: UUID, status: String? = nil) {
-        self.userId = userId
+    public init(friendUserId: UUID, status: String? = nil) {
         self.friendUserId = friendUserId
         self.status = status
     }
