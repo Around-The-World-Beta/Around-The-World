@@ -141,6 +141,26 @@ enum L10n {
     static var settingsTerms: String { tr("settings.terms") }
     static var settingsPrivacy: String { tr("settings.privacy") }
     static var settingsLogOut: String { tr("settings.log_out") }
+    static var settingsLegalUnpublished: String { tr("settings.legal.unpublished") }
+    static var settingsLegalMissingTitle: String { tr("settings.legal.missing_title") }
+    static var settingsLegalMissingMessage: String { tr("settings.legal.missing_message") }
+
+    static var reportTitle: String { tr("report.title") }
+    static var reportSubtitle: String { tr("report.subtitle") }
+    static var reportGame: String { tr("report.game") }
+    static var reportSubmit: String { tr("report.submit") }
+    static var reportThanks: String { tr("report.thanks") }
+    static var reportDetailsPlaceholder: String { tr("report.details_placeholder") }
+    static var reportReasonSpam: String { tr("report.reason.spam") }
+    static var reportReasonHarassment: String { tr("report.reason.harassment") }
+    static var reportReasonInappropriate: String { tr("report.reason.inappropriate") }
+    static var reportReasonFake: String { tr("report.reason.fake") }
+    static var reportReasonOther: String { tr("report.reason.other") }
+    static var blockTitle: String { tr("block.title") }
+    static var blockHost: String { tr("block.host") }
+    static var blockConfirm: String { tr("block.confirm") }
+    static var blockMessage: String { tr("block.message") }
+    static var blockDone: String { tr("block.done") }
 
     static func claimSpot(_ left: Int) -> String { tr("action.claim_spot", left) }
     static var joinWaitlist: String { tr("action.join_waitlist") }
@@ -184,6 +204,7 @@ enum L10n {
     static var hostTitlePlaceholder: String { tr("host.title.placeholder") }
     static var hostVenuePlaceholder: String { tr("host.venue.placeholder") }
     static var hostNotesPlaceholder: String { tr("host.notes.placeholder") }
+    static func hostNotesCount(_ n: Int) -> String { tr("host.notes_count", n) }
     static var hostPost: String { tr("host.post") }
     static var hostSave: String { tr("host.save") }
     static var hostEditTitle: String { tr("host.edit.title") }

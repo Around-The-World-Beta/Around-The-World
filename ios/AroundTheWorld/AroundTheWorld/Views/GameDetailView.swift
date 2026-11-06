@@ -57,6 +57,21 @@ struct GameDetailView: View {
         } message: {
             Text(L10n.hostCancelConfirm)
         }
+        .sheet(isPresented: $viewModel.showReport) {
+            if let game = viewModel.game {
+                ReportSheet(targetType: .game, targetId: game.id) { message in
+                    viewModel.actionMessage = message
+                }
+            }
+        }
+        .confirmationDialog(L10n.blockTitle, isPresented: $viewModel.confirmBlock, titleVisibility: .visible) {
+            Button(L10n.blockConfirm, role: .destructive) {
+                Task { await viewModel.blockHost() }
+            }
+            Button(L10n.authCancel, role: .cancel) {}
+        } message: {
+            Text(L10n.blockMessage)
+        }
         .fullScreenCover(item: $editingGame) { game in
             HostSessionView(existing: game)
                 .environmentObject(session)
@@ -133,12 +148,43 @@ struct GameDetailView: View {
                         hostActions(game)
                     } else {
                         claimButton(game)
+                        safetyActions
                     }
                 }
                 .padding(20)
                 .padding(.bottom, 72)
             }
         }
+    }
+
+    private var safetyActions: some View {
+        VStack(spacing: 8) {
+            Button {
+                viewModel.requestReport()
+            } label: {
+                Text(L10n.reportGame)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(AppTheme.muted)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(L10n.reportGame)
+
+            Button {
+                viewModel.requestBlock()
+            } label: {
+                Text(L10n.blockHost)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(AppTheme.destructive)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+            }
+            .buttonStyle(.plain)
+            .disabled(viewModel.isActing)
+            .accessibilityLabel(L10n.blockHost)
+        }
+        .padding(.top, 8)
     }
 
     private func hero(_ game: GameResponse) -> some View {

@@ -30,7 +30,7 @@ This machine cannot run the iPhone Simulator. Verify on your Mac with Xcode.
 6. Press **Run**
 7. **Signed out:** tap **+**. You should get the sign-in sheet, not a crash. Cancel and Matches still works.
 8. **Sign in with Apple**
-9. Tap **+**. You should see the full form (title, venue search, map pin, date, kickoff, format chips, skill chips, max players, notes) and a real **Post Game** button — not faded fake text.
+9. Tap **+**. You should see the full form (title, venue search, map pin, date, kickoff, format chips, skill chips, max players, notes) and a real **Post Game** button — not faded fake text. Notes stop at **500** characters.
 10. Search a Bay Area field (try **Franklin Square Park**) or drop a pin in San Francisco. Title something like **Friday Night 7v7**. Leave skill **Intermediate**, format **7v7**, players **14**.
 11. Tap **Post Game**. You should see **Game Posted!** then **Back to Find**.
 12. **Matches:** the new game is in **Free Sessions** on that date. If the field is far from San Francisco, the distance filter may have opened up so you can see it.

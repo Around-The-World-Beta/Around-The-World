@@ -39,6 +39,9 @@ targets:
         SUPABASE_URL: ""
         SUPABASE_ANON_KEY: ""
         GOOGLE_PLACES_API_KEY: ""
+        PRIVACY_POLICY_URL: ""
+        SUPPORT_URL: ""
+        TERMS_URL: ""
         "CODE_SIGNING_REQUIRED[sdk=iphonesimulator*]": NO
         "CODE_SIGN_IDENTITY[sdk=iphonesimulator*]": ""
     scheme:

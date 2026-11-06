@@ -59,6 +59,9 @@
 		B402C2D3E4F506A7B8C9D0E1 /* HostSessionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B401C2D3E4F506A7B8C9D0E1 /* HostSessionViewModel.swift */; };
 		A10FB2C3D4E5F6A7B8C9D0E1 /* AuthenticationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A10EB2C3D4E5F6A7B8C9D0E1 /* AuthenticationServices.framework */; };
 		C302A2B3C4D5E6F7A8B9C0D1 /* EditProfileSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C301A2B3C4D5E6F7A8B9C0D1 /* EditProfileSheet.swift */; };
+		E802A2B3C4D5E6F7A8B9C0D1 /* UserContentLimits.swift in Sources */ = {isa = PBXBuildFile; fileRef = E801A2B3C4D5E6F7A8B9C0D1 /* UserContentLimits.swift */; };
+		E804A2B3C4D5E6F7A8B9C0D1 /* SafetyModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E803A2B3C4D5E6F7A8B9C0D1 /* SafetyModels.swift */; };
+		E806A2B3C4D5E6F7A8B9C0D1 /* ReportSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E805A2B3C4D5E6F7A8B9C0D1 /* ReportSheet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -117,6 +120,9 @@
 		B401C2D3E4F506A7B8C9D0E1 /* HostSessionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostSessionViewModel.swift; sourceTree = "<group>"; };
 		A10BB2C3D4E5F6A7B8C9D0E1 /* AroundTheWorld.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AroundTheWorld.entitlements; sourceTree = "<group>"; };
 		A10EB2C3D4E5F6A7B8C9D0E1 /* AuthenticationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AuthenticationServices.framework; path = System/Library/Frameworks/AuthenticationServices.framework; sourceTree = SDKROOT; };
+		E801A2B3C4D5E6F7A8B9C0D1 /* UserContentLimits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserContentLimits.swift; sourceTree = "<group>"; };
+		E803A2B3C4D5E6F7A8B9C0D1 /* SafetyModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafetyModels.swift; sourceTree = "<group>"; };
+		E805A2B3C4D5E6F7A8B9C0D1 /* ReportSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportSheet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -218,6 +224,8 @@
 				99CE91BC936348EABE18C444 /* JSONCoding.swift */,
 				465DF0BC539C44C8A65865D0 /* ParticipantModels.swift */,
 				89677F6853DE461EA2018CC3 /* ProfileModels.swift */,
+				E803A2B3C4D5E6F7A8B9C0D1 /* SafetyModels.swift */,
+				E801A2B3C4D5E6F7A8B9C0D1 /* UserContentLimits.swift */,
 				FF64A379CB45417BA1497ABD /* UserModels.swift */,
 			);
 			path = Models;
@@ -274,6 +282,7 @@
 				F39BBA60A37E4866BC48342B /* MatchesDashboardView.swift */,
 				6A05983115D74A25AE087EF3 /* MyGames */,
 				8F44DF952BE844E2A1ADB66E /* Profile */,
+				E808A2B3C4D5E6F7A8B9C0D1 /* Safety */,
 				72FAEEA152414CA597AFE813 /* Settings */,
 			);
 			path = Views;
@@ -334,6 +343,14 @@
 				D528D027C99643ED9012308A /* SettingsView.swift */,
 			);
 			path = Settings;
+			sourceTree = "<group>";
+		};
+		E808A2B3C4D5E6F7A8B9C0D1 /* Safety */ = {
+			isa = PBXGroup;
+			children = (
+				E805A2B3C4D5E6F7A8B9C0D1 /* ReportSheet.swift */,
+			);
+			path = Safety;
 			sourceTree = "<group>";
 		};
 		A10DB2C3D4E5F6A7B8C9D0E1 /* Auth */ = {
@@ -480,6 +497,9 @@
 				A106B2C3D4E5F6A7B8C9D0E1 /* SupabaseAuthClient.swift in Sources */,
 				A108B2C3D4E5F6A7B8C9D0E1 /* SignInView.swift in Sources */,
 				A10AB2C3D4E5F6A7B8C9D0E1 /* MeModels.swift in Sources */,
+				E802A2B3C4D5E6F7A8B9C0D1 /* UserContentLimits.swift in Sources */,
+				E804A2B3C4D5E6F7A8B9C0D1 /* SafetyModels.swift in Sources */,
+				E806A2B3C4D5E6F7A8B9C0D1 /* ReportSheet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -557,6 +577,9 @@
 				SUPABASE_URL = "";
 				SUPABASE_ANON_KEY = "";
 				GOOGLE_PLACES_API_KEY = "";
+				PRIVACY_POLICY_URL = "";
+				SUPPORT_URL = "";
+				TERMS_URL = "";
 				"CODE_SIGNING_ALLOWED[sdk=iphonesimulator*]" = YES;
 				"CODE_SIGNING_REQUIRED[sdk=iphonesimulator*]" = NO;
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
@@ -596,6 +619,9 @@
 				SUPABASE_URL = "";
 				SUPABASE_ANON_KEY = "";
 				GOOGLE_PLACES_API_KEY = "";
+				PRIVACY_POLICY_URL = "";
+				SUPPORT_URL = "";
+				TERMS_URL = "";
 				"CODE_SIGNING_ALLOWED[sdk=iphonesimulator*]" = YES;
 				"CODE_SIGNING_REQUIRED[sdk=iphonesimulator*]" = NO;
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";

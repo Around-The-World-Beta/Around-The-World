@@ -57,7 +57,7 @@ final class HostSessionViewModel: ObservableObject {
         format = Self.formats.contains(existing.format) ? existing.format : "7v7"
         skill = MatchDifficulty.canonical(existing.skill)
         capacity = max(existing.capacity, existing.joinedCount)
-        notes = existing.notes
+        notes = UserContentLimits.clamped(existing.notes, maxLength: UserContentLimits.notesMax)
     }
 
     func applyVenue(name: String, neighborhood: String, coordinate: CLLocationCoordinate2D) {
@@ -89,7 +89,10 @@ final class HostSessionViewModel: ObservableObject {
         if area.isEmpty {
             area = "Bay Area"
         }
-        let trimmedNotes = notes.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedNotes = UserContentLimits.clamped(
+            notes.trimmingCharacters(in: .whitespacesAndNewlines),
+            maxLength: UserContentLimits.notesMax
+        )
 
         guard !trimmedTitle.isEmpty else {
             errorMessage = L10n.hostNeedTitle

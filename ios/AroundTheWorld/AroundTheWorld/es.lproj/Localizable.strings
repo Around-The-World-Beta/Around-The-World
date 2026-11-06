@@ -101,6 +101,9 @@
 "settings.terms" = "Términos y condiciones";
 "settings.privacy" = "Política de privacidad";
 "settings.log_out" = "Cerrar sesión";
+"settings.legal.unpublished" = "Aún no está publicado — ver la lista";
+"settings.legal.missing_title" = "Página aún no publicada";
+"settings.legal.missing_message" = "El texto está en el repo en docs/legal/. Publícalo en GitHub Pages o Notion y pega los dos enlaces https en Xcode (PRIVACY_POLICY_URL y SUPPORT_URL). Hasta entonces esta fila no puede abrir una página.";
 "settings.api_keys" = "Configuración de API";
 "settings.missing_keys" = "Faltan o son marcadores: %@";
 "settings.keys_ok" = "Las claves de Supabase y Google Places están configuradas.";
@@ -148,6 +151,7 @@
 "host.title.placeholder" = "p. ej. Viernes 7v7";
 "host.venue.placeholder" = "p. ej. Franklin Square Park";
 "host.notes.placeholder" = "Camisetas, zapatos, reglas, estacionamiento...";
+"host.notes_count" = "%d/500";
 "host.post" = "Publicar partido";
 "host.save" = "Guardar cambios";
 "host.edit.title" = "Editar partido";
@@ -198,6 +202,23 @@
 "profile.position.mid" = "Mediocampista";
 "profile.position.fwd" = "Delantero";
 "profile.name_too_short" = "El nombre necesita al menos 2 caracteres.";
+
+"report.title" = "Reportar";
+"report.subtitle" = "Cuéntanos qué está mal con este partido o sus notas. Revisamos los reportes a mano.";
+"report.game" = "Reportar este partido";
+"report.submit" = "Enviar reporte";
+"report.thanks" = "Gracias. Recibimos tu reporte.";
+"report.details_placeholder" = "Detalles opcionales (no hace falta un enlace)";
+"report.reason.spam" = "Spam o publicidad";
+"report.reason.harassment" = "Acoso";
+"report.reason.inappropriate" = "Texto ofensivo o inapropiado";
+"report.reason.fake" = "Partido falso o información engañosa";
+"report.reason.other" = "Otra cosa";
+"block.title" = "Bloquear a este organizador";
+"block.host" = "Bloquear organizador";
+"block.confirm" = "Bloquear";
+"block.message" = "No verás los partidos de esta persona. Esa persona no verá los tuyos. Puedes seguir explorando otros partidos del Área de la Bahía.";
+"block.done" = "Organizador bloqueado. Sus partidos ya no te aparecerán.";
 
 "map.title" = "Mapa del Área de la Bahía";
 "brand.logo_pending" = "Archivo de logo final pendiente del diseño.";
