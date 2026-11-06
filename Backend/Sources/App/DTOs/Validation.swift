@@ -130,4 +130,95 @@ enum APIValidation {
             throw Abort(.badRequest, reason: "latitude/longitude are out of range")
         }
     }
+
+    /// Caps and filters user-written text (bios, host notes, report details).
+    enum UserContent {
+        static let bioMax = 200
+        static let notesMax = 500
+        static let cityMax = 100
+        static let reportDetailsMax = 500
+        static let urlMax = 3
+
+        static func bio(_ value: String?) throws -> String? {
+            try optionalText(value, field: "bio", maxLength: bioMax, allowNewlines: true)
+        }
+
+        static func notes(_ value: String, required: Bool = false) throws -> String {
+            let trimmed = try text(value, field: "notes", maxLength: notesMax, allowNewlines: true)
+            if required {
+                _ = try APIValidation.requireNonEmpty(trimmed, field: "notes")
+            }
+            return trimmed
+        }
+
+        static func optionalNotes(_ value: String?) throws -> String? {
+            try optionalText(value, field: "notes", maxLength: notesMax, allowNewlines: true)
+        }
+
+        static func city(_ value: String?) throws -> String? {
+            try optionalText(value, field: "city", maxLength: cityMax, allowNewlines: false)
+        }
+
+        static func reportDetails(_ value: String?) throws -> String? {
+            try optionalText(value, field: "details", maxLength: reportDetailsMax, allowNewlines: true)
+        }
+
+        static func optionalText(
+            _ value: String?,
+            field: String,
+            maxLength: Int,
+            allowNewlines: Bool
+        ) throws -> String? {
+            guard let value else { return nil }
+            let trimmed = try text(value, field: field, maxLength: maxLength, allowNewlines: allowNewlines)
+            return trimmed.isEmpty ? nil : trimmed
+        }
+
+        static func text(
+            _ value: String,
+            field: String,
+            maxLength: Int,
+            allowNewlines: Bool
+        ) throws -> String {
+            let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard trimmed.count <= maxLength else {
+                throw Abort(.badRequest, reason: "\(field) must be at most \(maxLength) characters")
+            }
+            try rejectControlCharacters(trimmed, field: field, allowNewlines: allowNewlines)
+            try rejectHTML(trimmed, field: field)
+            try rejectExcessURLs(trimmed, field: field)
+            return trimmed
+        }
+
+        private static func rejectControlCharacters(
+            _ value: String,
+            field: String,
+            allowNewlines: Bool
+        ) throws {
+            let allowed: Set<Unicode.Scalar> = allowNewlines ? ["\n", "\r", "\t"] : []
+            for scalar in value.unicodeScalars {
+                if scalar.properties.generalCategory == .control && !allowed.contains(scalar) {
+                    throw Abort(.badRequest, reason: "\(field) contains characters that are not allowed")
+                }
+            }
+        }
+
+        private static func rejectHTML(_ value: String, field: String) throws {
+            let lowered = value.lowercased()
+            let blocked = ["<script", "<iframe", "<object", "<embed", "javascript:"]
+            if blocked.contains(where: { lowered.contains($0) }) {
+                throw Abort(.badRequest, reason: "\(field) cannot include HTML or scripts")
+            }
+        }
+
+        private static func rejectExcessURLs(_ value: String, field: String) throws {
+            let lowered = value.lowercased()
+            let httpCount = lowered.components(separatedBy: "http://").count - 1
+            let httpsCount = lowered.components(separatedBy: "https://").count - 1
+            let wwwCount = lowered.components(separatedBy: "www.").count - 1
+            if httpCount + httpsCount + wwwCount > urlMax {
+                throw Abort(.badRequest, reason: "\(field) has too many links")
+            }
+        }
+    }
 }

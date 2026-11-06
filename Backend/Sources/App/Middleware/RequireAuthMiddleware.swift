@@ -35,3 +35,19 @@ struct RequireAuthMiddleware: AsyncMiddleware {
         }
     }
 }
+
+/// Attaches the signed-in user when a token is present. Invalid tokens are ignored
+/// so public browse still works.
+struct OptionalAuthMiddleware: AsyncMiddleware {
+    func respond(to request: Request, chainingTo next: any AsyncResponder) async throws -> Response {
+        guard request.headers.bearerAuthorization != nil else {
+            return try await next.respond(to: request)
+        }
+        do {
+            let required = RequireAuthMiddleware()
+            return try await required.respond(to: request, chainingTo: next)
+        } catch let abort as any AbortError where abort.status == .unauthorized {
+            return try await next.respond(to: request)
+        }
+    }
+}

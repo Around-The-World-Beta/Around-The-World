@@ -4,7 +4,7 @@ import Vapor
 struct GamesController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
         let games = routes.grouped("games")
-        games.get(use: index)
+        games.grouped(OptionalAuthMiddleware()).get(use: index)
         games.get("mine", use: refuseLegacyMine)
         games.get(":gameID", use: show)
     }
@@ -36,6 +36,13 @@ struct GamesController: RouteCollection {
 
         if !includeFull {
             responses = responses.filter { $0.joinedCount < $0.capacity }
+        }
+
+        if let userID = req.authUser?.id {
+            let hidden = try await UserBlock.hiddenUserIDs(for: userID, on: req.db)
+            if !hidden.isEmpty {
+                responses = responses.filter { !hidden.contains($0.hostUserId) }
+            }
         }
 
         return responses
@@ -120,7 +127,7 @@ struct GamesWriteController: RouteCollection {
             format: try APIValidation.validateFormat(body.format),
             capacity: body.capacity,
             priceCents: body.priceCents,
-            notes: body.notes.trimmingCharacters(in: .whitespacesAndNewlines),
+            notes: try APIValidation.UserContent.notes(body.notes),
             startsAt: body.startsAt,
             latitude: body.latitude,
             longitude: body.longitude,
@@ -174,7 +181,7 @@ struct GamesWriteController: RouteCollection {
             game.priceCents = priceCents
         }
         if let notes = body.notes {
-            game.notes = notes.trimmingCharacters(in: .whitespacesAndNewlines)
+            game.notes = try APIValidation.UserContent.notes(notes)
         }
         if let startsAt = body.startsAt {
             game.startsAt = startsAt

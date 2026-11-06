@@ -34,6 +34,30 @@ struct MeController: RouteCollection {
     @Sendable
     func delete(req: Request) async throws -> APIMessage {
         let user = try req.requireAuthUser()
+        let userID = try user.requireID()
+        // SQLite does not always honor ON DELETE CASCADE. Delete related rows first
+        // so Apple's in-app deletion path actually removes the account and its data.
+        try await UserReport.query(on: req.db).filter(\.$reporter.$id == userID).delete()
+        try await UserBlock.query(on: req.db)
+            .group(.or) { group in
+                group.filter(\.$blocker.$id == userID)
+                group.filter(\.$blocked.$id == userID)
+            }
+            .delete()
+        try await Friendship.query(on: req.db)
+            .group(.or) { group in
+                group.filter(\.$user.$id == userID)
+                group.filter(\.$friend.$id == userID)
+            }
+            .delete()
+        try await Participant.query(on: req.db).filter(\.$user.$id == userID).delete()
+        let hosted = try await Game.query(on: req.db).filter(\.$host.$id == userID).all()
+        let hostedIDs = hosted.compactMap(\.id)
+        if !hostedIDs.isEmpty {
+            try await Participant.query(on: req.db).filter(\.$game.$id ~~ hostedIDs).delete()
+        }
+        try await Game.query(on: req.db).filter(\.$host.$id == userID).delete()
+        try await Profile.query(on: req.db).filter(\.$user.$id == userID).delete()
         try await user.delete(on: req.db)
         return APIMessage(message: "Account deleted")
     }
@@ -50,18 +74,10 @@ struct MeController: RouteCollection {
         let body = try req.content.decode(UpdateProfileRequest.self)
 
         if let city = body.city {
-            let trimmed = city.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard trimmed.count <= 100 else {
-                throw Abort(.badRequest, reason: "city must be at most 100 characters")
-            }
-            profile.city = trimmed.isEmpty ? nil : trimmed
+            profile.city = try APIValidation.UserContent.city(city)
         }
         if let bio = body.bio {
-            let trimmed = bio.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard trimmed.count <= 200 else {
-                throw Abort(.badRequest, reason: "bio must be at most 200 characters")
-            }
-            profile.bio = trimmed.isEmpty ? nil : trimmed
+            profile.bio = try APIValidation.UserContent.bio(bio)
         }
         if body.favoritePosition != nil {
             profile.favoritePosition = try APIValidation.validateOptionalPosition(body.favoritePosition)
