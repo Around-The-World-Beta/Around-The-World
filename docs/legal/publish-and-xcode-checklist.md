@@ -76,10 +76,13 @@ Do not add payments. Do not change the bundle id.
 
 ## 4. App Store Connect (when you submit)
 
+The full list — listing copy, screenshots, Team ID, TestFlight, review contact — is [`docs/release/README.md`](../release/README.md). Short version:
+
 1. Paste the same Privacy Policy URL on the app’s App Store Connect page.
 2. Paste the same Support URL.
 3. Fill **App Privacy** using [`app-store-privacy-disclosures.md`](app-store-privacy-disclosures.md).
 4. Age rating: treat the app as **13+**.
+5. There are **no payments**. Do not enable Payment Info.
 
 ---
 

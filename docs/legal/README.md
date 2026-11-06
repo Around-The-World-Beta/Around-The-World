@@ -10,4 +10,4 @@ These files are the public-facing text. They are **not** live URLs. You publish 
 | [`app-store-privacy-disclosures.md`](app-store-privacy-disclosures.md) | What to type into App Store Connect → App Privacy |
 | [`publish-and-xcode-checklist.md`](publish-and-xcode-checklist.md) | How to publish the pages and what to tap in Xcode |
 
-Start with the checklist.
+Start with the checklist. When the two https links are live, the App Store Connect steps (listing copy, screenshots, TestFlight, submit) are in [`docs/release/README.md`](../release/README.md).
