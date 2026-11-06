@@ -121,6 +121,11 @@ This creates the five tables the app needs — `users`, `profiles`, `games`, `pa
 already exist. It also switches on a protection called row level security, explained in
 Step 6.
 
+If you already ran that core file by hand, also run
+`supabase/migrations/202611060002_safety_reports_blocks.sql` the same way (new query, paste,
+Run). That adds report and block tables. Skip it if the API has already started against this
+database — it creates those tables on boot.
+
 **How you know it worked:** the result says `Success. No rows returned`.
 
 **If you see a red error instead, read it — it is written for you:**
@@ -226,6 +231,8 @@ The Swift migrations in `Backend/Sources/App/Migrations/` are the source of trut
 schema. `202611060001_atw_core_schema.sql` is a transcription of what they produce on
 Postgres, verified by applying each to an empty Postgres 16 database and diffing
 `pg_dump --schema-only` output — the two are byte-identical.
+`202611060002_safety_reports_blocks.sql` is the matching hand-apply file for
+`CreateUserReports` / `CreateUserBlocks`.
 
 **If you change a Swift migration, update the SQL file in the same commit**, and add the new
 migration's name to the `_fluent_migrations` insert at the bottom. Otherwise a hand-applied

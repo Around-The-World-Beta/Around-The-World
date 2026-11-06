@@ -234,3 +234,67 @@ struct CreateFriendshipRequest: Content {
 struct UpdateFriendshipRequest: Content {
     let status: String
 }
+
+enum ReportTargetType: String, Codable, CaseIterable, Sendable {
+    case user
+    case game
+}
+
+enum ReportReason: String, Codable, CaseIterable, Sendable {
+    case spam
+    case harassment
+    case inappropriate
+    case fake
+    case other
+}
+
+struct ReportResponse: Content {
+    let id: UUID
+    let reporterUserId: UUID
+    let targetType: String
+    let targetId: UUID
+    let reason: String
+    let details: String?
+    let createdAt: Date?
+
+    init(report: UserReport) throws {
+        guard let id = report.id else {
+            throw Abort(.internalServerError, reason: "Report missing id")
+        }
+        self.id = id
+        self.reporterUserId = report.$reporter.id
+        self.targetType = report.targetType
+        self.targetId = report.targetId
+        self.reason = report.reason
+        self.details = report.details
+        self.createdAt = report.createdAt
+    }
+}
+
+struct CreateReportRequest: Content {
+    let targetType: String
+    let targetId: UUID
+    let reason: String
+    let details: String?
+}
+
+struct BlockResponse: Content {
+    let id: UUID
+    let blockerUserId: UUID
+    let blockedUserId: UUID
+    let createdAt: Date?
+
+    init(block: UserBlock) throws {
+        guard let id = block.id else {
+            throw Abort(.internalServerError, reason: "Block missing id")
+        }
+        self.id = id
+        self.blockerUserId = block.$blocker.id
+        self.blockedUserId = block.$blocked.id
+        self.createdAt = block.createdAt
+    }
+}
+
+struct CreateBlockRequest: Content {
+    let blockedUserId: UUID
+}

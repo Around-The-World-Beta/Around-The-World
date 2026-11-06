@@ -31,6 +31,8 @@ public func configure(_ app: Application) async throws {
     app.migrations.add(AddProfileAge())
     app.migrations.add(NormalizeSkillTiers())
     app.migrations.add(EnableRowLevelSecurity())
+    app.migrations.add(CreateUserReports())
+    app.migrations.add(CreateUserBlocks())
     // Demo Bay Area listings: local/staging only. Never registered in production,
     // even if someone sets SEED_DEMO=1 on the production Railway service.
     let seedRequested = ["1", "true", "yes"].contains((Environment.get("SEED_DEMO") ?? "").lowercased())

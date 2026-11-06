@@ -77,6 +77,7 @@ func routes(_ app: Application) throws {
     try authed.register(collection: GamesWriteController())
     try authed.register(collection: ParticipantsController())
     try authed.register(collection: FriendshipsController())
+    try authed.register(collection: SafetyController())
 }
 
 struct HealthResponse: Content {
