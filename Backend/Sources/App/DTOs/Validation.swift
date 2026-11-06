@@ -2,6 +2,8 @@ import Vapor
 
 enum APIValidation {
     static let allowedSkills = Set(SkillLevel.allCases.map(\.rawValue))
+    /// Design order, not alphabetical — this string is shown to users in error messages.
+    static let allowedSkillsLabel = SkillLevel.allCases.map(\.rawValue).joined(separator: ", ")
     static let allowedPositions = Set(FavoritePosition.allCases.map(\.rawValue))
     static let allowedGameStatuses = Set(GameStatus.allCases.map(\.rawValue))
     static let allowedParticipantStatuses = Set(ParticipantStatus.allCases.map(\.rawValue))
@@ -32,15 +34,18 @@ enum APIValidation {
         return trimmed
     }
 
+    /// Accepts a canonical tier, or a legacy tier which is rewritten to its canonical
+    /// equivalent so older clients keep working without writing stale values.
     static func validateOptionalSkill(_ skill: String?) throws -> String? {
         guard let skill else { return nil }
         let trimmed = skill.trimmingCharacters(in: .whitespacesAndNewlines)
-        // Normalize legacy "Casual" → "Beginner" (Bay Area beta skill tiers).
-        let normalized = trimmed == SkillLevel.casual.rawValue ? SkillLevel.beginner.rawValue : trimmed
-        guard allowedSkills.contains(normalized) || normalized == SkillLevel.beginner.rawValue else {
-            throw Abort(.badRequest, reason: "skillLevel must be one of: Beginner, Intermediate, Baller, Open to All")
+        if let legacy = LegacySkillLevel(rawValue: trimmed) {
+            return legacy.canonical.rawValue
         }
-        return normalized
+        guard allowedSkills.contains(trimmed) else {
+            throw Abort(.badRequest, reason: "skillLevel must be one of: \(allowedSkillsLabel)")
+        }
+        return trimmed
     }
 
     static func validateOptionalAge(_ age: Int?) throws -> Int? {

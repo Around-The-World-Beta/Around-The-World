@@ -22,6 +22,7 @@ struct UsersController: RouteCollection {
     @Sendable
     func create(req: Request) async throws -> Response {
         let body = try req.content.decode(CreateUserRequest.self)
+        try IdentityLink.rejectClientSupplied(body.supabaseUserId)
         let email = try APIValidation.validateEmail(body.email)
         let displayName = try APIValidation.validateDisplayName(body.displayName)
         let skill = try APIValidation.validateOptionalSkill(body.skillLevel)
@@ -33,8 +34,7 @@ struct UsersController: RouteCollection {
 
         let user = User(
             email: email,
-            displayName: displayName,
-            supabaseUserId: body.supabaseUserId
+            displayName: displayName
         )
         try await user.save(on: req.db)
 
@@ -67,6 +67,7 @@ struct UsersController: RouteCollection {
     func update(req: Request) async throws -> UserResponse {
         let user = try await findUser(req)
         let body = try req.content.decode(UpdateUserRequest.self)
+        try IdentityLink.rejectClientSupplied(body.supabaseUserId)
 
         if let email = body.email {
             let normalized = try APIValidation.validateEmail(email)
@@ -80,10 +81,6 @@ struct UsersController: RouteCollection {
         if let displayName = body.displayName {
             user.displayName = try APIValidation.validateDisplayName(displayName)
         }
-        if let supabaseUserId = body.supabaseUserId {
-            user.supabaseUserId = supabaseUserId
-        }
-
         try await user.update(on: req.db)
         return try UserResponse(user: user)
     }

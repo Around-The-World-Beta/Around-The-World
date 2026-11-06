@@ -28,6 +28,8 @@ struct UserResponse: Content {
 struct CreateUserRequest: Content {
     let email: String
     let displayName: String
+    /// Still decoded so a stale client sending it gets an explicit error instead of
+    /// silently linking its account to someone else's login. See `IdentityLink`.
     let supabaseUserId: UUID?
     let city: String?
     let bio: String?
@@ -38,6 +40,7 @@ struct CreateUserRequest: Content {
 struct UpdateUserRequest: Content {
     let email: String?
     let displayName: String?
+    /// See `CreateUserRequest.supabaseUserId`.
     let supabaseUserId: UUID?
 }
 

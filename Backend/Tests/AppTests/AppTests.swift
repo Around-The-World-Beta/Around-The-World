@@ -33,7 +33,7 @@ struct AppTests {
                 title: "Capacity Two",
                 venue: "Dolores Park",
                 neighborhood: "Mission",
-                skill: "Beginner",
+                skill: SkillLevel.casual.rawValue,
                 format: "5v5",
                 capacity: 2,
                 priceCents: 0,
@@ -80,6 +80,97 @@ struct AppTests {
                 let body = try res.content.decode([GameResponse].self)
                 #expect(body.contains(where: { $0.id == gameID && $0.joinedCount == 1 }))
             }
+        }
+    }
+
+    @Test("canonical skill tiers match the product design")
+    func canonicalSkillTiers() async throws {
+        #expect(SkillLevel.allCases.map(\.rawValue) == ["Casual", "Intermediate", "Baller", "Open to All"])
+        #expect(!APIValidation.allowedSkills.contains("Beginner"))
+    }
+
+    @Test("legacy skill tier is rewritten on write, not stored")
+    func legacySkillTierNormalized() async throws {
+        try await withATWApp { app in
+            try await app.testing().test(
+                .POST,
+                "api/v1/users",
+                beforeRequest: { req async throws in
+                    try req.content.encode(
+                        CreateUserRequest(
+                            email: "legacy-\(UUID())@test.dev",
+                            displayName: "Legacy Tier",
+                            supabaseUserId: nil,
+                            city: nil,
+                            bio: nil,
+                            favoritePosition: nil,
+                            skillLevel: "Beginner"
+                        )
+                    )
+                }
+            ) { res async throws in
+                #expect(res.status == .created)
+                let user = try res.content.decode(UserResponse.self)
+                let profile = try await Profile.query(on: app.db)
+                    .filter(\.$user.$id == user.id)
+                    .first()
+                #expect(profile?.skillLevel == SkillLevel.casual.rawValue)
+            }
+        }
+    }
+
+    @Test("unknown skill tier is rejected")
+    func unknownSkillTierRejected() async throws {
+        try await withATWApp { app in
+            try await app.testing().test(
+                .POST,
+                "api/v1/users",
+                beforeRequest: { req async throws in
+                    try req.content.encode(
+                        CreateUserRequest(
+                            email: "bad-tier-\(UUID())@test.dev",
+                            displayName: "Bad Tier",
+                            supabaseUserId: nil,
+                            city: nil,
+                            bio: nil,
+                            favoritePosition: nil,
+                            skillLevel: "Could've Been Pro"
+                        )
+                    )
+                }
+            ) { res async throws in
+                #expect(res.status == .badRequest)
+            }
+        }
+    }
+
+    /// A client that can choose its own `supabase_user_id` can attach itself to anyone
+    /// else's login, so the column is only ever written from a verified token.
+    @Test("client-supplied supabaseUserId is refused")
+    func clientSuppliedSupabaseIDRefused() async throws {
+        try await withATWApp { app in
+            try await app.testing().test(
+                .POST,
+                "api/v1/users",
+                beforeRequest: { req async throws in
+                    try req.content.encode(
+                        CreateUserRequest(
+                            email: "spoof-\(UUID())@test.dev",
+                            displayName: "Spoofer",
+                            supabaseUserId: UUID(),
+                            city: nil,
+                            bio: nil,
+                            favoritePosition: nil,
+                            skillLevel: nil
+                        )
+                    )
+                }
+            ) { res async throws in
+                #expect(res.status == .forbidden)
+            }
+
+            let stored = try await User.query(on: app.db).all()
+            #expect(stored.allSatisfy { $0.supabaseUserId == nil })
         }
     }
 }

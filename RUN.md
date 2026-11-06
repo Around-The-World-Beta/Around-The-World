@@ -56,4 +56,4 @@ See `ios/AroundTheWorld/README.md` if the scheme is missing after a pull.
 | Port 5173 or 8081 busy | Kill the old process or change ports |
 | Map tiles blank | Needs network to OpenStreetMap tiles |
 | bun missing | https://bun.sh |
-| Swift missing (API) | Install Swift / Xcode CLT on Mac; Cloud agents use `/opt/swift` |
+| Swift missing (API) | Install Xcode / Command Line Tools on Mac. On a Linux Cloud Agent VM Swift is **not** preinstalled — see "Installing Swift" in `AGENTS.md` |
