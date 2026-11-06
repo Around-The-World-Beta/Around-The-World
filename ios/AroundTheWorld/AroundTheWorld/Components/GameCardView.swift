@@ -1,8 +1,11 @@
 import SwiftUI
+import CoreLocation
 
-/// Card layout inspired by `src/components/GameCard.tsx`.
+/// Card layout from the Lovable zip (`src/components/GameCard.tsx`).
 struct GameCardView: View {
     let game: GameResponse
+    var distanceMiles: Double? = nil
+    var origin: CLLocationCoordinate2D? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -13,10 +16,11 @@ struct GameCardView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(game.title)
                             .font(AppTheme.cardTitleFont)
+                            .italic()
                             .foregroundStyle(AppTheme.foreground)
                             .textCase(.uppercase)
                             .lineLimit(2)
-                        Text("\(game.neighborhood) · \(game.venue)")
+                        Text(distanceLine)
                             .font(.caption)
                             .foregroundStyle(AppTheme.muted)
                             .lineLimit(1)
@@ -32,7 +36,12 @@ struct GameCardView: View {
                     }
                 }
 
+                fillBar
+
                 HStack(spacing: 8) {
+                    if let chip = distanceChipText {
+                        distanceChip(chip)
+                    }
                     chip(game.skill)
                     chip(game.format)
                     Text(game.priceLabel.uppercased())
@@ -43,62 +52,144 @@ struct GameCardView: View {
                 HStack(spacing: 8) {
                     Text(game.isFull ? "JOIN WAITLIST" : "JOIN MATCH")
                         .font(.headline.weight(.black))
+                        .italic()
                         .foregroundStyle(game.isFull ? AppTheme.muted : AppTheme.primaryForeground)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
                         .background(
                             game.isFull ? AppTheme.secondaryFill : AppTheme.primary,
-                            in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            in: RoundedRectangle(cornerRadius: AppTheme.controlRadius, style: .continuous)
                         )
                         .overlay(
-                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            RoundedRectangle(cornerRadius: AppTheme.controlRadius, style: .continuous)
                                 .stroke(AppTheme.border, lineWidth: game.isFull ? 1 : 0)
                         )
 
                     Text("DETAILS")
                         .font(.caption.weight(.bold))
+                        .italic()
                         .foregroundStyle(AppTheme.foreground)
                         .padding(.horizontal, 14)
                         .padding(.vertical, 12)
-                        .background(AppTheme.secondaryFill, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                        .background(
+                            AppTheme.secondaryFill,
+                            in: RoundedRectangle(cornerRadius: AppTheme.controlRadius, style: .continuous)
+                        )
                         .overlay(
-                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            RoundedRectangle(cornerRadius: AppTheme.controlRadius, style: .continuous)
                                 .stroke(AppTheme.border, lineWidth: 1)
                         )
                 }
             }
             .padding(16)
         }
-        .background(AppTheme.card, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .background(
+            AppTheme.card,
+            in: RoundedRectangle(cornerRadius: AppTheme.cardRadius, style: .continuous)
+        )
         .overlay(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
+            RoundedRectangle(cornerRadius: AppTheme.cardRadius, style: .continuous)
                 .stroke(AppTheme.border, lineWidth: 1)
         )
     }
 
+    private var distanceLine: String {
+        if let origin {
+            return game.distanceLine(from: origin)
+        }
+        return "\(game.neighborhood) · \(game.venue)"
+    }
+
+    private var distanceChipText: String? {
+        if let origin {
+            return game.distanceChip(from: origin)
+        }
+        if let distanceMiles {
+            return distanceMiles < 10
+                ? String(format: "%.1f mi", distanceMiles)
+                : String(format: "%.0f mi", distanceMiles)
+        }
+        return nil
+    }
+
+    private var fillBar: some View {
+        GeometryReader { proxy in
+            ZStack(alignment: .leading) {
+                Capsule().fill(AppTheme.secondaryFill)
+                Capsule()
+                    .fill(game.isFull ? AppTheme.muted : AppTheme.gold)
+                    .frame(width: max(6, proxy.size.width * CGFloat(game.fillFraction)))
+            }
+        }
+        .frame(height: 4)
+    }
+
     private var headerArt: some View {
         ZStack(alignment: .topLeading) {
-            LinearGradient(
-                colors: [
-                    AppTheme.secondaryFill,
-                    AppTheme.card,
-                    AppTheme.primary.opacity(0.25),
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .frame(maxWidth: .infinity)
-            .frame(height: 120)
+            artBackground
+                .frame(maxWidth: .infinity)
+                .frame(height: 148)
+                .clipped()
 
-            Text(game.shortKickoffLabel.uppercased())
+            Text(game.startsInLabel.uppercased())
                 .font(.system(size: 10, weight: .bold))
                 .foregroundStyle(AppTheme.foreground)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 5)
-                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 6, style: .continuous))
+                .background(AppTheme.background.opacity(0.80), in: RoundedRectangle(cornerRadius: 4, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 4, style: .continuous)
+                        .stroke(AppTheme.border, lineWidth: 1)
+                )
                 .padding(12)
         }
-        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: AppTheme.cardRadius, style: .continuous))
+    }
+
+    @ViewBuilder
+    private var artBackground: some View {
+        if let urlString = game.imageUrl, let url = URL(string: urlString) {
+            AsyncImage(url: url) { phase in
+                switch phase {
+                case .success(let image):
+                    image
+                        .resizable()
+                        .scaledToFill()
+                        .opacity(0.90)
+                default:
+                    pitchFallback
+                }
+            }
+        } else {
+            pitchFallback
+        }
+    }
+
+    private var pitchFallback: some View {
+        LinearGradient(
+            colors: [
+                Color(red: 0.16, green: 0.14, blue: 0.10),
+                Color(red: 0.10, green: 0.09, blue: 0.07),
+                AppTheme.gold.opacity(0.22),
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+        .overlay(alignment: .bottomTrailing) {
+            Image(systemName: "sportscourt")
+                .font(.system(size: 42, weight: .light))
+                .foregroundStyle(AppTheme.gold.opacity(0.28))
+                .padding(16)
+        }
+    }
+
+    private func distanceChip(_ text: String) -> some View {
+        Text(text.uppercased())
+            .font(.system(size: 10, weight: .bold))
+            .foregroundStyle(AppTheme.primaryForeground)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(AppTheme.gold, in: RoundedRectangle(cornerRadius: AppTheme.chipRadius, style: .continuous))
     }
 
     private func chip(_ text: String) -> some View {
@@ -107,9 +198,9 @@ struct GameCardView: View {
             .foregroundStyle(AppTheme.foreground)
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
-            .background(AppTheme.secondaryFill, in: RoundedRectangle(cornerRadius: 6, style: .continuous))
+            .background(AppTheme.secondaryFill, in: RoundedRectangle(cornerRadius: AppTheme.chipRadius, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                RoundedRectangle(cornerRadius: AppTheme.chipRadius, style: .continuous)
                     .stroke(AppTheme.border, lineWidth: 1)
             )
     }

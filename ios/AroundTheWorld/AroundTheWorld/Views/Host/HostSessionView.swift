@@ -15,6 +15,7 @@ struct HostSessionView: View {
     @State private var venueName = ""
     @State private var neighborhood = ""
     @State private var query = ""
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         NavigationStack {
@@ -111,6 +112,16 @@ struct HostSessionView: View {
             .background(AppTheme.background.ignoresSafeArea())
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundStyle(AppTheme.foreground)
+                    }
+                    .accessibilityLabel(L10n.hostClose)
+                }
                 ToolbarItem(placement: .principal) {
                     BrandHeader(compact: true)
                 }

@@ -6,8 +6,8 @@ struct MyGamesView: View {
 
     var body: some View {
         NavigationStack {
-            ZStack {
-                AppTheme.background.ignoresSafeArea()
+            VStack(spacing: 0) {
+                TabHeaderView(title: L10n.tabMyGames, subtitle: L10n.myGamesSubtitle)
 
                 LoadableContent(
                     state: viewModel.state,
@@ -17,21 +17,25 @@ struct MyGamesView: View {
                     emptySystemImage: "calendar",
                     onRetry: { Task { await viewModel.load(force: true) } }
                 ) {
-                    List(viewModel.games) { game in
-                        NavigationLink {
-                            GameDetailView(gameID: game.id, currentUserID: viewModel.currentUserID)
-                        } label: {
-                            GameCardView(game: game)
+                    ScrollView {
+                        VStack(spacing: 12) {
+                            ForEach(viewModel.games) { game in
+                                NavigationLink {
+                                    GameDetailView(gameID: game.id, currentUserID: viewModel.currentUserID)
+                                } label: {
+                                    GameCardView(game: game)
+                                }
+                                .buttonStyle(.plain)
+                            }
                         }
-                        .listRowBackground(AppTheme.card)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 16)
                     }
-                    .listStyle(.plain)
-                    .scrollContentBackground(.hidden)
                     .refreshable { await viewModel.load(force: true) }
                 }
             }
-            .navigationTitle(L10n.tabMyGames)
-            .navigationBarTitleDisplayMode(.inline)
+            .background(AppTheme.background.ignoresSafeArea())
+            .toolbar(.hidden, for: .navigationBar)
         }
         .atwScreenBackground()
         .task { await viewModel.load() }
