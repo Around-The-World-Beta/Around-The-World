@@ -33,7 +33,16 @@ struct MyGamesView: View {
                                     NavigationLink {
                                         GameDetailView(gameID: game.id)
                                     } label: {
-                                        GameCardView(game: game)
+                                        VStack(alignment: .leading, spacing: 6) {
+                                            if game.isHostedBy(session.userID) {
+                                                Text(L10n.myGamesHosting)
+                                                    .font(.system(size: 10, weight: .bold))
+                                                    .foregroundStyle(AppTheme.gold)
+                                                    .textCase(.uppercase)
+                                                    .tracking(1.2)
+                                            }
+                                            GameCardView(game: game)
+                                        }
                                     }
                                     .buttonStyle(.plain)
                                 }
@@ -51,6 +60,9 @@ struct MyGamesView: View {
         .atwScreenBackground()
         .task { await viewModel.load() }
         .onChange(of: session.isSignedIn) { _, _ in
+            Task { await viewModel.load(force: true) }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: GamesDidChange.notification)) { _ in
             Task { await viewModel.load(force: true) }
         }
     }

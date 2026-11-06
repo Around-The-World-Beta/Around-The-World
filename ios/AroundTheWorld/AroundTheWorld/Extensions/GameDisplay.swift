@@ -1,7 +1,33 @@
 import Foundation
 import CoreLocation
 
+/// Nine-county Bay Area bbox — same numbers the server uses. Hosting outside this is rejected.
+enum BayAreaMapBounds {
+    static let minLatitude = 36.90
+    static let maxLatitude = 38.85
+    static let minLongitude = -123.15
+    static let maxLongitude = -121.20
+
+    static func contains(_ coordinate: CLLocationCoordinate2D) -> Bool {
+        (minLatitude...maxLatitude).contains(coordinate.latitude)
+            && (minLongitude...maxLongitude).contains(coordinate.longitude)
+    }
+}
+
 extension GameResponse {
+    var isCancelled: Bool {
+        status.compare("cancelled", options: [.caseInsensitive]) == .orderedSame
+    }
+
+    var isScheduled: Bool {
+        status.compare("scheduled", options: [.caseInsensitive]) == .orderedSame
+    }
+
+    func isHostedBy(_ userID: UUID?) -> Bool {
+        guard let userID else { return false }
+        return hostUserId == userID
+    }
+
     var priceLabel: String {
         if priceCents <= 0 { return "Free" }
         let dollars = Double(priceCents) / 100.0

@@ -62,6 +62,21 @@ public struct GameResponse: Codable, Sendable, Identifiable, Equatable {
     }
 }
 
+/// Posted after create / edit / cancel so Matches and My Games refresh.
+enum GamesDidChange {
+    static let notification = Notification.Name("atw.games.didChange")
+    static let gameKey = "game"
+    static let revealInBrowseKey = "revealInBrowse"
+
+    static func post(game: GameResponse? = nil, revealInBrowse: Bool = false) {
+        var info: [AnyHashable: Any] = [revealInBrowseKey: revealInBrowse]
+        if let game {
+            info[gameKey] = game
+        }
+        NotificationCenter.default.post(name: notification, object: nil, userInfo: info)
+    }
+}
+
 /// Matches Vapor `CreateGameRequest`. Host is the token — do not send `hostUserId`.
 public struct CreateGameRequest: Codable, Sendable, Equatable {
     public let title: String
@@ -170,5 +185,20 @@ public struct UpdateGameRequest: Codable, Sendable, Equatable {
         self.longitude = longitude
         self.status = status
         self.imageUrl = imageUrl
+    }
+}
+
+/// Posted after create / edit / cancel so Matches and My Games refresh.
+enum GamesDidChange {
+    static let notification = Notification.Name("atw.games.didChange")
+    static let gameKey = "game"
+    static let revealInBrowseKey = "revealInBrowse"
+
+    static func post(game: GameResponse? = nil, revealInBrowse: Bool = false) {
+        var info: [AnyHashable: Any] = [revealInBrowseKey: revealInBrowse]
+        if let game {
+            info[gameKey] = game
+        }
+        NotificationCenter.default.post(name: notification, object: nil, userInfo: info)
     }
 }

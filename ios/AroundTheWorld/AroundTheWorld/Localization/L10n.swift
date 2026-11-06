@@ -173,7 +173,39 @@ enum L10n {
     static var hostSelectedLocation: String { tr("host.selected_location") }
     static var hostCreate: String { tr("host.create") }
     static func hostAs(_ name: String) -> String { tr("host.as", name) }
-    static var hostPublishPending: String { tr("host.publish_pending") }
+    static var hostFieldTitle: String { tr("host.field.title") }
+    static var hostFieldVenue: String { tr("host.field.venue") }
+    static var hostFieldDate: String { tr("host.field.date") }
+    static var hostFieldKickoff: String { tr("host.field.kickoff") }
+    static var hostFieldFormat: String { tr("host.field.format") }
+    static var hostFieldSkill: String { tr("host.field.skill") }
+    static var hostFieldCapacity: String { tr("host.field.capacity") }
+    static var hostFieldNotes: String { tr("host.field.notes") }
+    static var hostTitlePlaceholder: String { tr("host.title.placeholder") }
+    static var hostVenuePlaceholder: String { tr("host.venue.placeholder") }
+    static var hostNotesPlaceholder: String { tr("host.notes.placeholder") }
+    static var hostPost: String { tr("host.post") }
+    static var hostSave: String { tr("host.save") }
+    static var hostEditTitle: String { tr("host.edit.title") }
+    static var hostEdit: String { tr("host.edit") }
+    static var hostBayAreaOnly: String { tr("host.bay_area") }
+    static var hostNeedTitle: String { tr("host.need_title") }
+    static var hostNeedVenue: String { tr("host.need_venue") }
+    static var hostNeedSignIn: String { tr("host.need_sign_in") }
+    static var hostPostedTitle: String { tr("host.posted.title") }
+    static var hostPostedMessage: String { tr("host.posted.message") }
+    static var hostPostedBack: String { tr("host.posted.back") }
+    static var hostUpdatedTitle: String { tr("host.updated.title") }
+    static var hostUpdatedMessage: String { tr("host.updated.message") }
+    static var hostUpdatedDone: String { tr("host.updated.done") }
+    static var hostCancelGame: String { tr("host.cancel.game") }
+    static var hostCancelConfirm: String { tr("host.cancel.confirm") }
+    static var hostCancelledBanner: String { tr("host.cancelled") }
+    static var hostCancelledDone: String { tr("host.cancelled.done") }
+    static var hostPlayersUnit: String { tr("host.players_unit") }
+    static var authHostSignedOut: String { tr("auth.host_signed_out") }
+    static var myGamesHosting: String { tr("my_games.hosting") }
+    static var myGamesCancelled: String { tr("my_games.cancelled") }
 
     static var profileTitle: String { tr("profile.title") }
     static var profileAge: String { tr("profile.age") }

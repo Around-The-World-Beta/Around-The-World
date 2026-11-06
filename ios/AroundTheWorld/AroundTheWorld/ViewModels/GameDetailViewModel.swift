@@ -47,6 +47,10 @@ final class GameDetailViewModel: ObservableObject {
         }
     }
 
+    var isHost: Bool {
+        game?.isHostedBy(session.userID) == true
+    }
+
     func claimSpot() async {
         guard let game else { return }
         guard session.isSignedIn else {
@@ -61,6 +65,32 @@ final class GameDetailViewModel: ObservableObject {
             let participant = try await api.createParticipant(CreateParticipantRequest(gameId: game.id))
             actionMessage = participant.status == "waitlist" ? L10n.claimWaitlisted : L10n.claimJoined
             await load()
+        } catch let error as APIError {
+            actionMessage = error.userFacingMessage
+        } catch {
+            actionMessage = error.localizedDescription
+        }
+    }
+
+    func cancelGame() async {
+        guard session.isSignedIn else {
+            session.requestSignIn()
+            return
+        }
+
+        isActing = true
+        defer { isActing = false }
+
+        do {
+            let updated = try await api.updateGame(id: gameID, UpdateGameRequest(status: "cancelled"))
+            game = updated
+            actionMessage = L10n.hostCancelledDone
+            GamesDidChange.post(game: updated, revealInBrowse: false)
+        } catch let error as APIError {
+            if case .httpStatus(401, _) = error {
+                session.requestSignIn()
+            }
+            actionMessage = error.userFacingMessage
         } catch {
             actionMessage = error.localizedDescription
         }

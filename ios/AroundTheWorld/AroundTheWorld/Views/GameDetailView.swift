@@ -3,7 +3,10 @@ import SwiftUI
 /// Game detail / Claim Spot — inspired by `src/routes/games.$gameId.tsx`.
 struct GameDetailView: View {
     @EnvironmentObject private var session: SessionStore
+    @EnvironmentObject private var languageStore: LanguageStore
     @StateObject private var viewModel: GameDetailViewModel
+    @State private var editingGame: GameResponse?
+    @State private var confirmCancel = false
 
     init(gameID: UUID) {
         _viewModel = StateObject(wrappedValue: GameDetailViewModel(gameID: gameID))
@@ -46,6 +49,22 @@ struct GameDetailView: View {
         } message: {
             Text(viewModel.actionMessage ?? "")
         }
+        .confirmationDialog(L10n.hostCancelGame, isPresented: $confirmCancel, titleVisibility: .visible) {
+            Button(L10n.hostCancelGame, role: .destructive) {
+                Task { await viewModel.cancelGame() }
+            }
+            Button(L10n.authCancel, role: .cancel) {}
+        } message: {
+            Text(L10n.hostCancelConfirm)
+        }
+        .fullScreenCover(item: $editingGame) { game in
+            HostSessionView(existing: game)
+                .environmentObject(session)
+                .environmentObject(languageStore)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: GamesDidChange.notification)) { _ in
+            Task { await viewModel.load() }
+        }
     }
 
     private func detailScroll(_ game: GameResponse) -> some View {
@@ -57,6 +76,12 @@ struct GameDetailView: View {
                     HStack(spacing: 8) {
                         chip(game.skill)
                         chip(game.format)
+                        if game.isCancelled {
+                            chip(L10n.myGamesCancelled)
+                        }
+                        if viewModel.isHost {
+                            chip(L10n.myGamesHosting)
+                        }
                     }
 
                     Text(game.title)
@@ -104,7 +129,11 @@ struct GameDetailView: View {
 
                     participantsBlock
 
-                    claimButton(game)
+                    if viewModel.isHost {
+                        hostActions(game)
+                    } else {
+                        claimButton(game)
+                    }
                 }
                 .padding(20)
                 .padding(.bottom, 72)
@@ -165,40 +194,110 @@ struct GameDetailView: View {
         }
     }
 
-    private func claimButton(_ game: GameResponse) -> some View {
-        let signedOut = !session.isSignedIn
-        let waitlist = !signedOut && game.isFull
-        return Button {
-            Task { await viewModel.claimSpot() }
-        } label: {
-            Group {
-                if viewModel.isActing {
-                    ProgressView()
-                        .tint(AppTheme.primaryForeground)
-                } else if signedOut {
-                    Text(L10n.signInToClaim)
-                } else if waitlist {
-                    Text(L10n.joinWaitlist)
-                } else {
-                    Text(L10n.claimSpot(game.spotsLeft))
+    private func hostActions(_ game: GameResponse) -> some View {
+        VStack(spacing: 10) {
+            if game.isCancelled {
+                Text(L10n.hostCancelledBanner)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(AppTheme.muted)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.top, 4)
+            } else {
+                Button {
+                    editingGame = game
+                } label: {
+                    Text(L10n.hostEdit.uppercased())
+                        .font(.title3.weight(.black))
+                        .italic()
+                        .foregroundStyle(AppTheme.foreground)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(
+                            AppTheme.secondaryFill,
+                            in: RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                .stroke(AppTheme.gold, lineWidth: 1)
+                        )
                 }
+                .buttonStyle(ATWPressScaleStyle())
+                .disabled(viewModel.isActing)
+
+                Button {
+                    confirmCancel = true
+                } label: {
+                    Group {
+                        if viewModel.isActing {
+                            ProgressView()
+                                .tint(AppTheme.muted)
+                        } else {
+                            Text(L10n.hostCancelGame.uppercased())
+                        }
+                    }
+                    .font(.subheadline.weight(.bold))
+                    .foregroundStyle(AppTheme.muted)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(
+                        AppTheme.card,
+                        in: RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            .stroke(AppTheme.border, lineWidth: 1)
+                    )
+                }
+                .buttonStyle(.plain)
+                .disabled(viewModel.isActing)
             }
-            .font(.title3.weight(.black))
-            .foregroundStyle(waitlist ? AppTheme.muted : AppTheme.primaryForeground)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 18)
-            .background(
-                waitlist ? AppTheme.secondaryFill : AppTheme.primary,
-                in: RoundedRectangle(cornerRadius: 14, style: .continuous)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .stroke(AppTheme.border, lineWidth: waitlist ? 1 : 0)
-            )
         }
-        .buttonStyle(.plain)
-        .disabled(viewModel.isActing)
         .padding(.top, 4)
+    }
+
+    @ViewBuilder
+    private func claimButton(_ game: GameResponse) -> some View {
+        if game.isCancelled {
+            Text(L10n.hostCancelledBanner)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(AppTheme.muted)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top, 4)
+        } else {
+            let signedOut = !session.isSignedIn
+            let waitlist = !signedOut && game.isFull
+            Button {
+                Task { await viewModel.claimSpot() }
+            } label: {
+                Group {
+                    if viewModel.isActing {
+                        ProgressView()
+                            .tint(AppTheme.primaryForeground)
+                    } else if signedOut {
+                        Text(L10n.signInToClaim)
+                    } else if waitlist {
+                        Text(L10n.joinWaitlist)
+                    } else {
+                        Text(L10n.claimSpot(game.spotsLeft))
+                    }
+                }
+                .font(.title3.weight(.black))
+                .foregroundStyle(waitlist ? AppTheme.muted : AppTheme.primaryForeground)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 18)
+                .background(
+                    waitlist ? AppTheme.secondaryFill : AppTheme.primary,
+                    in: RoundedRectangle(cornerRadius: 14, style: .continuous)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .stroke(AppTheme.border, lineWidth: waitlist ? 1 : 0)
+                )
+            }
+            .buttonStyle(.plain)
+            .disabled(viewModel.isActing)
+            .padding(.top, 4)
+        }
     }
 
     private func chip(_ text: String) -> some View {

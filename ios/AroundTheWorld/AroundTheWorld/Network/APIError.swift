@@ -24,4 +24,14 @@ public enum APIError: Error, Sendable, Equatable, LocalizedError {
             return "Network transport error: \(detail)"
         }
     }
+
+    /// Server / transport copy for on-screen errors (no "HTTP 400:" prefix).
+    public var userFacingMessage: String {
+        switch self {
+        case .httpStatus(_, let message):
+            return message
+        default:
+            return errorDescription ?? L10n.somethingBroke
+        }
+    }
 }
