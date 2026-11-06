@@ -8,13 +8,26 @@ enum FavoritePosition: String, Codable, CaseIterable, Sendable {
     case forward = "Forward"
 }
 
+/// Canonical skill tiers. These four strings are the single source of truth and must
+/// match the approved product design, the Supabase schema check constraint, and the
+/// host form's options exactly — see `docs/supabase-setup.md`.
 enum SkillLevel: String, Codable, CaseIterable, Sendable {
-    case beginner = "Beginner"
+    case casual = "Casual"
     case intermediate = "Intermediate"
     case baller = "Baller"
     case openToAll = "Open to All"
-    /// Legacy seed / pre-beta value — accepted by validation, normalized to Beginner.
-    case casual = "Casual"
+}
+
+/// Tiers that were persisted before the canonical list was settled, mapped forward.
+/// Accepted on input and rewritten; never stored and never returned.
+enum LegacySkillLevel: String, CaseIterable, Sendable {
+    case beginner = "Beginner"
+
+    var canonical: SkillLevel {
+        switch self {
+        case .beginner: .casual
+        }
+    }
 }
 
 /// Extended player profile (1:1 with `users`). Aligns with existing Supabase `profiles` fields.

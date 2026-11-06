@@ -23,6 +23,8 @@ public func configure(_ app: Application) async throws {
     app.migrations.add(CreateParticipants())
     app.migrations.add(CreateFriendships())
     app.migrations.add(AddProfileAge())
+    app.migrations.add(NormalizeSkillTiers())
+    app.migrations.add(EnableRowLevelSecurity())
     // SeedDemoData is a no-op unless SEED_DEMO=1 (keeps real Supabase DBs empty).
     app.migrations.add(SeedDemoData())
 

@@ -15,7 +15,7 @@ export function ProfilePage() {
         </div>
         <div>
           <strong>Skill tier</strong>
-          <div className="muted">Beginner / Intermediate / Baller</div>
+          <div className="muted">Casual / Intermediate / Baller / Open to All</div>
         </div>
         <div>
           <strong>Position</strong>

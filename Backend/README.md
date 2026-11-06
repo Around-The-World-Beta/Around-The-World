@@ -45,6 +45,21 @@ export DATABASE_TLS=require
 
 `docker compose up -d` in this folder starts a local Postgres 16 if you prefer that over SQLite.
 
+**Setting up a hosted Supabase project:** follow [`../docs/supabase-setup.md`](../docs/supabase-setup.md).
+It replaces Step 1.3 of the launch plan PDF, which is wrong — see
+[`../docs/launch-plan-corrections.md`](../docs/launch-plan-corrections.md).
+
+## Schema
+
+`Sources/App/Migrations/` is the source of truth. `supabase/migrations/202611060001_atw_core_schema.sql`
+is a verified transcription for applying the same schema by hand in the Supabase SQL editor.
+**Change one and you must change the other in the same commit** — the two diverging is what
+broke this project before. `docs/supabase-setup.md` explains how to re-verify them.
+
+This service owns `users`, `profiles`, `games`, `participants`, and `friendships`. Supabase Auth
+owns `auth.users` and nothing else. They are linked by `users.supabase_user_id`, which is written
+only from a verified JWT and is rejected if a client sends it — see `Sources/App/IdentityLink.swift`.
+
 ## API (`/api/v1`)
 
 | Resource | Endpoints |
