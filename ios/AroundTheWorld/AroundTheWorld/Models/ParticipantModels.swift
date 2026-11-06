@@ -26,15 +26,13 @@ public struct ParticipantResponse: Codable, Sendable, Identifiable, Equatable {
     }
 }
 
-/// Matches Vapor `CreateParticipantRequest`.
+/// Matches Vapor `CreateParticipantRequest`. Player is the signed-in user.
 public struct CreateParticipantRequest: Codable, Sendable, Equatable {
     public let gameId: UUID
-    public let userId: UUID
     public let status: String?
 
-    public init(gameId: UUID, userId: UUID, status: String? = nil) {
+    public init(gameId: UUID, status: String? = nil) {
         self.gameId = gameId
-        self.userId = userId
         self.status = status
     }
 }

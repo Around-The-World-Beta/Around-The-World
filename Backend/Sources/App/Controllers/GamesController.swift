@@ -3,18 +3,13 @@ import Vapor
 
 struct GamesController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
-        let games = routes.grouped("api", "v1", "games")
+        let games = routes.grouped("games")
         games.get(use: index)
-        games.post(use: create)
-        games.get("mine", use: mine)
-        games.group(":gameID") { game in
-            game.get(use: show)
-            game.patch(use: update)
-            game.delete(use: delete)
-        }
+        games.get("mine", use: refuseLegacyMine)
+        games.get(":gameID", use: show)
     }
 
-    /// Browse listings for the Bay Area beta.
+    /// Browse listings for the Bay Area beta. Public — no token required.
     ///
     /// Visibility is derived from the live roster (`joinedCount < capacity`), not a
     /// stored "hidden" flag — a cancellation that frees a spot reopens the listing
@@ -31,7 +26,7 @@ struct GamesController: RouteCollection {
             .sort(\.$startsAt, .ascending)
             .all()
 
-        var responses = try await mapGames(games, on: req.db)
+        var responses = try await Self.mapGames(games, on: req.db)
 
         if region.lowercased() != "all" {
             responses = responses.filter {
@@ -39,7 +34,6 @@ struct GamesController: RouteCollection {
             }
         }
 
-        // spots_filled < spots_total  ≡  joinedCount < capacity
         if !includeFull {
             responses = responses.filter { $0.joinedCount < $0.capacity }
         }
@@ -47,34 +41,78 @@ struct GamesController: RouteCollection {
         return responses
     }
 
-    /// Sessions the user already signed up for (joined or waitlisted), including full ones.
+    /// Old clients asked `GET /games/mine?userId=`. That leaked other people's schedules.
     @Sendable
-    func mine(req: Request) async throws -> [GameResponse] {
-        guard let userID = try? req.query.get(UUID.self, at: "userId") else {
-            throw Abort(.badRequest, reason: "userId query parameter is required")
+    func refuseLegacyMine(req: Request) async throws -> [GameResponse] {
+        if req.query[String.self, at: "userId"] != nil {
+            throw Abort(
+                .unauthorized,
+                reason: "userId is taken from the auth token. Use GET /api/v1/me/games"
+            )
         }
+        throw Abort(.unauthorized, reason: "Sign in required. Use GET /api/v1/me/games")
+    }
 
-        let participations = try await Participant.query(on: req.db)
-            .filter(\.$user.$id == userID)
-            .filter(\.$status != ParticipantStatus.cancelled.rawValue)
-            .all()
-        let gameIDs = Set(participations.map(\.$game.id))
-        guard !gameIDs.isEmpty else { return [] }
+    @Sendable
+    func show(req: Request) async throws -> GameResponse {
+        let game = try await Self.findGame(req)
+        let joinedCount = try await Self.joinedCount(for: game, on: req.db)
+        return try GameResponse(game: game, joinedCount: joinedCount)
+    }
 
-        let games = try await Game.query(on: req.db)
-            .filter(\.$id ~~ Array(gameIDs))
-            .sort(\.$startsAt, .ascending)
-            .all()
-        return try await mapGames(games, on: req.db)
+    static func findGame(_ req: Request) async throws -> Game {
+        guard let gameID = req.parameters.get("gameID", as: UUID.self) else {
+            throw Abort(.badRequest, reason: "Invalid game id")
+        }
+        guard let game = try await Game.find(gameID, on: req.db) else {
+            throw Abort(.notFound, reason: "Game not found")
+        }
+        return game
+    }
+
+    static func joinedCount(for game: Game, on db: any Database) async throws -> Int {
+        guard let gameID = game.id else { return 0 }
+        return try await Participant.query(on: db)
+            .filter(\.$game.$id == gameID)
+            .filter(\.$status == ParticipantStatus.joined.rawValue)
+            .count()
+    }
+
+    static func mapGames(_ games: [Game], on db: any Database) async throws -> [GameResponse] {
+        var responses: [GameResponse] = []
+        responses.reserveCapacity(games.count)
+        for game in games {
+            let joined = try await joinedCount(for: game, on: db)
+            responses.append(try GameResponse(game: game, joinedCount: joined))
+        }
+        return responses
+    }
+
+    static func requireHost(_ game: Game, userID: UUID) throws {
+        guard game.$host.id == userID else {
+            throw Abort(.forbidden, reason: "Only the host can change this game")
+        }
+    }
+}
+
+struct GamesWriteController: RouteCollection {
+    func boot(routes: any RoutesBuilder) throws {
+        let games = routes.grouped("games")
+        games.post(use: create)
+        games.group(":gameID") { game in
+            game.patch(use: update)
+            game.delete(use: delete)
+        }
     }
 
     @Sendable
     func create(req: Request) async throws -> Response {
+        let hostID = try req.requireAuthUserID()
         let body = try req.content.decode(CreateGameRequest.self)
-        try await validateGameBody(body, on: req.db)
+        try Self.validateGameBody(body)
 
         let game = Game(
-            hostID: body.hostUserId,
+            hostID: hostID,
             title: try APIValidation.requireNonEmpty(body.title, field: "title"),
             venue: try APIValidation.requireNonEmpty(body.venue, field: "venue"),
             neighborhood: try APIValidation.requireNonEmpty(body.neighborhood, field: "neighborhood"),
@@ -90,9 +128,8 @@ struct GamesController: RouteCollection {
         )
         try await game.save(on: req.db)
 
-        // Host is automatically joined.
         if let gameID = game.id {
-            let hostParticipant = Participant(gameID: gameID, userID: body.hostUserId, status: .joined)
+            let hostParticipant = Participant(gameID: gameID, userID: hostID, status: .joined)
             try await hostParticipant.save(on: req.db)
         }
 
@@ -103,15 +140,10 @@ struct GamesController: RouteCollection {
     }
 
     @Sendable
-    func show(req: Request) async throws -> GameResponse {
-        let game = try await findGame(req)
-        let joinedCount = try await joinedCount(for: game, on: req.db)
-        return try GameResponse(game: game, joinedCount: joinedCount)
-    }
-
-    @Sendable
     func update(req: Request) async throws -> GameResponse {
-        let game = try await findGame(req)
+        let userID = try req.requireAuthUserID()
+        let game = try await GamesController.findGame(req)
+        try GamesController.requireHost(game, userID: userID)
         let body = try req.content.decode(UpdateGameRequest.self)
 
         if let title = body.title {
@@ -131,7 +163,7 @@ struct GamesController: RouteCollection {
         }
         if let capacity = body.capacity {
             try APIValidation.validateCapacity(capacity)
-            let joined = try await joinedCount(for: game, on: req.db)
+            let joined = try await GamesController.joinedCount(for: game, on: req.db)
             guard capacity >= joined else {
                 throw Abort(.badRequest, reason: "capacity cannot be less than current joined count (\(joined))")
             }
@@ -149,6 +181,9 @@ struct GamesController: RouteCollection {
         }
         if let latitude = body.latitude, let longitude = body.longitude {
             try APIValidation.validateCoordinates(latitude: latitude, longitude: longitude)
+            guard BayAreaRegion.contains(latitude: latitude, longitude: longitude) else {
+                throw Abort(.badRequest, reason: "Bay Area beta: session location must be inside the San Francisco Bay Area")
+            }
             game.latitude = latitude
             game.longitude = longitude
         } else if body.latitude != nil || body.longitude != nil {
@@ -163,54 +198,25 @@ struct GamesController: RouteCollection {
         }
 
         try await game.update(on: req.db)
-        let joined = try await joinedCount(for: game, on: req.db)
+        let joined = try await GamesController.joinedCount(for: game, on: req.db)
         return try GameResponse(game: game, joinedCount: joined)
     }
 
     @Sendable
     func delete(req: Request) async throws -> APIMessage {
-        let game = try await findGame(req)
+        let userID = try req.requireAuthUserID()
+        let game = try await GamesController.findGame(req)
+        try GamesController.requireHost(game, userID: userID)
         try await game.delete(on: req.db)
         return APIMessage(message: "Game deleted")
     }
 
-    private func findGame(_ req: Request) async throws -> Game {
-        guard let gameID = req.parameters.get("gameID", as: UUID.self) else {
-            throw Abort(.badRequest, reason: "Invalid game id")
-        }
-        guard let game = try await Game.find(gameID, on: req.db) else {
-            throw Abort(.notFound, reason: "Game not found")
-        }
-        return game
-    }
-
-    private func validateGameBody(_ body: CreateGameRequest, on db: any Database) async throws {
-        guard try await User.find(body.hostUserId, on: db) != nil else {
-            throw Abort(.badRequest, reason: "hostUserId does not reference an existing user")
-        }
+    private static func validateGameBody(_ body: CreateGameRequest) throws {
         try APIValidation.validateCapacity(body.capacity)
         try APIValidation.validatePriceCents(body.priceCents)
         try APIValidation.validateCoordinates(latitude: body.latitude, longitude: body.longitude)
         guard BayAreaRegion.contains(latitude: body.latitude, longitude: body.longitude) else {
             throw Abort(.badRequest, reason: "Bay Area beta: session location must be inside the San Francisco Bay Area")
         }
-    }
-
-    private func joinedCount(for game: Game, on db: any Database) async throws -> Int {
-        guard let gameID = game.id else { return 0 }
-        return try await Participant.query(on: db)
-            .filter(\.$game.$id == gameID)
-            .filter(\.$status == ParticipantStatus.joined.rawValue)
-            .count()
-    }
-
-    private func mapGames(_ games: [Game], on db: any Database) async throws -> [GameResponse] {
-        var responses: [GameResponse] = []
-        responses.reserveCapacity(games.count)
-        for game in games {
-            let joined = try await joinedCount(for: game, on: db)
-            responses.append(try GameResponse(game: game, joinedCount: joined))
-        }
-        return responses
     }
 }

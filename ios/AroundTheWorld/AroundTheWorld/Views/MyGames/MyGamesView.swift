@@ -58,7 +58,7 @@ final class MyGamesViewModel: ObservableObject {
 
         state = .loading
         do {
-            let fetched = try await api.listMyGames(userId: userID)
+            let fetched = try await api.listMyGames()
             games = fetched
             state = fetched.isEmpty ? .empty : .loaded
         } catch {

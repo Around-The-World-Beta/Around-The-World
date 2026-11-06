@@ -62,9 +62,8 @@ public struct GameResponse: Codable, Sendable, Identifiable, Equatable {
     }
 }
 
-/// Matches Vapor `CreateGameRequest`.
+/// Matches Vapor `CreateGameRequest`. Host is the signed-in user; do not send hostUserId.
 public struct CreateGameRequest: Codable, Sendable, Equatable {
-    public let hostUserId: UUID
     public let title: String
     public let venue: String
     public let neighborhood: String
@@ -79,7 +78,6 @@ public struct CreateGameRequest: Codable, Sendable, Equatable {
     public let imageUrl: String?
 
     public init(
-        hostUserId: UUID,
         title: String,
         venue: String,
         neighborhood: String,
@@ -93,7 +91,6 @@ public struct CreateGameRequest: Codable, Sendable, Equatable {
         longitude: Double,
         imageUrl: String? = nil
     ) {
-        self.hostUserId = hostUserId
         self.title = title
         self.venue = venue
         self.neighborhood = neighborhood

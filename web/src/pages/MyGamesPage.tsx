@@ -7,7 +7,7 @@ export function MyGamesPage() {
       <h2>{t("myGames")}</h2>
       <p>
         Sessions you join stay here — including full ones. Sign-in wires this list to{" "}
-        <code>/api/v1/games/mine</code>.
+        <code>/api/v1/me/games</code>.
       </p>
     </div>
   );

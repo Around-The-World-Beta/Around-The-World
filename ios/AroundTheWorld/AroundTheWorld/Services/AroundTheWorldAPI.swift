@@ -2,11 +2,18 @@ import Foundation
 
 /// High-level async API surface that maps 1:1 onto Vapor `/api/v1` routes.
 /// Uses `NetworkManager` under the hood so screens stay free of URL plumbing.
+///
+/// Authenticated calls need `setAccessToken` with the Supabase access token.
+/// See `docs/auth-contract.md`.
 public struct AroundTheWorldAPI: Sendable {
     private let network: NetworkManager
 
     public init(network: NetworkManager = .shared) {
         self.network = network
+    }
+
+    public func setAccessToken(_ token: String?) async {
+        await network.setBearerToken(token)
     }
 
     // MARK: Health
@@ -15,53 +22,35 @@ public struct AroundTheWorldAPI: Sendable {
         try await network.get("health")
     }
 
-    // MARK: Users
+    // MARK: Account (`/me`)
 
-    public func listUsers() async throws -> [UserResponse] {
-        try await network.get("api/v1/users")
+    public func me() async throws -> MeResponse {
+        try await network.get("api/v1/me")
     }
 
-    public func getUser(id: UUID) async throws -> UserResponse {
-        try await network.get("api/v1/users/\(id.uuidString)")
+    public func updateMe(_ request: UpdateMeRequest) async throws -> MeResponse {
+        try await network.patch("api/v1/me", body: request)
     }
 
-    public func createUser(_ request: CreateUserRequest) async throws -> UserResponse {
-        try await network.post("api/v1/users", body: request)
+    public func deleteAccount() async throws -> APIMessage {
+        try await network.delete("api/v1/me")
     }
 
-    public func updateUser(id: UUID, _ request: UpdateUserRequest) async throws -> UserResponse {
-        try await network.patch("api/v1/users/\(id.uuidString)", body: request)
+    public func myProfile() async throws -> ProfileResponse {
+        try await network.get("api/v1/me/profile")
     }
 
-    public func deleteUser(id: UUID) async throws -> APIMessage {
-        try await network.delete("api/v1/users/\(id.uuidString)")
+    public func updateMyProfile(_ request: UpdateProfileRequest) async throws -> ProfileResponse {
+        try await network.patch("api/v1/me/profile", body: request)
     }
 
-    // MARK: Profiles
-
-    public func listProfiles() async throws -> [ProfileResponse] {
-        try await network.get("api/v1/profiles")
-    }
-
-    public func getProfile(id: UUID) async throws -> ProfileResponse {
-        try await network.get("api/v1/profiles/\(id.uuidString)")
-    }
-
-    public func getProfile(userId: UUID) async throws -> ProfileResponse {
-        try await network.get("api/v1/profiles/user/\(userId.uuidString)")
-    }
-
-    public func updateProfile(id: UUID, _ request: UpdateProfileRequest) async throws -> ProfileResponse {
-        try await network.patch("api/v1/profiles/\(id.uuidString)", body: request)
-    }
-
-    public func deleteProfile(id: UUID) async throws -> APIMessage {
-        try await network.delete("api/v1/profiles/\(id.uuidString)")
+    public func getPlayer(id: UUID) async throws -> PublicPlayerResponse {
+        try await network.get("api/v1/players/\(id.uuidString)")
     }
 
     // MARK: Games
 
-    /// Browse open Bay Area sessions (`joinedCount < capacity` by default).
+    /// Browse open Bay Area sessions (`joinedCount < capacity` by default). Public.
     public func listGames(includeFull: Bool = false, region: String = "bay-area") async throws -> [GameResponse] {
         try await network.get(
             "api/v1/games",
@@ -72,12 +61,9 @@ public struct AroundTheWorldAPI: Sendable {
         )
     }
 
-    /// Sessions the user already joined/waitlisted — includes full games.
-    public func listMyGames(userId: UUID) async throws -> [GameResponse] {
-        try await network.get(
-            "api/v1/games/mine",
-            queryItems: [URLQueryItem(name: "userId", value: userId.uuidString)]
-        )
+    /// Sessions the signed-in user hosts or has joined/waitlisted — includes full games.
+    public func listMyGames() async throws -> [GameResponse] {
+        try await network.get("api/v1/me/games")
     }
 
     public func getGame(id: UUID) async throws -> GameResponse {
@@ -97,10 +83,6 @@ public struct AroundTheWorldAPI: Sendable {
     }
 
     // MARK: Participants
-
-    public func listParticipants() async throws -> [ParticipantResponse] {
-        try await network.get("api/v1/participants")
-    }
 
     public func listParticipants(gameId: UUID) async throws -> [ParticipantResponse] {
         try await network.get("api/v1/participants/game/\(gameId.uuidString)")
@@ -124,12 +106,8 @@ public struct AroundTheWorldAPI: Sendable {
 
     // MARK: Friendships
 
-    public func listFriendships() async throws -> [FriendshipResponse] {
-        try await network.get("api/v1/friendships")
-    }
-
-    public func listFriendships(userId: UUID) async throws -> [FriendshipResponse] {
-        try await network.get("api/v1/friendships/user/\(userId.uuidString)")
+    public func listMyFriendships() async throws -> [FriendshipResponse] {
+        try await network.get("api/v1/me/friendships")
     }
 
     public func getFriendship(id: UUID) async throws -> FriendshipResponse {

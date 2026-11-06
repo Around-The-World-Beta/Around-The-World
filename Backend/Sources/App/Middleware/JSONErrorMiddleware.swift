@@ -31,6 +31,11 @@ struct JSONErrorMiddleware: AsyncMiddleware {
 
             let body = ErrorBody(error: .init(message: message, status: Int(status.code)))
             let response = Response(status: status)
+            if let abort = error as? any AbortError {
+                for header in abort.headers {
+                    response.headers.replaceOrAdd(name: header.name, value: header.value)
+                }
+            }
             try response.content.encode(body, as: .json)
             return response
         }

@@ -25,23 +25,40 @@ struct UserResponse: Content {
     }
 }
 
-struct CreateUserRequest: Content {
-    let email: String
-    let displayName: String
-    /// Still decoded so a stale client sending it gets an explicit error instead of
-    /// silently linking its account to someone else's login. See `IdentityLink`.
+struct MeResponse: Content {
+    let user: UserResponse
+    let profile: ProfileResponse
+}
+
+struct UpdateMeRequest: Content {
+    let displayName: String?
+    /// Still decoded so a stale client sending it gets an explicit error.
     let supabaseUserId: UUID?
+}
+
+struct PublicPlayerResponse: Content {
+    let id: UUID
+    let displayName: String
     let city: String?
     let bio: String?
     let favoritePosition: String?
     let skillLevel: String?
-}
+    let avatarUrl: String?
+    let age: Int?
 
-struct UpdateUserRequest: Content {
-    let email: String?
-    let displayName: String?
-    /// See `CreateUserRequest.supabaseUserId`.
-    let supabaseUserId: UUID?
+    init(user: User, profile: Profile?) throws {
+        guard let id = user.id else {
+            throw Abort(.internalServerError, reason: "User missing id")
+        }
+        self.id = id
+        self.displayName = user.displayName
+        self.city = profile?.city
+        self.bio = profile?.bio
+        self.favoritePosition = profile?.favoritePosition
+        self.skillLevel = profile?.skillLevel
+        self.avatarUrl = profile?.avatarUrl
+        self.age = profile?.age
+    }
 }
 
 struct ProfileResponse: Content {
@@ -128,7 +145,6 @@ struct GameResponse: Content {
 }
 
 struct CreateGameRequest: Content {
-    let hostUserId: UUID
     let title: String
     let venue: String
     let neighborhood: String
@@ -182,7 +198,6 @@ struct ParticipantResponse: Content {
 
 struct CreateParticipantRequest: Content {
     let gameId: UUID
-    let userId: UUID
     let status: String?
 }
 
@@ -212,7 +227,6 @@ struct FriendshipResponse: Content {
 }
 
 struct CreateFriendshipRequest: Content {
-    let userId: UUID
     let friendUserId: UUID
     let status: String?
 }

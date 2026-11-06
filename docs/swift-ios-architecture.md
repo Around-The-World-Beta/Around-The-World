@@ -30,4 +30,4 @@ Press Run in Xcode (iOS 17+ simulator or device).
 | Concern | Owner |
 | --- | --- |
 | Postgres | Supabase via `DATABASE_URL` on the Vapor service |
-| Auth (Sign in with Apple, email) | Next iteration — JWT middleware on Vapor |
+| Auth (Sign in with Apple) | Supabase Auth issues the JWT; Vapor verifies it. Contract: [`auth-contract.md`](./auth-contract.md) |

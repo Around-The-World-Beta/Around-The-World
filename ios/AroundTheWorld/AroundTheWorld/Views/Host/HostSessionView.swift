@@ -98,7 +98,7 @@ struct HostSessionView: View {
                         .background(AppTheme.gold, in: RoundedRectangle(cornerRadius: 14))
                         .opacity(0.45)
                         .overlay(alignment: .bottom) {
-                            Text("Publish wires to API after auth (hostUserId). Location picker is ready.")
+                            Text("Publish wires to API after sign-in. Location picker is ready.")
                                 .font(.caption2)
                                 .foregroundStyle(AppTheme.muted)
                                 .padding(.top, 8)

@@ -20,54 +20,65 @@ struct AppTests {
     @Test("full games are hidden from browse and reappear after cancellation")
     func rosterDerivedVisibility() async throws {
         try await withATWApp { app in
-            let host = User(email: "host-\(UUID())@test.dev", displayName: "Host")
-            try await host.save(on: app.db)
-            let hostID = try #require(host.id)
-
-            let guest = User(email: "guest-\(UUID())@test.dev", displayName: "Guest")
-            try await guest.save(on: app.db)
-            let guestID = try #require(guest.id)
-
-            let game = Game(
-                hostID: hostID,
-                title: "Capacity Two",
-                venue: "Dolores Park",
-                neighborhood: "Mission",
-                skill: SkillLevel.casual.rawValue,
-                format: "5v5",
-                capacity: 2,
-                priceCents: 0,
-                notes: "",
-                startsAt: Date().addingTimeInterval(3600),
-                latitude: 37.7597,
-                longitude: -122.4269
+            let (hostToken, _) = try await mintSupabaseToken(
+                on: app,
+                email: "host-\(UUID())@test.dev",
+                name: "Host"
             )
-            try await game.save(on: app.db)
-            let gameID = try #require(game.id)
+            let (guestToken, _) = try await mintSupabaseToken(
+                on: app,
+                email: "guest-\(UUID())@test.dev",
+                name: "Guest"
+            )
 
-            try await Participant(gameID: gameID, userID: hostID, status: .joined).save(on: app.db)
-            try await Participant(gameID: gameID, userID: guestID, status: .joined).save(on: app.db)
+            try await app.testing().test(.GET, "api/v1/me", headers: bearerHeaders(hostToken)) { res async throws in
+                #expect(res.status == .ok)
+            }
+
+            var gameID: UUID?
+            try await app.testing().test(
+                .POST,
+                "api/v1/games",
+                headers: bearerHeaders(hostToken),
+                beforeRequest: { req async throws in
+                    try req.content.encode(sampleCreateGame(title: "Capacity Two", capacity: 2))
+                }
+            ) { res async throws in
+                #expect(res.status == .created)
+                gameID = try res.content.decode(GameResponse.self).id
+            }
+            let id = try #require(gameID)
+
+            var participantID: UUID?
+            try await app.testing().test(
+                .POST,
+                "api/v1/participants",
+                headers: bearerHeaders(guestToken),
+                beforeRequest: { req async throws in
+                    try req.content.encode(CreateParticipantRequest(gameId: id, status: "joined"))
+                }
+            ) { res async throws in
+                #expect(res.status == .created)
+                participantID = try res.content.decode(ParticipantResponse.self).id
+            }
+            let signupID = try #require(participantID)
 
             try await app.testing().test(.GET, "api/v1/games?includeFull=false&region=bay-area") { res async throws in
                 #expect(res.status == .ok)
                 let body = try res.content.decode([GameResponse].self)
-                #expect(!body.contains(where: { $0.id == gameID }))
+                #expect(!body.contains(where: { $0.id == id }))
             }
 
-            try await app.testing().test(.GET, "api/v1/games/mine?userId=\(guestID.uuidString)") { res async throws in
+            try await app.testing().test(.GET, "api/v1/me/games", headers: bearerHeaders(guestToken)) { res async throws in
                 #expect(res.status == .ok)
                 let body = try res.content.decode([GameResponse].self)
-                #expect(body.contains(where: { $0.id == gameID }))
+                #expect(body.contains(where: { $0.id == id }))
             }
 
-            let guestRow = try await Participant.query(on: app.db)
-                .filter(\.$game.$id == gameID)
-                .filter(\.$user.$id == guestID)
-                .first()
-            let participantID = try #require(guestRow?.id)
             try await app.testing().test(
                 .PATCH,
-                "api/v1/participants/\(participantID.uuidString)",
+                "api/v1/participants/\(signupID.uuidString)",
+                headers: bearerHeaders(guestToken),
                 beforeRequest: { req async throws in
                     try req.content.encode(UpdateParticipantRequest(status: "cancelled"))
                 }
@@ -78,7 +89,7 @@ struct AppTests {
             try await app.testing().test(.GET, "api/v1/games?includeFull=false&region=bay-area") { res async throws in
                 #expect(res.status == .ok)
                 let body = try res.content.decode([GameResponse].self)
-                #expect(body.contains(where: { $0.id == gameID && $0.joinedCount == 1 }))
+                #expect(body.contains(where: { $0.id == id && $0.joinedCount == 1 }))
             }
         }
     }
@@ -92,29 +103,31 @@ struct AppTests {
     @Test("legacy skill tier is rewritten on write, not stored")
     func legacySkillTierNormalized() async throws {
         try await withATWApp { app in
+            let (token, _) = try await mintSupabaseToken(
+                on: app,
+                email: "legacy-\(UUID())@test.dev",
+                name: "Legacy Tier"
+            )
             try await app.testing().test(
-                .POST,
-                "api/v1/users",
+                .PATCH,
+                "api/v1/me/profile",
+                headers: bearerHeaders(token),
                 beforeRequest: { req async throws in
                     try req.content.encode(
-                        CreateUserRequest(
-                            email: "legacy-\(UUID())@test.dev",
-                            displayName: "Legacy Tier",
-                            supabaseUserId: nil,
+                        UpdateProfileRequest(
                             city: nil,
                             bio: nil,
                             favoritePosition: nil,
-                            skillLevel: "Beginner"
+                            skillLevel: "Beginner",
+                            avatarUrl: nil,
+                            age: nil
                         )
                     )
                 }
             ) { res async throws in
-                #expect(res.status == .created)
-                let user = try res.content.decode(UserResponse.self)
-                let profile = try await Profile.query(on: app.db)
-                    .filter(\.$user.$id == user.id)
-                    .first()
-                #expect(profile?.skillLevel == SkillLevel.casual.rawValue)
+                #expect(res.status == .ok)
+                let profile = try res.content.decode(ProfileResponse.self)
+                #expect(profile.skillLevel == SkillLevel.casual.rawValue)
             }
         }
     }
@@ -122,19 +135,24 @@ struct AppTests {
     @Test("unknown skill tier is rejected")
     func unknownSkillTierRejected() async throws {
         try await withATWApp { app in
+            let (token, _) = try await mintSupabaseToken(
+                on: app,
+                email: "bad-tier-\(UUID())@test.dev",
+                name: "Bad Tier"
+            )
             try await app.testing().test(
-                .POST,
-                "api/v1/users",
+                .PATCH,
+                "api/v1/me/profile",
+                headers: bearerHeaders(token),
                 beforeRequest: { req async throws in
                     try req.content.encode(
-                        CreateUserRequest(
-                            email: "bad-tier-\(UUID())@test.dev",
-                            displayName: "Bad Tier",
-                            supabaseUserId: nil,
+                        UpdateProfileRequest(
                             city: nil,
                             bio: nil,
                             favoritePosition: nil,
-                            skillLevel: "Could've Been Pro"
+                            skillLevel: "Could've Been Pro",
+                            avatarUrl: nil,
+                            age: nil
                         )
                     )
                 }
@@ -146,31 +164,35 @@ struct AppTests {
 
     /// A client that can choose its own `supabase_user_id` can attach itself to anyone
     /// else's login, so the column is only ever written from a verified token.
-    @Test("client-supplied supabaseUserId is refused")
+    @Test("client-supplied supabaseUserId is refused; token sub is stored instead")
     func clientSuppliedSupabaseIDRefused() async throws {
         try await withATWApp { app in
+            let sub = UUID()
+            let (token, _) = try await mintSupabaseToken(
+                on: app,
+                sub: sub,
+                email: "linked-\(UUID())@test.dev",
+                name: "Linked"
+            )
+
             try await app.testing().test(
-                .POST,
-                "api/v1/users",
+                .PATCH,
+                "api/v1/me",
+                headers: bearerHeaders(token),
                 beforeRequest: { req async throws in
                     try req.content.encode(
-                        CreateUserRequest(
-                            email: "spoof-\(UUID())@test.dev",
-                            displayName: "Spoofer",
-                            supabaseUserId: UUID(),
-                            city: nil,
-                            bio: nil,
-                            favoritePosition: nil,
-                            skillLevel: nil
-                        )
+                        UpdateMeRequest(displayName: "Still Me", supabaseUserId: UUID())
                     )
                 }
             ) { res async throws in
                 #expect(res.status == .forbidden)
             }
 
-            let stored = try await User.query(on: app.db).all()
-            #expect(stored.allSatisfy { $0.supabaseUserId == nil })
+            try await app.testing().test(.GET, "api/v1/me", headers: bearerHeaders(token)) { res async throws in
+                #expect(res.status == .ok)
+                let me = try res.content.decode(MeResponse.self)
+                #expect(me.user.supabaseUserId == sub)
+            }
         }
     }
 }
