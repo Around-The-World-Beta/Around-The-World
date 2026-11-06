@@ -115,4 +115,22 @@ public struct AroundTheWorldAPI: Sendable {
     public func deleteFriendship(id: UUID) async throws -> APIMessage {
         try await network.delete("api/v1/friendships/\(id.uuidString)")
     }
+
+    // MARK: Report / block
+
+    public func createReport(_ request: CreateReportRequest) async throws -> ReportResponse {
+        try await network.post("api/v1/reports", body: request)
+    }
+
+    public func listMyBlocks() async throws -> [BlockResponse] {
+        try await network.get("api/v1/me/blocks")
+    }
+
+    public func createBlock(_ request: CreateBlockRequest) async throws -> BlockResponse {
+        try await network.post("api/v1/blocks", body: request)
+    }
+
+    public func unblock(userId: UUID) async throws -> APIMessage {
+        try await network.delete("api/v1/blocks/\(userId.uuidString)")
+    }
 }

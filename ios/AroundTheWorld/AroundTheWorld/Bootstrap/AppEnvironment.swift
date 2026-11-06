@@ -27,6 +27,15 @@ enum AppEnvironment {
         return key
     }
 
+    /// Public Privacy Policy page. Empty until Auner publishes it and pastes the URL.
+    static var privacyPolicyURL: URL? { legalURL("PRIVACY_POLICY_URL") }
+
+    /// Public Help / support page. Empty until published.
+    static var supportURL: URL? { legalURL("SUPPORT_URL") }
+
+    /// Public Terms page. Empty until published.
+    static var termsURL: URL? { legalURL("TERMS_URL") }
+
     /// Google Places (venue photos only — not used for map/search).
     static var googlePlacesAPIKey: String? {
         guard let key = cleaned("GOOGLE_PLACES_API_KEY") ?? cleanedEnv("GOOGLE_PLACES_API_KEY"),
@@ -67,5 +76,13 @@ enum AppEnvironment {
               !raw.isEmpty,
               !raw.contains("$(") else { return nil }
         return raw
+    }
+
+    private static func legalURL(_ key: String) -> URL? {
+        guard let raw = cleaned(key) ?? cleanedEnv(key),
+              let url = URL(string: raw),
+              url.scheme == "https"
+        else { return nil }
+        return url
     }
 }

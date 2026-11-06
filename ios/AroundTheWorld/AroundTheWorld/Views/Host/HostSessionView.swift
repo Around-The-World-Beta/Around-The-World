@@ -216,9 +216,22 @@ struct HostSessionView: View {
                 }
 
                 hostField(L10n.hostFieldNotes) {
-                    TextField(L10n.hostNotesPlaceholder, text: $viewModel.notes, axis: .vertical)
-                        .lineLimit(3...6)
-                        .hostTextFieldChrome()
+                    VStack(alignment: .trailing, spacing: 6) {
+                        TextField(L10n.hostNotesPlaceholder, text: $viewModel.notes, axis: .vertical)
+                            .lineLimit(3...6)
+                            .hostTextFieldChrome()
+                            .onChange(of: viewModel.notes) { _, next in
+                                if next.count > UserContentLimits.notesMax {
+                                    viewModel.notes = UserContentLimits.clamped(
+                                        next,
+                                        maxLength: UserContentLimits.notesMax
+                                    )
+                                }
+                            }
+                        Text(L10n.hostNotesCount(viewModel.notes.count))
+                            .font(.system(size: 10))
+                            .foregroundStyle(AppTheme.muted)
+                    }
                 }
 
                 if let name = session.user?.displayName, !name.isEmpty {

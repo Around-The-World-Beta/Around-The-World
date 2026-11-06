@@ -101,6 +101,9 @@
 "settings.terms" = "Terms & Conditions";
 "settings.privacy" = "Privacy Policy";
 "settings.log_out" = "Log Out";
+"settings.legal.unpublished" = "Not published yet — see the checklist";
+"settings.legal.missing_title" = "Page not published yet";
+"settings.legal.missing_message" = "The text is in the repo under docs/legal/. Publish it to GitHub Pages or Notion, then paste the two https links into Xcode (PRIVACY_POLICY_URL and SUPPORT_URL). Until then this row cannot open a page.";
 "settings.api_keys" = "API configuration";
 "settings.missing_keys" = "Missing or placeholder: %@";
 "settings.keys_ok" = "Supabase + Google Places keys are configured.";
@@ -148,6 +151,7 @@
 "host.title.placeholder" = "e.g. Friday Night 7v7";
 "host.venue.placeholder" = "e.g. Franklin Square Park";
 "host.notes.placeholder" = "Shirts, shoes, rules, parking...";
+"host.notes_count" = "%d/500";
 "host.post" = "Post Game";
 "host.save" = "Save changes";
 "host.edit.title" = "Edit Game";
@@ -198,6 +202,23 @@
 "profile.position.mid" = "Midfielder";
 "profile.position.fwd" = "Forward";
 "profile.name_too_short" = "Name needs at least 2 characters.";
+
+"report.title" = "Report";
+"report.subtitle" = "Tell us what's wrong with this game or its notes. We review reports by hand.";
+"report.game" = "Report this game";
+"report.submit" = "Send report";
+"report.thanks" = "Thanks. We received your report.";
+"report.details_placeholder" = "Optional details (no links needed)";
+"report.reason.spam" = "Spam or advertising";
+"report.reason.harassment" = "Harassment or bullying";
+"report.reason.inappropriate" = "Inappropriate or offensive text";
+"report.reason.fake" = "Fake game or misleading info";
+"report.reason.other" = "Something else";
+"block.title" = "Block this host";
+"block.host" = "Block host";
+"block.confirm" = "Block";
+"block.message" = "You won’t see this player’s games. They won’t see yours. You can still browse other Bay Area pickups.";
+"block.done" = "Host blocked. Their games will no longer show up for you.";
 
 "map.title" = "Bay Area map";
 "brand.logo_pending" = "Final logo file pending from design.";

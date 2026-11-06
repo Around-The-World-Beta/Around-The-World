@@ -9,6 +9,8 @@ final class GameDetailViewModel: ObservableObject {
     @Published private(set) var participants: [ParticipantResponse] = []
     @Published var actionMessage: String?
     @Published private(set) var isActing = false
+    @Published var showReport = false
+    @Published var confirmBlock = false
 
     let gameID: UUID
     private let api: AroundTheWorldAPI
@@ -91,6 +93,39 @@ final class GameDetailViewModel: ObservableObject {
                 session.requestSignIn()
             }
             actionMessage = error.userFacingMessage
+        } catch {
+            actionMessage = error.localizedDescription
+        }
+    }
+
+    func requestReport() {
+        guard session.isSignedIn else {
+            session.requestSignIn()
+            return
+        }
+        showReport = true
+    }
+
+    func requestBlock() {
+        guard session.isSignedIn else {
+            session.requestSignIn()
+            return
+        }
+        guard !isHost else { return }
+        confirmBlock = true
+    }
+
+    func blockHost() async {
+        guard let hostID = game?.hostUserId else { return }
+        guard session.isSignedIn else {
+            session.requestSignIn()
+            return
+        }
+        isActing = true
+        defer { isActing = false }
+        do {
+            _ = try await api.createBlock(CreateBlockRequest(blockedUserId: hostID))
+            actionMessage = L10n.blockDone
         } catch {
             actionMessage = error.localizedDescription
         }

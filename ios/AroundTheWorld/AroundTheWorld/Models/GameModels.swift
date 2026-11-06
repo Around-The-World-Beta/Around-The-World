@@ -113,7 +113,7 @@ public struct CreateGameRequest: Codable, Sendable, Equatable {
         self.format = format
         self.capacity = capacity
         self.priceCents = priceCents
-        self.notes = notes
+        self.notes = UserContentLimits.clamped(notes, maxLength: UserContentLimits.notesMax)
         self.startsAt = startsAt
         self.latitude = latitude
         self.longitude = longitude
@@ -179,7 +179,7 @@ public struct UpdateGameRequest: Codable, Sendable, Equatable {
         self.format = format
         self.capacity = capacity
         self.priceCents = priceCents
-        self.notes = notes
+        self.notes = notes.map { UserContentLimits.clamped($0, maxLength: UserContentLimits.notesMax) }
         self.startsAt = startsAt
         self.latitude = latitude
         self.longitude = longitude

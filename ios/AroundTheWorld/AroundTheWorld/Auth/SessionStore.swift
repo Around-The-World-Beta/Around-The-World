@@ -110,6 +110,7 @@ final class SessionStore: ObservableObject {
         BootLogger.done("auth.signOut")
     }
 
+    /// Apple-required in-app deletion: `DELETE /api/v1/me`, then drop the local session.
     func deleteAccount() async {
         lastError = nil
         isWorking = true
@@ -169,8 +170,14 @@ final class SessionStore: ObservableObject {
             return false
         }
 
-        let trimmedCity = String(city.trimmingCharacters(in: .whitespacesAndNewlines).prefix(100))
-        let trimmedBio = String(bio.trimmingCharacters(in: .whitespacesAndNewlines).prefix(200))
+        let trimmedCity = UserContentLimits.clamped(
+            city.trimmingCharacters(in: .whitespacesAndNewlines),
+            maxLength: UserContentLimits.cityMax
+        )
+        let trimmedBio = UserContentLimits.clamped(
+            bio.trimmingCharacters(in: .whitespacesAndNewlines),
+            maxLength: UserContentLimits.bioMax
+        )
         let validPosition = PlayerPosition(rawValue: position ?? "")?.rawValue
         let validAge: Int?
         if let age, (4...99).contains(age) {

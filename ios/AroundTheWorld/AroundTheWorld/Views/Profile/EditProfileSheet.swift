@@ -279,8 +279,8 @@ struct EditProfileSheet: View {
                         .stroke(AppTheme.border, lineWidth: 1)
                 )
                 .onChange(of: bio) { _, next in
-                    if next.count > 200 {
-                        bio = String(next.prefix(200))
+                    if next.count > UserContentLimits.bioMax {
+                        bio = UserContentLimits.clamped(next, maxLength: UserContentLimits.bioMax)
                     }
                 }
 

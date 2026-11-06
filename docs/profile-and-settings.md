@@ -50,7 +50,7 @@ Until that exists, the caption under the photo is correct: the picture stays on 
     - **Language** — English and Spanish change the words in the app; the other ten stay English for now. Scroll to the bottom and confirm **Indonesian** is visible
     - **Notifications** — “Coming in version 1.1”
     - **Payments** — “Hosting is free. Pay at the field.”
-    - **Help & Feedback**, **Terms**, **Privacy Policy** — these open placeholder web pages (`aroundtheworld.app/...`). Real pages come later (legal workstream). If Safari shows a missing page, that is expected.
+    - **Help & Feedback**, **Terms**, **Privacy Policy** — these open the public pages only after you publish the text in `docs/legal/` and paste `SUPPORT_URL`, `TERMS_URL`, and `PRIVACY_POLICY_URL` into the Xcode scheme. Until then the row explains that the page is not published yet. See [`legal/publish-and-xcode-checklist.md`](legal/publish-and-xcode-checklist.md).
 12. Scroll to the bottom of Settings. **Log Out** — confirm. Profile should go back to the empty + sign-in state. Matches still work.
 13. Sign in again. Settings → **Delete Account** → confirm. That is the Apple-required in-app deletion path. You should be signed out afterwards.
 
@@ -61,7 +61,7 @@ Until that exists, the caption under the photo is correct: the picture stays on 
 | Empty profile after a successful Apple login | Server auth update is not running, or `SUPABASE_JWT_SECRET` is unset on the API |
 | Save on Edit Profile fails | API not running, or you are not signed in |
 | Photo does not stay after Save | Expected — no upload endpoint yet |
-| Help / Terms / Privacy show a missing webpage | Expected — placeholder URLs until those pages are published |
+| Help / Terms / Privacy say the page is not published | Expected until you publish `docs/legal/` and paste the https links into Xcode |
 | “Sign in isn't set up on this build yet” | See [`sign-in-with-apple.md`](sign-in-with-apple.md) |
 
 Do not change the bundle id. Do not add payments. Do not add a city picker for posting games.

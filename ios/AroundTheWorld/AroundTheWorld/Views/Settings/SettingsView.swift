@@ -13,6 +13,7 @@ struct SettingsView: View {
     @State private var showLanguage = false
     @State private var showNotificationsNote = false
     @State private var showPaymentsNote = false
+    @State private var unpublishedLegal: LegalPage?
 
     var body: some View {
         ZStack {
@@ -56,23 +57,26 @@ struct SettingsView: View {
 
                         SettingsRow(
                             systemImage: "questionmark.circle",
-                            title: L10n.settingsHelp
+                            title: L10n.settingsHelp,
+                            subtitle: AppEnvironment.supportURL == nil ? L10n.settingsLegalUnpublished : nil
                         ) {
-                            openURL(ProfileLegalLinks.help)
+                            openLegal(.support)
                         }
 
                         SettingsRow(
                             systemImage: "doc.text",
-                            title: L10n.settingsTerms
+                            title: L10n.settingsTerms,
+                            subtitle: AppEnvironment.termsURL == nil ? L10n.settingsLegalUnpublished : nil
                         ) {
-                            openURL(ProfileLegalLinks.terms)
+                            openLegal(.terms)
                         }
 
                         SettingsRow(
                             systemImage: "shield",
-                            title: L10n.settingsPrivacy
+                            title: L10n.settingsPrivacy,
+                            subtitle: AppEnvironment.privacyPolicyURL == nil ? L10n.settingsLegalUnpublished : nil
                         ) {
-                            openURL(ProfileLegalLinks.privacy)
+                            openLegal(.privacy)
                         }
 
                         if session.isSignedIn {
@@ -136,6 +140,14 @@ struct SettingsView: View {
         } message: {
             Text(L10n.settingsPaymentsSubtitle)
         }
+        .alert(L10n.settingsLegalMissingTitle, isPresented: Binding(
+            get: { unpublishedLegal != nil },
+            set: { if !$0 { unpublishedLegal = nil } }
+        )) {
+            Button("OK", role: .cancel) { unpublishedLegal = nil }
+        } message: {
+            Text(L10n.settingsLegalMissingMessage)
+        }
         .alert(
             L10n.somethingBroke,
             isPresented: Binding(
@@ -146,6 +158,14 @@ struct SettingsView: View {
             Button("OK", role: .cancel) { session.lastError = nil }
         } message: {
             Text(session.lastError ?? "")
+        }
+    }
+
+    private func openLegal(_ page: LegalPage) {
+        if let url = page.url {
+            openURL(url)
+        } else {
+            unpublishedLegal = page
         }
     }
 
@@ -298,9 +318,19 @@ private struct SettingsRow: View {
     }
 }
 
-/// Placeholder public pages until W8 publishes the real ones.
-enum ProfileLegalLinks {
-    static let help = URL(string: "https://aroundtheworld.app/help")!
-    static let terms = URL(string: "https://aroundtheworld.app/terms")!
-    static let privacy = URL(string: "https://aroundtheworld.app/privacy")!
+/// Public pages Auner publishes, then pastes into Xcode as `PRIVACY_POLICY_URL`,
+/// `SUPPORT_URL`, and `TERMS_URL`. Empty on purpose until those links exist —
+/// we do not invent a live URL.
+enum LegalPage {
+    case privacy
+    case support
+    case terms
+
+    var url: URL? {
+        switch self {
+        case .privacy: return AppEnvironment.privacyPolicyURL
+        case .support: return AppEnvironment.supportURL
+        case .terms: return AppEnvironment.termsURL
+        }
+    }
 }

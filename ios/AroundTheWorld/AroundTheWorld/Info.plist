@@ -59,5 +59,12 @@
 	<string>$(SUPABASE_ANON_KEY)</string>
 	<key>GOOGLE_PLACES_API_KEY</key>
 	<string>$(GOOGLE_PLACES_API_KEY)</string>
+	<!-- Paste the public https links after you publish the pages in docs/legal/. Leave blank until then. -->
+	<key>PRIVACY_POLICY_URL</key>
+	<string>$(PRIVACY_POLICY_URL)</string>
+	<key>SUPPORT_URL</key>
+	<string>$(SUPPORT_URL)</string>
+	<key>TERMS_URL</key>
+	<string>$(TERMS_URL)</string>
 </dict>
 </plist>
